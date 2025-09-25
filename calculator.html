@@ -110,6 +110,7 @@
     <div class="display" id="display">0</div>
     <div class="buttons">
       <button class="clear" onclick="clearDisplay()">C</button>
+      <button onclick="backspace()">←</button>
       <button onclick="appendValue('(')">(</button>
       <button onclick="appendValue(')')">)</button>
       <button class="operator" onclick="appendValue('/')">÷</button>
@@ -156,6 +157,14 @@
         display.innerText = result;
       } catch (e) {
         display.innerText = 'Error';
+      }
+    }
+
+    function backspace() {
+      if (display.innerText.length > 1) {
+        display.innerText = display.innerText.slice(0, -1);
+      } else {
+        display.innerText = '0';
       }
     }
   </script>
