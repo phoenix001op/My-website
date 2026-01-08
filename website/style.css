@@ -1,0 +1,141 @@
+* {margin:0; padding:0; box-sizing:border-box;}
+
+body {
+  font-family: 'Courier New', monospace;
+  background: #1b1b1b;
+  color: #f0f0f0;
+  line-height: 1.6;
+}
+
+header {
+  background: #2d2d2d;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 4px solid #01675f;
+}
+
+header h1 {
+  font-size: 2.2rem;
+  color: #3fcf8e;
+  text-shadow: 2px 2px 0px #111;
+  letter-spacing: 2px;
+}
+
+nav {margin-top: 10px;}
+nav a {
+  color: #fff;
+  margin: 0 12px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+nav a:hover {color: #3fcf8e;}
+
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 20px;
+  text-align: center;
+}
+.pixel-dp {
+  width: 120px; height: 120px;
+  background: #3fcf8e;
+  border: 4px solid #2d2d2d;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  image-rendering: pixelated;
+  background-image: url('https://i.ibb.co/8z3LQhM/pixel-boy.png'); /* replace */
+  background-size: cover;
+}
+.bio h2 {color: #3fcf8e; margin-bottom: 10px;}
+.bio p {color: #ccc; max-width: 500px; margin: 0 auto 15px; font-size: 0.95rem;}
+
+.skills {display: flex; justify-content: center; gap: 15px; margin-top: 10px;}
+.skill {
+  background: #2a2a2a;
+  padding: 8px 12px;
+  border: 2px solid #3fcf8e;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 40px;
+}
+.card {
+  background: #2a2a2a;
+  border: 3px solid #3fcf8e;
+  border-radius: 8px;
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {transform: translateY(-5px); box-shadow: 0 6px 15px rgba(0,0,0,0.4);}
+.card h3 {margin-bottom: 10px; color: #3fcf8e;}
+.card p {font-size: 0.9rem; color: #ccc;}
+.btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #3fcf8e;
+  color: #111;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+.btn:hover {background: #2fa76e;}
+
+.contact {padding: 40px; text-align: center;}
+.contact h2 {margin-bottom: 15px; color: #3fcf8e;}
+.contact a {
+  display: block;
+  margin: 10px 0;
+  color: #3fcf8e;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+.contact a:hover {color: #2fa76e;}
+
+footer {
+  background: #2d2d2d;
+  text-align: center;
+  padding: 15px;
+  border-top: 4px solid #3fcf8e;
+  margin-top: 30px;
+}
+/* Add this to your existing style.css */
+.profile-pic {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #64ffda;
+  display: block;
+  margin: 0 auto 20px auto;
+}
+.skills {
+  display: flex;
+  justify-content: center;  /* center them horizontally */
+  align-items: center;
+  gap: 15px;  /* space between logos */
+  margin-top: 20px;
+}
+
+.skills img {
+  width: 40px;
+  height: 40px;
+  image-rendering: pixelated;
+}
+
+.pixel-skill {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 12px;
+  color: #00ff99;
+  margin-bottom: 10px;
+  text-align: center;
+}

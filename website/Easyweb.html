@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4A6FFF;
+            --secondary: #FF6B6B;
+            --accent: #6BCF7F;
+            --light: #F8F9FA;
+            --dark: #343A40;
+            --text: #495057;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f7ff;
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), #6C8EFF);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+        }
+        
+        .logo h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+        
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+            background: linear-gradient(135deg, #E1F0FF, #FFFFFF);
+        }
+        
+        .hero h2 {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            color: var(--text);
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: var(--secondary);
+            color: white;
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            cursor: pointer;
+            border: none;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 50px 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section-title h2 {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .section-title p {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            color: var(--text);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature-card {
+            background-color: var(--light);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 2px solid transparent;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 1.8rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .feature-card p {
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+        
+        /* Tools Section */
+        .tools {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #E1F0FF, #FFFFFF);
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .tool-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tool-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tool-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .tool-card p {
+            color: var(--text);
+            margin-bottom: 20px;
+        }
+        
+        .tool-button {
+            display: inline-block;
+            background-color: var(--accent);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .tool-button:hover {
+            background-color: #5ABF70;
+        }
+        
+        /* Calculator Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+        
+        .calculator {
+            margin-top: 20px;
+        }
+        
+        .calculator input, .calculator select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .calculator button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--light);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: none;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column a {
+            color: #DDD;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-column a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: #AAA;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            nav ul {
+                gap: 15px;
+            }
+            
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Easy</h1>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#tools">Tools</a></li>
+                        <li><a href="#about">About</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h2>Making Calculation Easy</h2>
+            <p>Easy helps in learning and solve math problems with fun tools, colorful visuals.</p>
+            <button class="cta-button" id="exploreTools">Explore Tools</button>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why people choose  Easy</h2>
+                <p>Our platform makes learning math enjoyable with these amazing features</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3>Fun & Interactive</h3>
+                    <p>Learning math through games and interactive tools that make concepts stick.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>Colorful Visuals</h3>
+                    <p>Bright colors and engaging visuals that keep children interested and focused.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>Step-by-Step Help</h3>
+                    <p>Clear explanations that break down problems into easy-to-understand steps.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section class="tools" id="tools">
+        <div class="container">
+            <div class="section-title">
+                <h2>36+ Math Tools</h2>
+                <p>Explore our collection of helpful math tools designed </p>
+            </div>
+            <div class="tools-grid">
+                <!-- Tools sorted alphabetically -->
+                <div class="tool-card">
+                    <h3>Addition & Subtraction</h3>
+                    <p>Calculate sums and differences of numbers.</p>
+                    <button class="tool-button" data-tool="add-subtract">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Age Calculator</h3>
+                    <p>Calculate age in years, months, days.</p>
+                    <button class="tool-button" data-tool="age">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Algebra Solver</h3>
+                    <p>Solve basic algebraic equations.</p>
+                    <button class="tool-button" data-tool="algebra">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Angle & Theta Value</h3>
+                    <p>Find angle values and theta calculations.</p>
+                    <button class="tool-button" data-tool="angles">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Area & Perimeter</h3>
+                    <p>Calculate area and perimeter of basic shapes.</p>
+                    <button class="tool-button" data-tool="area-perimeter">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Average Calculator</h3>
+                    <p>Find the average of numbers quickly and easily.</p>
+                    <button class="tool-button" data-tool="average">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Bill Split Calculator</h3>
+                    <p>Split bills among friends or family.</p>
+                    <button class="tool-button" data-tool="bill-split">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>BMI Calculator</h3>
+                    <p>Calculate Body Mass Index for health.</p>
+                    <button class="tool-button" data-tool="bmi">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Budget Splitter</h3>
+                    <p>Divide money among people fairly.</p>
+                    <button class="tool-button" data-tool="budget-split">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Currency Converter</h3>
+                    <p>Convert between different currencies.</p>
+                    <button class="tool-button" data-tool="currency">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Date Difference</h3>
+                    <p>Find days between two dates.</p>
+                    <button class="tool-button" data-tool="date-difference">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Decimal to Fraction</h3>
+                    <p>Convert decimals to fractions and vice versa.</p>
+                    <button class="tool-button" data-tool="decimal-fraction">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Discount Calculator</h3>
+                    <p>Calculate discounts and final prices.</p>
+                    <button class="tool-button" data-tool="discount">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>EMI Calculator</h3>
+                    <p>Calculate Equated Monthly Installments for loans.</p>
+                    <button class="tool-button" data-tool="emi">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Fraction Simplifier</h3>
+                    <p>Simplify fractions and understand equivalent fractions.</p>
+                    <button class="tool-button" data-tool="fractions">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Fuel Mileage</h3>
+                    <p>Calculate fuel efficiency (km/l or mpg).</p>
+                    <button class="tool-button" data-tool="fuel-mileage">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>GST Calculator</h3>
+                    <p>Calculate GST amount and total price.</p>
+                    <button class="tool-button" data-tool="gst">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>HCF & LCM Finder</h3>
+                    <p>Find Highest Common Factor and Least Common Multiple.</p>
+                    <button class="tool-button" data-tool="hcf-lcm">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Income Tax Estimator</h3>
+                    <p>Estimate income tax based on salary (India New Regime).</p>
+                    <button class="tool-button" data-tool="income-tax">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Mean, Median, Mode</h3>
+                    <p>Calculate mean, median and mode of numbers.</p>
+                    <button class="tool-button" data-tool="mean-median-mode">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Multiplication & Division</h3>
+                    <p>Multiply and divide numbers easily.</p>
+                    <button class="tool-button" data-tool="multiply-divide">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Percentage Calculator</h3>
+                    <p>Calculate percentages and understand how they work.</p>
+                    <button class="tool-button" data-tool="percentage">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Percentage of Total</h3>
+                    <p>Find total when percentage is given.</p>
+                    <button class="tool-button" data-tool="percentage-total">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Probability Calculator</h3>
+                    <p>Calculate probability of simple events.</p>
+                    <button class="tool-button" data-tool="probability">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Profit & Loss</h3>
+                    <p>Calculate profit or loss percentages.</p>
+                    <button class="tool-button" data-tool="profit-loss">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Ratio & Proportion</h3>
+                    <p>Find ratios and solve proportion problems.</p>
+                    <button class="tool-button" data-tool="ratio-proportion">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Shopping Total</h3>
+                    <p>Calculate total shopping cost with tax.</p>
+                    <button class="tool-button" data-tool="shopping">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Simple Interest</h3>
+                    <p>Calculate simple interest for loans or savings.</p>
+                    <button class="tool-button" data-tool="simple-interest">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Square & Cube Calculator</h3>
+                    <p>Calculate squares and cubes of numbers.</p>
+                    <button class="tool-button" data-tool="square-cube">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Square Root Finder</h3>
+                    <p>Find square roots using division method.</p>
+                    <button class="tool-button" data-tool="square-root">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Temperature Converter</h3>
+                    <p>Convert between Celsius and Fahrenheit.</p>
+                    <button class="tool-button" data-tool="temperature">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Time Conversion</h3>
+                    <p>Convert between hours, minutes, seconds.</p>
+                    <button class="tool-button" data-tool="time-conversion">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Tip Calculator</h3>
+                    <p>Calculate tip amounts for bills.</p>
+                    <button class="tool-button" data-tool="tip">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Trigonometric Calculator</h3>
+                    <p>Calculate sin, cos, tan values for angles.</p>
+                    <button class="tool-button" data-tool="trigonometry">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Unit Converter</h3>
+                    <p>Convert between cm-m, kg-g, etc.</p>
+                    <button class="tool-button" data-tool="unit-converter">Try It</button>
+                </div>
+                <div class="tool-card">
+                    <h3>Volume Calculator</h3>
+                    <p>Calculate volume of cube, cylinder, etc.</p>
+                    <button class="tool-button" data-tool="volume">Try It</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculator Modal -->
+    <div class="modal" id="calculatorModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modalTitle">Math Tool</h2>
+            <div class="calculator" id="calculatorContent">
+                <!-- Calculator content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Easy</h3>
+                    <p>Making math simple and enjoyable for children of all ages.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#tools">Tools</a></li>
+                        <li><a href="#about">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Math Tools</h3>
+                    <ul>
+                        <li><a href="#" data-tool="average">Average Calculator</a></li>
+                        <li><a href="#" data-tool="percentage">Percentage Helper</a></li>
+                        <li><a href="#" data-tool="probability">Probability Explorer</a></li>
+                        <li><a href="#" data-tool="angles">Geometry Helper</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><a href="https://www.instagram.com/ig_lavish_12?igsh=cWNibGxmZm9nNjhv">Instagram</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Lavish❤|Easy - Math Helper for Kids. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Modal functionality
+        const modal = document.getElementById('calculatorModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const calculatorContent = document.getElementById('calculatorContent');
+        const closeModal = document.querySelector('.close-modal');
+        const exploreToolsBtn = document.getElementById('exploreTools');
+        
+        // Open modal when tool buttons are clicked
+        document.querySelectorAll('.tool-button, .footer-column a[data-tool]').forEach(button => {
+            button.addEventListener('click', function() {
+                const tool = this.getAttribute('data-tool');
+                openCalculator(tool);
+            });
+        });
+        
+        // Explore tools button
+        exploreToolsBtn.addEventListener('click', function() {
+            document.getElementById('tools').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Close modal
+        closeModal.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        // Open calculator based on tool type
+        function openCalculator(tool) {
+            modal.style.display = 'flex';
+            
+            switch(tool) {
+                case 'add-subtract':
+                    modalTitle.textContent = 'Addition & Subtraction Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Enter two numbers to add or subtract:</p>
+                        <input type="number" id="num1" placeholder="First number">
+                        <input type="number" id="num2" placeholder="Second number">
+                        <button id="calculateAdd">Add Numbers</button>
+                        <button id="calculateSubtract">Subtract Numbers</button>
+                        <div class="result" id="addSubtractResult"></div>
+                    `;
+                    document.getElementById('calculateAdd').addEventListener('click', calculateAdd);
+                    document.getElementById('calculateSubtract').addEventListener('click', calculateSubtract);
+                    break;
+                    
+                case 'multiply-divide':
+                    modalTitle.textContent = 'Multiplication & Division Tool';
+                    calculatorContent.innerHTML = `
+                        <p>Enter two numbers to multiply or divide:</p>
+                        <input type="number" id="num1" placeholder="First number">
+                        <input type="number" id="num2" placeholder="Second number">
+                        <button id="calculateMultiply">Multiply Numbers</button>
+                        <button id="calculateDivide">Divide Numbers</button>
+                        <div class="result" id="multiplyDivideResult"></div>
+                    `;
+                    document.getElementById('calculateMultiply').addEventListener('click', calculateMultiply);
+                    document.getElementById('calculateDivide').addEventListener('click', calculateDivide);
+                    break;
+                    
+                case 'average':
+                    modalTitle.textContent = 'Average Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Enter numbers separated by commas to find their average:</p>
+                        <input type="text" id="numbers" placeholder="e.g., 5, 10, 15, 20">
+                        <button id="calculateAverage">Calculate Average</button>
+                        <div class="result" id="averageResult"></div>
+                    `;
+                    document.getElementById('calculateAverage').addEventListener('click', calculateAverage);
+                    break;
+                    
+                case 'percentage':
+                    modalTitle.textContent = 'Percentage Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Calculate what percentage one number is of another:</p>
+                        <input type="number" id="part" placeholder="Part">
+                        <input type="number" id="whole" placeholder="Whole">
+                        <button id="calculatePercentage">Calculate Percentage</button>
+                        <div class="result" id="percentageResult"></div>
+                    `;
+                    document.getElementById('calculatePercentage').addEventListener('click', calculatePercentage);
+                    break;
+                    
+                case 'fractions':
+                    modalTitle.textContent = 'Fraction Simplifier';
+                    calculatorContent.innerHTML = `
+                        <p>Enter a fraction to simplify (e.g., 8/12):</p>
+                        <input type="text" id="fraction" placeholder="e.g., 8/12">
+                        <button id="simplifyFraction">Simplify Fraction</button>
+                        <div class="result" id="fractionResult"></div>
+                    `;
+                    document.getElementById('simplifyFraction').addEventListener('click', simplifyFraction);
+                    break;
+                    
+                case 'decimal-fraction':
+                    modalTitle.textContent = 'Decimal to Fraction Converter';
+                    calculatorContent.innerHTML = `
+                        <p>Enter a decimal to convert to fraction:</p>
+                        <input type="number" step="any" id="decimal" placeholder="e.g., 0.75">
+                        <button id="convertDecimal">Convert to Fraction</button>
+                        <div class="result" id="decimalResult"></div>
+                    `;
+                    document.getElementById('convertDecimal').addEventListener('click', convertDecimal);
+                    break;
+                    
+                case 'hcf-lcm':
+                    modalTitle.textContent = 'HCF & LCM Finder';
+                    calculatorContent.innerHTML = `
+                        <p>Enter two numbers to find HCF and LCM:</p>
+                        <input type="number" id="num1" placeholder="First number">
+                        <input type="number" id="num2" placeholder="Second number">
+                        <button id="calculateHCF">Calculate HCF</button>
+                        <button id="calculateLCM">Calculate LCM</button>
+                        <div class="result" id="hcfLcmResult"></div>
+                    `;
+                    document.getElementById('calculateHCF').addEventListener('click', calculateHCF);
+                    document.getElementById('calculateLCM').addEventListener('click', calculateLCM);
+                    break;
+                    
+                case 'square-cube':
+                    modalTitle.textContent = 'Square & Cube Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Enter a number to find its square and cube:</p>
+                        <input type="number" id="number" placeholder="Enter a number">
+                        <button id="calculateSquare">Calculate Square</button>
+                        <button id="calculateCube">Calculate Cube</button>
+                        <div class="result" id="squareCubeResult"></div>
+                    `;
+                    document.getElementById('calculateSquare').addEventListener('click', calculateSquare);
+                    document.getElementById('calculateCube').addEventListener('click', calculateCube);
+                    break;
+                    
+                case 'square-root':
+                    modalTitle.textContent = 'Square Root Finder';
+                    calculatorContent.innerHTML = `
+                        <p>Enter a number to find its square root:</p>
+                        <input type="number" id="number" placeholder="Enter a number">
+                        <button id="calculateSquareRoot">Calculate Square Root</button>
+                        <div class="result" id="squareRootResult"></div>
+                    `;
+                    document.getElementById('calculateSquareRoot').addEventListener('click', calculateSquareRoot);
+                    break;
+                    
+                case 'area-perimeter':
+                    modalTitle.textContent = 'Area & Perimeter Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Select a shape to calculate area and perimeter:</p>
+                        <select id="shape">
+                            <option value="rectangle">Rectangle</option>
+                            <option value="square">Square</option>
+                            <option value="circle">Circle</option>
+                            <option value="triangle">Triangle</option>
+                        </select>
+                        <div id="shapeInputs"></div>
+                        <button id="calculateAreaPerimeter">Calculate</button>
+                        <div class="result" id="areaPerimeterResult"></div>
+                    `;
+                    document.getElementById('shape').addEventListener('change', updateShapeInputs);
+                    document.getElementById('calculateAreaPerimeter').addEventListener('click', calculateAreaPerimeter);
+                    updateShapeInputs();
+                    break;
+                    
+                case 'volume':
+                    modalTitle.textContent = 'Volume Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Select a shape to calculate volume:</p>
+                        <select id="shape">
+                            <option value="cube">Cube</option>
+                            <option value="cylinder">Cylinder</option>
+                            <option value="sphere">Sphere</option>
+                            <option value="cone">Cone</option>
+                        </select>
+                        <div id="volumeInputs"></div>
+                        <button id="calculateVolume">Calculate Volume</button>
+                        <div class="result" id="volumeResult"></div>
+                    `;
+                    document.getElementById('shape').addEventListener('change', updateVolumeInputs);
+                    document.getElementById('calculateVolume').addEventListener('click', calculateVolume);
+                    updateVolumeInputs();
+                    break;
+                    
+                case 'angles':
+                    modalTitle.textContent = 'Angle Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Find the missing angle in a triangle:</p>
+                        <input type="number" id="angle1" placeholder="First angle">
+                        <input type="number" id="angle2" placeholder="Second angle">
+                        <button id="calculateAngle">Calculate Third Angle</button>
+                        <div class="result" id="angleResult"></div>
+                    `;
+                    document.getElementById('calculateAngle').addEventListener('click', calculateAngle);
+                    break;
+                    
+                case 'trigonometry':
+                    modalTitle.textContent = 'Trigonometric Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Enter an angle in degrees to find trigonometric values:</p>
+                        <input type="number" id="angle" placeholder="Angle in degrees">
+                        <button id="calculateTrig">Calculate sin, cos, tan</button>
+                        <div class="result" id="trigResult"></div>
+                    `;
+                    document.getElementById('calculateTrig').addEventListener('click', calculateTrig);
+                    break;
+                    
+                case 'probability':
+                    modalTitle.textContent = 'Probability Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Calculate the probability of an event:</p>
+                        <input type="number" id="favorable" placeholder="Favorable outcomes">
+                        <input type="number" id="total" placeholder="Total possible outcomes">
+                        <button id="calculateProbability">Calculate Probability</button>
+                        <div class="result" id="probabilityResult"></div>
+                    `;
+                    document.getElementById('calculateProbability').addEventListener('click', calculateProbability);
+                    break;
+                    
+                case 'ratio-proportion':
+                    modalTitle.textContent = 'Ratio & Proportion Finder';
+                    calculatorContent.innerHTML = `
+                        <p>Enter two numbers to find ratio and check proportion:</p>
+                        <input type="number" id="num1" placeholder="First number">
+                        <input type="number" id="num2" placeholder="Second number">
+                        <button id="calculateRatio">Calculate Ratio</button>
+                        <div class="result" id="ratioResult"></div>
+                    `;
+                    document.getElementById('calculateRatio').addEventListener('click', calculateRatio);
+                    break;
+                    
+                case 'algebra':
+                    modalTitle.textContent = 'Algebra Solver';
+                    calculatorContent.innerHTML = `
+                        <p>Solve simple equations of form ax + b = c:</p>
+                        <input type="number" id="a" placeholder="a (coefficient of x)">
+                        <input type="number" id="b" placeholder="b (constant)">
+                        <input type="number" id="c" placeholder="c (result)">
+                        <button id="solveAlgebra">Solve for x</button>
+                        <div class="result" id="algebraResult"></div>
+                    `;
+                    document.getElementById('solveAlgebra').addEventListener('click', solveAlgebra);
+                    break;
+                    
+                case 'mean-median-mode':
+                    modalTitle.textContent = 'Mean, Median, Mode Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Enter numbers separated by commas:</p>
+                        <input type="text" id="numbers" placeholder="e.g., 5, 10, 15, 20, 25">
+                        <button id="calculateStats">Calculate Mean, Median, Mode</button>
+                        <div class="result" id="statsResult"></div>
+                    `;
+                    document.getElementById('calculateStats').addEventListener('click', calculateStats);
+                    break;
+                    
+                case 'simple-interest':
+                    modalTitle.textContent = 'Simple Interest Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Calculate simple interest:</p>
+                        <input type="number" id="principal" placeholder="Principal amount">
+                        <input type="number" id="rate" placeholder="Interest rate (%)">
+                        <input type="number" id="time" placeholder="Time (years)">
+                        <button id="calculateInterest">Calculate Interest</button>
+                        <div class="result" id="interestResult"></div>
+                    `;
+                    document.getElementById('calculateInterest').addEventListener('click', calculateInterest);
+                    break;
+                    
+                case 'time-conversion':
+                    modalTitle.textContent = 'Time Conversion';
+                    calculatorContent.innerHTML = `
+                        <p>Convert between time units:</p>
+                        <input type="number" id="timeValue" placeholder="Time value">
+                        <select id="fromUnit">
+                            <option value="seconds">Seconds</option>
+                            <option value="minutes">Minutes</option>
+                            <option value="hours">Hours</option>
+                            <option value="days">Days</option>
+                        </select>
+                        <select id="toUnit">
+                            <option value="seconds">Seconds</option>
+                            <option value="minutes">Minutes</option>
+                            <option value="hours">Hours</option>
+                            <option value="days">Days</option>
+                        </select>
+                        <button id="convertTime">Convert Time</button>
+                        <div class="result" id="timeResult"></div>
+                    `;
+                    document.getElementById('convertTime').addEventListener('click', convertTime);
+                    break;
+                    
+                case 'unit-converter':
+                    modalTitle.textContent = 'Unit Converter';
+                    calculatorContent.innerHTML = `
+                        <p>Convert between different units:</p>
+                        <input type="number" id="unitValue" placeholder="Value to convert">
+                        <select id="unitType">
+                            <option value="length">Length</option>
+                            <option value="weight">Weight</option>
+                            <option value="volume">Volume</option>
+                        </select>
+                        <select id="fromUnit"></select>
+                        <select id="toUnit"></select>
+                        <button id="convertUnit">Convert</button>
+                        <div class="result" id="unitResult"></div>
+                    `;
+                    document.getElementById('unitType').addEventListener('change', updateUnitOptions);
+                    document.getElementById('convertUnit').addEventListener('click', convertUnit);
+                    updateUnitOptions();
+                    break;
+                    
+                case 'gst':
+                    modalTitle.textContent = 'GST Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Calculate GST amount and total price:</p>
+                        <input type="number" id="amount" placeholder="Original amount">
+                        <input type="number" id="gstRate" placeholder="GST rate (%)">
+                        <button id="calculateGST">Calculate GST</button>
+                        <div class="result" id="gstResult"></div>
+                    `;
+                    document.getElementById('calculateGST').addEventListener('click', calculateGST);
+                    break;
+                    
+                case 'discount':
+                    modalTitle.textContent = 'Discount Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Calculate discount and final price:</p>
+                        <input type="number" id="originalPrice" placeholder="Original price">
+                        <input type="number" id="discountRate" placeholder="Discount rate (%)">
+                        <button id="calculateDiscount">Calculate Discount</button>
+                        <div class="result" id="discountResult"></div>
+                    `;
+                    document.getElementById('calculateDiscount').addEventListener('click', calculateDiscount);
+                    break;
+                    
+                case 'income-tax':
+                    modalTitle.textContent = 'Income Tax Calculator (India New Regime)';
+                    calculatorContent.innerHTML = `
+                        <p>Calculate income tax as per India's New Tax Regime (FY 2023-24):</p>
+                        <input type="number" id="income" placeholder="Annual income (₹)">
+                        <button id="calculateTax">Calculate Tax</button>
+                        <div class="result" id="taxResult"></div>
+                    `;
+                    document.getElementById('calculateTax').addEventListener('click', calculateTax);
+                    break;
+                    
+                case 'emi':
+                    modalTitle.textContent = 'EMI Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Calculate Equated Monthly Installment:</p>
+                        <input type="number" id="loanAmount" placeholder="Loan amount">
+                        <input type="number" id="interestRate" placeholder="Annual interest rate (%)">
+                        <input type="number" id="loanTerm" placeholder="Loan term (years)">
+                        <button id="calculateEMI">Calculate EMI</button>
+                        <div class="result" id="emiResult"></div>
+                    `;
+                    document.getElementById('calculateEMI').addEventListener('click', calculateEMI);
+                    break;
+                    
+                case 'currency':
+                    modalTitle.textContent = 'Currency Converter';
+                    calculatorContent.innerHTML = `
+                        <p>Convert between currencies (using approximate rates):</p>
+                        <input type="number" id="amount" placeholder="Amount to convert">
+                        <select id="fromCurrency">
+                            <option value="USD">USD (US Dollar)</option>
+                            <option value="EUR">EUR (Euro)</option>
+                            <option value="GBP">GBP (British Pound)</option>
+                            <option value="INR">INR (Indian Rupee)</option>
+                            <option value="JPY">JPY (Japanese Yen)</option>
+                        </select>
+                        <select id="toCurrency">
+                            <option value="USD">USD (US Dollar)</option>
+                            <option value="EUR">EUR (Euro)</option>
+                            <option value="GBP">GBP (British Pound)</option>
+                            <option value="INR">INR (Indian Rupee)</option>
+                            <option value="JPY">JPY (Japanese Yen)</option>
+                        </select>
+                        <button id="convertCurrency">Convert Currency</button>
+                        <div class="result" id="currencyResult"></div>
+                    `;
+                    document.getElementById('convertCurrency').addEventListener('click', convertCurrency);
+                    break;
+                    
+                case 'tip':
+                    modalTitle.textContent = 'Tip Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Calculate tip amount:</p>
+                        <input type="number" id="billAmount" placeholder="Bill amount">
+                        <input type="number" id="tipPercentage" placeholder="Tip percentage (%)">
+                        <button id="calculateTip">Calculate Tip</button>
+                        <div class="result" id="tipResult"></div>
+                    `;
+                    document.getElementById('calculateTip').addEventListener('click', calculateTip);
+                    break;
+                    
+                case 'budget-split':
+                    modalTitle.textContent = 'Budget Splitter';
+                    calculatorContent.innerHTML = `
+                        <p>Divide money among people:</p>
+                        <input type="number" id="totalAmount" placeholder="Total amount">
+                        <input type="number" id="people" placeholder="Number of people">
+                        <button id="splitBudget">Split Budget</button>
+                        <div class="result" id="budgetResult"></div>
+                    `;
+                    document.getElementById('splitBudget').addEventListener('click', splitBudget);
+                    break;
+                    
+                case 'profit-loss':
+                    modalTitle.textContent = 'Profit & Loss Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Calculate profit or loss percentage:</p>
+                        <input type="number" id="costPrice" placeholder="Cost price">
+                        <input type="number" id="sellingPrice" placeholder="Selling price">
+                        <button id="calculateProfitLoss">Calculate</button>
+                        <div class="result" id="profitLossResult"></div>
+                    `;
+                    document.getElementById('calculateProfitLoss').addEventListener('click', calculateProfitLoss);
+                    break;
+                    
+                case 'age':
+                    modalTitle.textContent = 'Age Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Calculate age from birth date:</p>
+                        <input type="date" id="birthDate">
+                        <button id="calculateAge">Calculate Age</button>
+                        <div class="result" id="ageResult"></div>
+                    `;
+                    document.getElementById('calculateAge').addEventListener('click', calculateAge);
+                    break;
+                    
+                case 'date-difference':
+                    modalTitle.textContent = 'Date Difference Finder';
+                    calculatorContent.innerHTML = `
+                        <p>Find days between two dates:</p>
+                        <input type="date" id="date1">
+                        <input type="date" id="date2">
+                        <button id="calculateDateDiff">Calculate Difference</button>
+                        <div class="result" id="dateDiffResult"></div>
+                    `;
+                    document.getElementById('calculateDateDiff').addEventListener('click', calculateDateDiff);
+                    break;
+                    
+                case 'temperature':
+                    modalTitle.textContent = 'Temperature Converter';
+                    calculatorContent.innerHTML = `
+                        <p>Convert between Celsius and Fahrenheit:</p>
+                        <input type="number" id="tempValue" placeholder="Temperature value">
+                        <select id="tempFrom">
+                            <option value="celsius">Celsius</option>
+                            <option value="fahrenheit">Fahrenheit</option>
+                        </select>
+                        <select id="tempTo">
+                            <option value="celsius">Celsius</option>
+                            <option value="fahrenheit">Fahrenheit</option>
+                        </select>
+                        <button id="convertTemp">Convert Temperature</button>
+                        <div class="result" id="tempResult"></div>
+                    `;
+                    document.getElementById('convertTemp').addEventListener('click', convertTemp);
+                    break;
+                    
+                case 'bmi':
+                    modalTitle.textContent = 'BMI Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Calculate Body Mass Index:</p>
+                        <input type="number" id="weight" placeholder="Weight (kg)">
+                        <input type="number" id="height" placeholder="Height (cm)">
+                        <button id="calculateBMI">Calculate BMI</button>
+                        <div class="result" id="bmiResult"></div>
+                    `;
+                    document.getElementById('calculateBMI').addEventListener('click', calculateBMI);
+                    break;
+                    
+                case 'bill-split':
+                    modalTitle.textContent = 'Bill Split Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Split bill among people:</p>
+                        <input type="number" id="totalBill" placeholder="Total bill amount">
+                        <input type="number" id="people" placeholder="Number of people">
+                        <button id="splitBill">Split Bill</button>
+                        <div class="result" id="billSplitResult"></div>
+                    `;
+                    document.getElementById('splitBill').addEventListener('click', splitBill);
+                    break;
+                    
+                case 'shopping':
+                    modalTitle.textContent = 'Shopping Total Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Calculate total shopping cost with tax:</p>
+                        <input type="number" id="subtotal" placeholder="Subtotal amount">
+                        <input type="number" id="taxRate" placeholder="Tax rate (%)">
+                        <button id="calculateShopping">Calculate Total</button>
+                        <div class="result" id="shoppingResult"></div>
+                    `;
+                    document.getElementById('calculateShopping').addEventListener('click', calculateShopping);
+                    break;
+                    
+                case 'fuel-mileage':
+                    modalTitle.textContent = 'Fuel Mileage Calculator';
+                    calculatorContent.innerHTML = `
+                        <p>Calculate fuel efficiency:</p>
+                        <input type="number" id="distance" placeholder="Distance traveled (km)">
+                        <input type="number" id="fuel" placeholder="Fuel used (liters)">
+                        <button id="calculateMileage">Calculate Mileage</button>
+                        <div class="result" id="mileageResult"></div>
+                    `;
+                    document.getElementById('calculateMileage').addEventListener('click', calculateMileage);
+                    break;
+                    
+                case 'percentage-total':
+                    modalTitle.textContent = 'Find Total from Percentage';
+                    calculatorContent.innerHTML = `
+                        <p>Find total when percentage is given:</p>
+                        <input type="number" id="partValue" placeholder="Part value">
+                        <input type="number" id="percentage" placeholder="Percentage">
+                        <button id="calculateTotal">Calculate Total</button>
+                        <div class="result" id="totalResult"></div>
+                    `;
+                    document.getElementById('calculateTotal').addEventListener('click', calculateTotal);
+                    break;
+                    
+                default:
+                    modalTitle.textContent = 'Coming Soon!';
+                    calculatorContent.innerHTML = `
+                        <p>This tool is under development. Check back soon!</p>
+                        <div style="text-align: center; font-size: 4rem; color: var(--primary); margin: 20px 0;">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                    `;
+            }
+        }
+        
+        // Calculator functions
+        
+        function calculateAdd() {
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            
+            if (isNaN(num1) || isNaN(num2)) {
+                showResult('addSubtractResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const result = num1 + num2;
+            showResult('addSubtractResult', `${num1} + ${num2} = ${result}`);
+        }
+        
+        function calculateSubtract() {
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            
+            if (isNaN(num1) || isNaN(num2)) {
+                showResult('addSubtractResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const result = num1 - num2;
+            showResult('addSubtractResult', `${num1} - ${num2} = ${result}`);
+        }
+        
+        function calculateMultiply() {
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            
+            if (isNaN(num1) || isNaN(num2)) {
+                showResult('multiplyDivideResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const result = num1 * num2;
+            showResult('multiplyDivideResult', `${num1} × ${num2} = ${result}`);
+        }
+        
+        function calculateDivide() {
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            
+            if (isNaN(num1) || isNaN(num2)) {
+                showResult('multiplyDivideResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            if (num2 === 0) {
+                showResult('multiplyDivideResult', 'Cannot divide by zero.');
+                return;
+            }
+            
+            const result = num1 / num2;
+            showResult('multiplyDivideResult', `${num1} ÷ ${num2} = ${result}`);
+        }
+        
+        function calculateAverage() {
+            const numbersInput = document.getElementById('numbers').value;
+            const numbers = numbersInput.split(',').map(num => parseFloat(num.trim()));
+            
+            if (numbers.some(isNaN)) {
+                showResult('averageResult', 'Please enter valid numbers separated by commas.');
+                return;
+            }
+            
+            const sum = numbers.reduce((a, b) => a + b, 0);
+            const average = sum / numbers.length;
+            
+            showResult('averageResult', `The average is: ${average.toFixed(2)}`);
+        }
+        
+        function calculatePercentage() {
+            const part = parseFloat(document.getElementById('part').value);
+            const whole = parseFloat(document.getElementById('whole').value);
+            
+            if (isNaN(part) || isNaN(whole) || whole === 0) {
+                showResult('percentageResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const percentage = (part / whole) * 100;
+            
+            showResult('percentageResult', `${part} is ${percentage.toFixed(2)}% of ${whole}`);
+        }
+        
+        function simplifyFraction() {
+            const fractionInput = document.getElementById('fraction').value;
+            const parts = fractionInput.split('/');
+            
+            if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1]) || parts[1] == 0) {
+                showResult('fractionResult', 'Please enter a valid fraction (e.g., 8/12).');
+                return;
+            }
+            
+            let numerator = parseInt(parts[0]);
+            let denominator = parseInt(parts[1]);
+            
+            // Find GCD using Euclidean algorithm
+            const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+            const divisor = gcd(numerator, denominator);
+            
+            numerator /= divisor;
+            denominator /= divisor;
+            
+            showResult('fractionResult', `Simplified fraction: ${numerator}/${denominator}`);
+        }
+        
+        function convertDecimal() {
+            const decimal = parseFloat(document.getElementById('decimal').value);
+            
+            if (isNaN(decimal)) {
+                showResult('decimalResult', 'Please enter a valid decimal number.');
+                return;
+            }
+            
+            // Convert decimal to fraction
+            const tolerance = 1.0E-6;
+            let numerator = 1;
+            let denominator = 1;
+            let fraction = numerator / denominator;
+            
+            while (Math.abs(fraction - decimal) > tolerance) {
+                if (fraction < decimal) {
+                    numerator++;
+                } else {
+                    denominator++;
+                    numerator = Math.round(decimal * denominator);
+                }
+                fraction = numerator / denominator;
+            }
+            
+            showResult('decimalResult', `${decimal} = ${numerator}/${denominator}`);
+        }
+        
+        function calculateHCF() {
+            const num1 = parseInt(document.getElementById('num1').value);
+            const num2 = parseInt(document.getElementById('num2').value);
+            
+            if (isNaN(num1) || isNaN(num2)) {
+                showResult('hcfLcmResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            // Calculate HCF using Euclidean algorithm
+            let a = Math.abs(num1);
+            let b = Math.abs(num2);
+            
+            while (b !== 0) {
+                const temp = b;
+                b = a % b;
+                a = temp;
+            }
+            
+            showResult('hcfLcmResult', `HCF of ${num1} and ${num2} is ${a}`);
+        }
+        
+        function calculateLCM() {
+            const num1 = parseInt(document.getElementById('num1').value);
+            const num2 = parseInt(document.getElementById('num2').value);
+            
+            if (isNaN(num1) || isNaN(num2)) {
+                showResult('hcfLcmResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            // Calculate LCM using the formula: LCM(a,b) = (a*b)/HCF(a,b)
+            let a = Math.abs(num1);
+            let b = Math.abs(num2);
+            const originalA = a;
+            const originalB = b;
+            
+            while (b !== 0) {
+                const temp = b;
+                b = a % b;
+                a = temp;
+            }
+            
+            const hcf = a;
+            const lcm = (originalA * originalB) / hcf;
+            
+            showResult('hcfLcmResult', `LCM of ${num1} and ${num2} is ${lcm}`);
+        }
+        
+        function calculateSquare() {
+            const number = parseFloat(document.getElementById('number').value);
+            
+            if (isNaN(number)) {
+                showResult('squareCubeResult', 'Please enter a valid number.');
+                return;
+            }
+            
+            const square = number * number;
+            showResult('squareCubeResult', `Square of ${number} is ${square}`);
+        }
+        
+        function calculateCube() {
+            const number = parseFloat(document.getElementById('number').value);
+            
+            if (isNaN(number)) {
+                showResult('squareCubeResult', 'Please enter a valid number.');
+                return;
+            }
+            
+            const cube = number * number * number;
+            showResult('squareCubeResult', `Cube of ${number} is ${cube}`);
+        }
+        
+        function calculateSquareRoot() {
+            const number = parseFloat(document.getElementById('number').value);
+            
+            if (isNaN(number) || number < 0) {
+                showResult('squareRootResult', 'Please enter a valid non-negative number.');
+                return;
+            }
+            
+            const sqrt = Math.sqrt(number);
+            showResult('squareRootResult', `Square root of ${number} is ${sqrt.toFixed(4)}`);
+        }
+        
+        function updateShapeInputs() {
+            const shape = document.getElementById('shape').value;
+            const shapeInputs = document.getElementById('shapeInputs');
+            
+            switch(shape) {
+                case 'rectangle':
+                    shapeInputs.innerHTML = `
+                        <input type="number" id="length" placeholder="Length">
+                        <input type="number" id="width" placeholder="Width">
+                    `;
+                    break;
+                case 'square':
+                    shapeInputs.innerHTML = `
+                        <input type="number" id="side" placeholder="Side length">
+                    `;
+                    break;
+                case 'circle':
+                    shapeInputs.innerHTML = `
+                        <input type="number" id="radius" placeholder="Radius">
+                    `;
+                    break;
+                case 'triangle':
+                    shapeInputs.innerHTML = `
+                        <input type="number" id="side1" placeholder="Side 1">
+                        <input type="number" id="side2" placeholder="Side 2">
+                        <input type="number" id="side3" placeholder="Side 3">
+                    `;
+                    break;
+            }
+        }
+        
+        function calculateAreaPerimeter() {
+            const shape = document.getElementById('shape').value;
+            let area, perimeter;
+            
+            switch(shape) {
+                case 'rectangle':
+                    const length = parseFloat(document.getElementById('length').value);
+                    const width = parseFloat(document.getElementById('width').value);
+                    
+                    if (isNaN(length) || isNaN(width)) {
+                        showResult('areaPerimeterResult', 'Please enter valid dimensions.');
+                        return;
+                    }
+                    
+                    area = length * width;
+                    perimeter = 2 * (length + width);
+                    break;
+                    
+                case 'square':
+                    const side = parseFloat(document.getElementById('side').value);
+                    
+                    if (isNaN(side)) {
+                        showResult('areaPerimeterResult', 'Please enter a valid side length.');
+                        return;
+                    }
+                    
+                    area = side * side;
+                    perimeter = 4 * side;
+                    break;
+                    
+                case 'circle':
+                    const radius = parseFloat(document.getElementById('radius').value);
+                    
+                    if (isNaN(radius)) {
+                        showResult('areaPerimeterResult', 'Please enter a valid radius.');
+                        return;
+                    }
+                    
+                    area = Math.PI * radius * radius;
+                    perimeter = 2 * Math.PI * radius;
+                    break;
+                    
+                case 'triangle':
+                    const side1 = parseFloat(document.getElementById('side1').value);
+                    const side2 = parseFloat(document.getElementById('side2').value);
+                    const side3 = parseFloat(document.getElementById('side3').value);
+                    
+                    if (isNaN(side1) || isNaN(side2) || isNaN(side3)) {
+                        showResult('areaPerimeterResult', 'Please enter valid side lengths.');
+                        return;
+                    }
+                    
+                    // Using Heron's formula for area
+                    const s = (side1 + side2 + side3) / 2;
+                    area = Math.sqrt(s * (s - side1) * (s - side2) * (s - side3));
+                    perimeter = side1 + side2 + side3;
+                    break;
+            }
+            
+            showResult('areaPerimeterResult', `Area: ${area.toFixed(2)}, Perimeter: ${perimeter.toFixed(2)}`);
+        }
+        
+        function updateVolumeInputs() {
+            const shape = document.getElementById('shape').value;
+            const volumeInputs = document.getElementById('volumeInputs');
+            
+            switch(shape) {
+                case 'cube':
+                    volumeInputs.innerHTML = `
+                        <input type="number" id="side" placeholder="Side length">
+                    `;
+                    break;
+                case 'cylinder':
+                    volumeInputs.innerHTML = `
+                        <input type="number" id="radius" placeholder="Radius">
+                        <input type="number" id="height" placeholder="Height">
+                    `;
+                    break;
+                case 'sphere':
+                    volumeInputs.innerHTML = `
+                        <input type="number" id="radius" placeholder="Radius">
+                    `;
+                    break;
+                case 'cone':
+                    volumeInputs.innerHTML = `
+                        <input type="number" id="radius" placeholder="Radius">
+                        <input type="number" id="height" placeholder="Height">
+                    `;
+                    break;
+            }
+        }
+        
+        function calculateVolume() {
+            const shape = document.getElementById('shape').value;
+            let volume;
+            
+            switch(shape) {
+                case 'cube':
+                    const side = parseFloat(document.getElementById('side').value);
+                    
+                    if (isNaN(side)) {
+                        showResult('volumeResult', 'Please enter a valid side length.');
+                        return;
+                    }
+                    
+                    volume = side * side * side;
+                    break;
+                    
+                case 'cylinder':
+                    const radius = parseFloat(document.getElementById('radius').value);
+                    const height = parseFloat(document.getElementById('height').value);
+                    
+                    if (isNaN(radius) || isNaN(height)) {
+                        showResult('volumeResult', 'Please enter valid dimensions.');
+                        return;
+                    }
+                    
+                    volume = Math.PI * radius * radius * height;
+                    break;
+                    
+                case 'sphere':
+                    const sphereRadius = parseFloat(document.getElementById('radius').value);
+                    
+                    if (isNaN(sphereRadius)) {
+                        showResult('volumeResult', 'Please enter a valid radius.');
+                        return;
+                    }
+                    
+                    volume = (4/3) * Math.PI * Math.pow(sphereRadius, 3);
+                    break;
+                    
+                case 'cone':
+                    const coneRadius = parseFloat(document.getElementById('radius').value);
+                    const coneHeight = parseFloat(document.getElementById('height').value);
+                    
+                    if (isNaN(coneRadius) || isNaN(coneHeight)) {
+                        showResult('volumeResult', 'Please enter valid dimensions.');
+                        return;
+                    }
+                    
+                    volume = (1/3) * Math.PI * coneRadius * coneRadius * coneHeight;
+                    break;
+            }
+            
+            showResult('volumeResult', `Volume: ${volume.toFixed(2)}`);
+        }
+        
+        function calculateAngle() {
+            const angle1 = parseFloat(document.getElementById('angle1').value);
+            const angle2 = parseFloat(document.getElementById('angle2').value);
+            
+            if (isNaN(angle1) || isNaN(angle2) || angle1 + angle2 >= 180) {
+                showResult('angleResult', 'Please enter valid angles. The sum must be less than 180°.');
+                return;
+            }
+            
+            const angle3 = 180 - angle1 - angle2;
+            
+            showResult('angleResult', `The third angle is: ${angle3}°`);
+        }
+        
+        function calculateTrig() {
+            const angle = parseFloat(document.getElementById('angle').value);
+            
+            if (isNaN(angle)) {
+                showResult('trigResult', 'Please enter a valid angle.');
+                return;
+            }
+            
+            // Convert to radians
+            const radians = angle * (Math.PI / 180);
+            
+            const sinValue = Math.sin(radians);
+            const cosValue = Math.cos(radians);
+            const tanValue = Math.tan(radians);
+            
+            showResult('trigResult', `sin(${angle}°) = ${sinValue.toFixed(4)}, cos(${angle}°) = ${cosValue.toFixed(4)}, tan(${angle}°) = ${tanValue.toFixed(4)}`);
+        }
+        
+        function calculateProbability() {
+            const favorable = parseFloat(document.getElementById('favorable').value);
+            const total = parseFloat(document.getElementById('total').value);
+            
+            if (isNaN(favorable) || isNaN(total) || total === 0 || favorable > total) {
+                showResult('probabilityResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const probability = favorable / total;
+            
+            showResult('probabilityResult', `Probability: ${probability.toFixed(2)} or ${(probability * 100).toFixed(2)}%`);
+        }
+        
+        function calculateRatio() {
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            
+            if (isNaN(num1) || isNaN(num2) || num2 === 0) {
+                showResult('ratioResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            // Simplify ratio
+            const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+            const divisor = gcd(num1, num2);
+            const simplified1 = num1 / divisor;
+            const simplified2 = num2 / divisor;
+            
+            showResult('ratioResult', `Ratio: ${simplified1}:${simplified2}`);
+        }
+        
+        function solveAlgebra() {
+            const a = parseFloat(document.getElementById('a').value);
+            const b = parseFloat(document.getElementById('b').value);
+            const c = parseFloat(document.getElementById('c').value);
+            
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                showResult('algebraResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            if (a === 0) {
+                showResult('algebraResult', 'Coefficient a cannot be zero.');
+                return;
+            }
+            
+            const x = (c - b) / a;
+            
+            showResult('algebraResult', `x = ${x}`);
+        }
+        
+        function calculateStats() {
+            const numbersInput = document.getElementById('numbers').value;
+            const numbers = numbersInput.split(',').map(num => parseFloat(num.trim()));
+            
+            if (numbers.some(isNaN)) {
+                showResult('statsResult', 'Please enter valid numbers separated by commas.');
+                return;
+            }
+            
+            // Mean
+            const sum = numbers.reduce((a, b) => a + b, 0);
+            const mean = sum / numbers.length;
+            
+            // Median
+            const sorted = [...numbers].sort((a, b) => a - b);
+            let median;
+            if (sorted.length % 2 === 0) {
+                median = (sorted[sorted.length/2 - 1] + sorted[sorted.length/2]) / 2;
+            } else {
+                median = sorted[Math.floor(sorted.length/2)];
+            }
+            
+            // Mode
+            const frequency = {};
+            let maxFreq = 0;
+            let modes = [];
+            
+            numbers.forEach(num => {
+                frequency[num] = (frequency[num] || 0) + 1;
+                if (frequency[num] > maxFreq) {
+                    maxFreq = frequency[num];
+                    modes = [num];
+                } else if (frequency[num] === maxFreq) {
+                    modes.push(num);
+                }
+            });
+            
+            const modeText = modes.length === numbers.length ? 'No mode (all values unique)' : `Mode: ${modes.join(', ')}`;
+            
+            showResult('statsResult', `Mean: ${mean.toFixed(2)}, Median: ${median}, ${modeText}`);
+        }
+        
+        function calculateInterest() {
+            const principal = parseFloat(document.getElementById('principal').value);
+            const rate = parseFloat(document.getElementById('rate').value);
+            const time = parseFloat(document.getElementById('time').value);
+            
+            if (isNaN(principal) || isNaN(rate) || isNaN(time)) {
+                showResult('interestResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const interest = (principal * rate * time) / 100;
+            const total = principal + interest;
+            
+            showResult('interestResult', `Simple Interest: ${interest.toFixed(2)}, Total Amount: ${total.toFixed(2)}`);
+        }
+        
+        function convertTime() {
+            const timeValue = parseFloat(document.getElementById('timeValue').value);
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+            
+            if (isNaN(timeValue)) {
+                showResult('timeResult', 'Please enter a valid time value.');
+                return;
+            }
+            
+            // Convert to seconds first
+            let seconds;
+            switch(fromUnit) {
+                case 'seconds': seconds = timeValue; break;
+                case 'minutes': seconds = timeValue * 60; break;
+                case 'hours': seconds = timeValue * 3600; break;
+                case 'days': seconds = timeValue * 86400; break;
+            }
+            
+            // Convert to target unit
+            let result;
+            switch(toUnit) {
+                case 'seconds': result = seconds; break;
+                case 'minutes': result = seconds / 60; break;
+                case 'hours': result = seconds / 3600; break;
+                case 'days': result = seconds / 86400; break;
+            }
+            
+            showResult('timeResult', `${timeValue} ${fromUnit} = ${result.toFixed(2)} ${toUnit}`);
+        }
+        
+        function updateUnitOptions() {
+            const unitType = document.getElementById('unitType').value;
+            const fromUnit = document.getElementById('fromUnit');
+            const toUnit = document.getElementById('toUnit');
+            
+            fromUnit.innerHTML = '';
+            toUnit.innerHTML = '';
+            
+            let options;
+            switch(unitType) {
+                case 'length':
+                    options = ['millimeters', 'centimeters', 'meters', 'kilometers', 'inches', 'feet', 'yards', 'miles'];
+                    break;
+                case 'weight':
+                    options = ['milligrams', 'grams', 'kilograms', 'ounces', 'pounds'];
+                    break;
+                case 'volume':
+                    options = ['milliliters', 'liters', 'cubic centimeters', 'cubic meters', 'fluid ounces', 'cups', 'pints', 'quarts', 'gallons'];
+                    break;
+            }
+            
+            options.forEach(option => {
+                const fromOption = document.createElement('option');
+                fromOption.value = option;
+                fromOption.textContent = option;
+                fromUnit.appendChild(fromOption);
+                
+                const toOption = document.createElement('option');
+                toOption.value = option;
+                toOption.textContent = option;
+                toUnit.appendChild(toOption);
+            });
+        }
+        
+        function convertUnit() {
+            const unitValue = parseFloat(document.getElementById('unitValue').value);
+            const unitType = document.getElementById('unitType').value;
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+            
+            if (isNaN(unitValue)) {
+                showResult('unitResult', 'Please enter a valid value.');
+                return;
+            }
+            
+            // Conversion factors (simplified)
+            const conversionFactors = {
+                length: {
+                    millimeters: 1,
+                    centimeters: 10,
+                    meters: 1000,
+                    kilometers: 1000000,
+                    inches: 25.4,
+                    feet: 304.8,
+                    yards: 914.4,
+                    miles: 1609344
+                },
+                weight: {
+                    milligrams: 1,
+                    grams: 1000,
+                    kilograms: 1000000,
+                    ounces: 28349.5,
+                    pounds: 453592
+                },
+                volume: {
+                    milliliters: 1,
+                    liters: 1000,
+                    'cubic centimeters': 1,
+                    'cubic meters': 1000000,
+                    'fluid ounces': 29.5735,
+                    cups: 236.588,
+                    pints: 473.176,
+                    quarts: 946.353,
+                    gallons: 3785.41
+                }
+            };
+            
+            const fromFactor = conversionFactors[unitType][fromUnit];
+            const toFactor = conversionFactors[unitType][toUnit];
+            
+            const result = (unitValue * fromFactor) / toFactor;
+            
+            showResult('unitResult', `${unitValue} ${fromUnit} = ${result.toFixed(4)} ${toUnit}`);
+        }
+        
+        function calculateGST() {
+            const amount = parseFloat(document.getElementById('amount').value);
+            const gstRate = parseFloat(document.getElementById('gstRate').value);
+            
+            if (isNaN(amount) || isNaN(gstRate)) {
+                showResult('gstResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const gstAmount = (amount * gstRate) / 100;
+            const total = amount + gstAmount;
+            
+            showResult('gstResult', `GST Amount: ${gstAmount.toFixed(2)}, Total: ${total.toFixed(2)}`);
+        }
+        
+        function calculateDiscount() {
+            const originalPrice = parseFloat(document.getElementById('originalPrice').value);
+            const discountRate = parseFloat(document.getElementById('discountRate').value);
+            
+            if (isNaN(originalPrice) || isNaN(discountRate)) {
+                showResult('discountResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const discountAmount = (originalPrice * discountRate) / 100;
+            const finalPrice = originalPrice - discountAmount;
+            
+            showResult('discountResult', `Discount: ${discountAmount.toFixed(2)}, Final Price: ${finalPrice.toFixed(2)}`);
+        }
+        
+        function calculateTax() {
+            const income = parseFloat(document.getElementById('income').value);
+            
+            if (isNaN(income)) {
+                showResult('taxResult', 'Please enter a valid income.');
+                return;
+            }
+            
+            // India New Tax Regime (FY 2023-24)
+            let tax = 0;
+            let remainingIncome = income;
+            
+            // Tax slabs for New Regime
+            if (remainingIncome > 1500000) {
+                tax += (remainingIncome - 1500000) * 0.30;
+                remainingIncome = 1500000;
+            }
+            if (remainingIncome > 1200000) {
+                tax += (remainingIncome - 1200000) * 0.20;
+                remainingIncome = 1200000;
+            }
+            if (remainingIncome > 900000) {
+                tax += (remainingIncome - 900000) * 0.15;
+                remainingIncome = 900000;
+            }
+            if (remainingIncome > 600000) {
+                tax += (remainingIncome - 600000) * 0.10;
+                remainingIncome = 600000;
+            }
+            if (remainingIncome > 300000) {
+                tax += (remainingIncome - 300000) * 0.05;
+                remainingIncome = 300000;
+            }
+            
+            // Rebate under section 87A for income up to ₹7 lakhs
+            if (income <= 700000) {
+                tax = 0;
+            }
+            
+            // Add health and education cess (4%)
+            const cess = tax * 0.04;
+            tax += cess;
+            
+            showResult('taxResult', `Income Tax (New Regime): ₹${tax.toFixed(2)}`);
+        }
+        
+        function calculateEMI() {
+            const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+            const interestRate = parseFloat(document.getElementById('interestRate').value);
+            const loanTerm = parseFloat(document.getElementById('loanTerm').value);
+            
+            if (isNaN(loanAmount) || isNaN(interestRate) || isNaN(loanTerm)) {
+                showResult('emiResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const monthlyRate = interestRate / 12 / 100;
+            const numberOfPayments = loanTerm * 12;
+            
+            const emi = loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments) / 
+                        (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+            
+            showResult('emiResult', `EMI: ₹${emi.toFixed(2)} per month`);
+        }
+        
+        function convertCurrency() {
+            const amount = parseFloat(document.getElementById('amount').value);
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const toCurrency = document.getElementById('toCurrency').value;
+            
+            if (isNaN(amount)) {
+                showResult('currencyResult', 'Please enter a valid amount.');
+                return;
+            }
+            
+            // Approximate exchange rates (for demonstration)
+            const rates = {
+                USD: { USD: 1, EUR: 0.85, GBP: 0.73, INR: 83.0, JPY: 110.5 },
+                EUR: { USD: 1.18, EUR: 1, GBP: 0.86, INR: 88.0, JPY: 130.0 },
+                GBP: { USD: 1.37, EUR: 1.16, GBP: 1, INR: 102.0, JPY: 151.0 },
+                INR: { USD: 0.012, EUR: 0.011, GBP: 0.0098, INR: 1, JPY: 1.48 },
+                JPY: { USD: 0.0090, EUR: 0.0077, GBP: 0.0066, INR: 0.68, JPY: 1 }
+            };
+            
+            const rate = rates[fromCurrency][toCurrency];
+            const result = amount * rate;
+            
+            showResult('currencyResult', `${amount} ${fromCurrency} = ${result.toFixed(2)} ${toCurrency}`);
+        }
+        
+        function calculateTip() {
+            const billAmount = parseFloat(document.getElementById('billAmount').value);
+            const tipPercentage = parseFloat(document.getElementById('tipPercentage').value);
+            
+            if (isNaN(billAmount) || isNaN(tipPercentage)) {
+                showResult('tipResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const tipAmount = (billAmount * tipPercentage) / 100;
+            const total = billAmount + tipAmount;
+            
+            showResult('tipResult', `Tip: ${tipAmount.toFixed(2)}, Total: ${total.toFixed(2)}`);
+        }
+        
+        function splitBudget() {
+            const totalAmount = parseFloat(document.getElementById('totalAmount').value);
+            const people = parseInt(document.getElementById('people').value);
+            
+            if (isNaN(totalAmount) || isNaN(people) || people <= 0) {
+                showResult('budgetResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const share = totalAmount / people;
+            
+            showResult('budgetResult', `Each person gets: ${share.toFixed(2)}`);
+        }
+        
+        function calculateProfitLoss() {
+            const costPrice = parseFloat(document.getElementById('costPrice').value);
+            const sellingPrice = parseFloat(document.getElementById('sellingPrice').value);
+            
+            if (isNaN(costPrice) || isNaN(sellingPrice)) {
+                showResult('profitLossResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const difference = sellingPrice - costPrice;
+            const percentage = (Math.abs(difference) / costPrice) * 100;
+            
+            if (difference > 0) {
+                showResult('profitLossResult', `Profit: ${difference.toFixed(2)} (${percentage.toFixed(2)}%)`);
+            } else if (difference < 0) {
+                showResult('profitLossResult', `Loss: ${Math.abs(difference).toFixed(2)} (${percentage.toFixed(2)}%)`);
+            } else {
+                showResult('profitLossResult', 'No profit, no loss');
+            }
+        }
+        
+        function calculateAge() {
+            const birthDate = new Date(document.getElementById('birthDate').value);
+            const today = new Date();
+            
+            if (isNaN(birthDate.getTime())) {
+                showResult('ageResult', 'Please enter a valid birth date.');
+                return;
+            }
+            
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            
+            showResult('ageResult', `Age: ${age} years`);
+        }
+        
+        function calculateDateDiff() {
+            const date1 = new Date(document.getElementById('date1').value);
+            const date2 = new Date(document.getElementById('date2').value);
+            
+            if (isNaN(date1.getTime()) || isNaN(date2.getTime())) {
+                showResult('dateDiffResult', 'Please enter valid dates.');
+                return;
+            }
+            
+            const timeDiff = Math.abs(date2.getTime() - date1.getTime());
+            const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            
+            showResult('dateDiffResult', `Days between: ${dayDiff}`);
+        }
+        
+        function convertTemp() {
+            const tempValue = parseFloat(document.getElementById('tempValue').value);
+            const fromUnit = document.getElementById('tempFrom').value;
+            const toUnit = document.getElementById('tempTo').value;
+            
+            if (isNaN(tempValue)) {
+                showResult('tempResult', 'Please enter a valid temperature.');
+                return;
+            }
+            
+            let result;
+            if (fromUnit === 'celsius' && toUnit === 'fahrenheit') {
+                result = (tempValue * 9/5) + 32;
+            } else if (fromUnit === 'fahrenheit' && toUnit === 'celsius') {
+                result = (tempValue - 32) * 5/9;
+            } else {
+                result = tempValue;
+            }
+            
+            showResult('tempResult', `${tempValue}°${fromUnit.charAt(0).toUpperCase()} = ${result.toFixed(2)}°${toUnit.charAt(0).toUpperCase()}`);
+        }
+        
+        function calculateBMI() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value) / 100; // convert cm to m
+            
+            if (isNaN(weight) || isNaN(height) || height === 0) {
+                showResult('bmiResult', 'Please enter valid weight and height.');
+                return;
+            }
+            
+            const bmi = weight / (height * height);
+            
+            let category;
+            if (bmi < 18.5) category = 'Underweight';
+            else if (bmi < 25) category = 'Normal weight';
+            else if (bmi < 30) category = 'Overweight';
+            else category = 'Obese';
+            
+            showResult('bmiResult', `BMI: ${bmi.toFixed(2)} (${category})`);
+        }
+        
+        function splitBill() {
+            const totalBill = parseFloat(document.getElementById('totalBill').value);
+            const people = parseInt(document.getElementById('people').value);
+            
+            if (isNaN(totalBill) || isNaN(people) || people <= 0) {
+                showResult('billSplitResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const share = totalBill / people;
+            
+            showResult('billSplitResult', `Each person pays: ${share.toFixed(2)}`);
+        }
+        
+        function calculateShopping() {
+            const subtotal = parseFloat(document.getElementById('subtotal').value);
+            const taxRate = parseFloat(document.getElementById('taxRate').value);
+            
+            if (isNaN(subtotal) || isNaN(taxRate)) {
+                showResult('shoppingResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const taxAmount = (subtotal * taxRate) / 100;
+            const total = subtotal + taxAmount;
+            
+            showResult('shoppingResult', `Tax: ${taxAmount.toFixed(2)}, Total: ${total.toFixed(2)}`);
+        }
+        
+        function calculateMileage() {
+            const distance = parseFloat(document.getElementById('distance').value);
+            const fuel = parseFloat(document.getElementById('fuel').value);
+            
+            if (isNaN(distance) || isNaN(fuel) || fuel === 0) {
+                showResult('mileageResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const mileage = distance / fuel;
+            
+            showResult('mileageResult', `Fuel Mileage: ${mileage.toFixed(2)} km/l`);
+        }
+        
+        function calculateTotal() {
+            const partValue = parseFloat(document.getElementById('partValue').value);
+            const percentage = parseFloat(document.getElementById('percentage').value);
+            
+            if (isNaN(partValue) || isNaN(percentage) || percentage === 0) {
+                showResult('totalResult', 'Please enter valid numbers.');
+                return;
+            }
+            
+            const total = (partValue / percentage) * 100;
+            
+            showResult('totalResult', `Total: ${total.toFixed(2)}`);
+        }
+        
+        function showResult(elementId, message) {
+            const resultElement = document.getElementById(elementId);
+            resultElement.textContent = message;
+            resultElement.style.display = 'block';
+        }
+        
+        // Simple animation for feature cards on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            featureCards.forEach(card => {
+                card.style.opacity = 0;
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

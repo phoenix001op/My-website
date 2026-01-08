@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Russian Roulette</title>
+  <link rel="stylesheet" href="Russian_Roulette.css">
+</head>
+<body class="dark-mode">
+  <!-- Home Screen -->
+  <div id="home">
+    <h1>🎮 Russian Roulette</h1>
+    <div class="home-buttons">
+      <button onclick="startGame()">▶ Play</button>
+      <button onclick="toggleSettings()">⚙️ Settings</button>
+      <button id="howToPlayBtn">❓ Tutorial</button>
+    </div>
+  </div>
+
+  <!-- Settings Panel -->
+  <div id="settings" style="display:none;">
+    <h2>Settings</h2>
+    <label>
+      <input type="checkbox" id="soundToggle" checked> Game Sound
+    </label>
+    <br>
+    <label>
+      <input type="checkbox" id="modeToggle"> Light Mode
+    </label>
+    <br><br>
+    <button onclick="closeSettings()">Close</button>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="game">
+    <button id="backBtn">⬅ Back</button>
+    <div id="bulletCounter">Bullets: 1/6</div>
+    <img src="toppng.com-2-generic-pistol-royalty-free-3d-model-revolver-671x486.png" id="pistol" alt="Pistol">
+    <div id="flash"></div>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div id="gameover">
+    <h1>💀 Game Over</h1>
+    <button onclick="restartGame()">Restart</button>
+  </div>
+
+  <!-- Preloaded Sounds -->
+  <audio id="gunshot" src="mixkit-game-gun-shot-1662.mp3" preload="auto"></audio>
+  <audio id="dryfire" src="empty-gun-shot-6209.mp3" preload="auto"></audio>
+
+  <script src="Russian_Roulette.js"></script>
+</body>
+</html>

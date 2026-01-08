@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Tic Tac Toe</h1>
+        
+        <div class="settings">
+            <label>Choose Symbol:
+                <select id="player-symbol">
+                    <option value="X">X</option>
+                    <option value="O">O</option>
+                </select>
+            </label>
+            <label>Difficulty:
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </label>
+            <button id="restart">Restart</button>
+        </div>
+
+        <div class="board" id="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+
+        <div class="info" id="info">Your turn!</div>
+        <button id="play-again" style="display:none;">Play Again</button>
+        <div class="scoreboard">
+            <p>Wins: <span id="wins">0</span> | Losses: <span id="losses">0</span> | Draws: <span id="draws">0</span></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
