@@ -1,0 +1,246 @@
+/* ===============================
+   GLOBAL RESET & BASE
+================================ */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  background: #1f1f1f;   /* not pure black */
+  color: #ffffff;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ===============================
+   LIGHT MODE
+================================ */
+body.light-mode {
+  background: #f0f0f0;
+  color: #111;
+}
+
+/* ===============================
+   COMMON SCREENS
+================================ */
+#home,
+#game,
+#gameover,
+#settings {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===============================
+   BUTTONS
+================================ */
+button {
+  padding: 12px 26px;
+  margin: 8px;
+  font-size: 1.05rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #343434;
+  color: #fff;
+  transition: background 0.2s, transform 0.1s;
+}
+
+button:hover {
+  background: #4a4a4a;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+body.light-mode button {
+  background: #ddd;
+  color: #111;
+}
+
+body.light-mode button:hover {
+  background: #ccc;
+}
+
+/* ===============================
+   HOME SCREEN
+================================ */
+#home h1 {
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+/* ===============================
+   SETTINGS PANEL
+================================ */
+#settings {
+  display: none;
+  background: rgba(0,0,0,0.85);
+  padding: 25px 35px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+body.light-mode #settings {
+  background: rgba(255,255,255,0.9);
+  color: #111;
+}
+
+/* ===============================
+   GAME SCREEN
+================================ */
+#game {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===============================
+   BACK BUTTON
+================================ */
+#backBtn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 14px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.6);
+}
+
+body.light-mode #backBtn {
+  background: rgba(200,200,200,0.8);
+  color: #111;
+}
+
+/* ===============================
+   BULLET COUNTER
+================================ */
+#bulletCounter {
+  position: absolute;
+  top: 3vh;
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 3px #000;
+}
+
+body.light-mode #bulletCounter {
+  text-shadow: none;
+}
+
+/* ===============================
+   PISTOL IMAGE
+================================ */
+#pistol {
+  width: min(75vw, 320px);
+  max-width: 85vw;
+  position: absolute;
+  bottom: 12vh;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: transform 0.1s ease;
+}
+
+/* recoil animation */
+.fire {
+  transform: translateX(-50%) translateY(-10px) rotate(-4deg) scale(1.05);
+}
+
+/* ===============================
+   MUZZLE FLASH
+================================ */
+#flash {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, #fff 0%, transparent 75%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s;
+}
+
+/* ===============================
+   GAME OVER SCREEN
+================================ */
+#gameover {
+  display: none;
+}
+
+#gameover h1 {
+  margin-bottom: 20px;
+}
+
+/* ===============================
+   TUTORIAL TOOLTIP
+================================ */
+#howToPlayBtn {
+  position: relative;
+}
+
+#howToPlayBtn::after {
+  content: "Tap anywhere to pull the trigger. One bullet is hidden. Survive each click.";
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  width: max-content;
+  max-width: 260px;
+  text-align: center;
+  display: none;
+  z-index: 10;
+}
+
+#howToPlayBtn:hover::after {
+  display: block;
+}
+
+body.light-mode #howToPlayBtn::after {
+  background: #222;
+}
+
+/* ===============================
+   MOBILE EXTRA SAFETY
+================================ */
+@media (max-width: 480px) {
+  #pistol {
+    bottom: 10vh;
+  }
+
+  button {
+    font-size: 1rem;
+    padding: 10px 22px;
+  }
+}
+/* ===== FIX HOME SCREEN CENTERING (MOBILE) ===== */
+#home {
+  width: 100%;
+  text-align: center;
+}
+
+#home button {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
