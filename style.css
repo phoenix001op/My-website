@@ -89,17 +89,7 @@ nav a:hover {color: #3fcf8e;}
 }
 .btn:hover {background: #2fa76e;}
 
-.contact {padding: 40px; text-align: center;}
-.contact h2 {margin-bottom: 15px; color: #3fcf8e;}
-.contact a {
-  display: block;
-  margin: 10px 0;
-  color: #3fcf8e;
-  text-decoration: none;
-  font-weight: bold;
-  transition: color 0.3s ease;
-}
-.contact a:hover {color: #2fa76e;}
+
 
 footer {
   background: #2d2d2d;
