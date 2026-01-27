@@ -4,357 +4,186 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Study Timer</title>
-  <style>
-    :root {
-      --bg1: linear-gradient(135deg, #2b1055, #7597de);
-      --bg2: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      --bg3: linear-gradient(135deg, #42275a, #734b6d);
-    }
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      min-height: 100vh;
-      background: var(--bg1);
-      color: white;
-      transition: background 0.6s ease;
-      position: relative;
-    }
-    .screen {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .container {
-      background: rgba(0,0,0,0.35);
-      backdrop-filter: blur(10px);
-      padding: 30px 35px;
-      border-radius: 28px;
-      text-align: center;
-      width: 100%;
-      max-width: 520px;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.45);
-      position: relative;
-    }
-    @media (max-width: 600px) {
-      .container {
-        max-width: 100%;
-        height: 100vh;
-        border-radius: 0;
-        box-shadow: none;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-    }
-    h1 { margin-bottom: 10px; }
-    .timer { font-size: 56px; font-weight: bold; margin: 20px 0; }
-    .inputs input {
-      width: 70px; padding: 6px; margin: 5px; border-radius: 8px; border: none; text-align: center;
-    }
-    button {
-      padding: 10px 18px; margin: 6px; border-radius: 25px; border: none; cursor: pointer;
-      font-weight: 600; background: #ff7ad9; color: white;
-    }
-    .row { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
-    .hidden { display: none; }
-    #calendarDays div, #statsDays div { cursor: pointer; padding: 10px; border-radius: 10px; text-align: center; }
-    
-    /* Music Player Styles */
-    .music-player {
-      position: fixed;
-      left: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      padding: 20px;
-      width: 220px;
-      z-index: 100;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .music-player.hidden {
-      display: none;
-    }
-    .music-title {
-      font-size: 18px;
-      margin-bottom: 15px;
-      color: #ff7ad9;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .music-controls {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-    .music-btn {
-      background: #ff7ad9;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .music-btn:hover {
-      background: #ff5ccd;
-    }
-    .track-selector {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .track-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      text-align: left;
-      font-size: 14px;
-      transition: all 0.3s ease;
-    }
-    .track-btn:hover {
-      background: rgba(255, 122, 217, 0.2);
-    }
-    .track-btn.active {
-      background: #ff7ad9;
-      color: white;
-    }
-    
-    /* Calendar Styles */
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .calendar-nav-btn {
-      background: #ff7ad9;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .calendar-month-year {
-      font-size: 18px;
-      font-weight: bold;
-    }
-    .calendar-day-header {
-      font-weight: bold;
-      padding: 10px;
-      background: rgba(255, 122, 217, 0.2);
-      border-radius: 8px;
-    }
-    .calendar-day {
-      padding: 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-    .calendar-day:hover {
-      background: rgba(255, 122, 217, 0.1);
-    }
-    .calendar-day.has-data {
-      background: rgba(255, 122, 217, 0.3);
-    }
-    .calendar-day.today {
-      border: 2px solid #ff7ad9;
-    }
-    .study-minutes {
-      font-size: 10px;
-      position: absolute;
-      bottom: 2px;
-      right: 2px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 2px 4px;
-      border-radius: 4px;
-    }
-    .date-details {
-      margin-top: 20px;
-      padding: 15px;
-      background: rgba(255, 122, 217, 0.1);
-      border-radius: 12px;
-    }
-    
-    /* Login Page Improvements */
-    .login-container {
-      animation: fadeIn 0.8s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .welcome-title {
-      font-size: 2.5em;
-      margin-bottom: 10px;
-      background: linear-gradient(45deg, #ff7ad9, #7597de);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .login-input {
-      width: 100%;
-      padding: 15px;
-      border-radius: 15px;
-      border: 2px solid rgba(255, 122, 217, 0.3);
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      font-size: 16px;
-      margin: 20px 0;
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-    .login-input:focus {
-      outline: none;
-      border-color: #ff7ad9;
-      box-shadow: 0 0 15px rgba(255, 122, 217, 0.3);
-    }
-    .login-btn {
-      padding: 15px 40px;
-      font-size: 16px;
-      background: linear-gradient(45deg, #ff7ad9, #ff5ccd);
-      border: none;
-      border-radius: 25px;
-      color: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-    .login-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(255, 122, 217, 0.4);
-    }
-    .login-subtitle {
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 30px;
-    }
-    
-    /* Responsive Music Player */
-    @media (max-width: 1100px) {
-      .music-player {
-        left: 10px;
-        width: 180px;
-        padding: 15px;
-      }
-    }
-    @media (max-width: 768px) {
-      .music-player {
-        position: fixed;
-        top: auto;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 90%;
-        max-width: 300px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="studytimer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
 <!-- LOGIN SCREEN -->
 <div class="screen" id="loginScreen">
   <div class="container login-container">
-    <h1 class="welcome-title">👋 Welcome to Padh lo </h1>
-    <p class="login-subtitle">Track your study sessions and boost productivity</p>
+    <h1 class="welcome-title"><i class="fas fa-graduation-cap"></i> Padh lo</h1>
+    <p class="login-subtitle">Track study time, earn XP, and level up!</p>
     <input id="usernameInput" placeholder="Enter your name" class="login-input" />
     <br><br>
-    <button class="login-btn" onclick="login()">Start Studying →</button>
+    <button class="login-btn" onclick="login()">
+      <i class="fas fa-play"></i> Start Studying
+    </button>
   </div>
 </div>
 
 <!-- MUSIC PLAYER -->
 <div class="music-player hidden" id="musicPlayer">
-  <div class="music-title">🎵 Relax Music</div>
+  <div class="music-title"><i class="fas fa-music"></i> Relax Music</div>
   <div class="music-controls">
-    <button class="music-btn" onclick="playMusic()">▶️</button>
-    <button class="music-btn" onclick="pauseMusic()">⏸️</button>
-    <button class="music-btn" onclick="stopMusic()">⏹️</button>
+    <button class="music-btn" onclick="playMusic()"><i class="fas fa-play"></i></button>
+    <button class="music-btn" onclick="pauseMusic()"><i class="fas fa-pause"></i></button>
+    <button class="music-btn" onclick="stopMusic()"><i class="fas fa-stop"></i></button>
   </div>
   <div class="track-selector">
-    <button class="track-btn active" onclick="selectTrack(1)">🎵 Drifting Away</button>
-    <button class="track-btn" onclick="selectTrack(2)">🎵 Piano Relaxation</button>
-    <button class="track-btn" onclick="selectTrack(3)">🎵 Nature Sounds</button>
-    <button class="track-btn" onclick="selectTrack(4)">🎵 Focus Ambient</button>
+    <button class="track-btn active" onclick="selectTrack(1)"><i class="fas fa-water"></i> Drifting Away</button>
+    <button class="track-btn" onclick="selectTrack(2)"><i class="fas fa-piano"></i> Piano Relaxation</button>
+    <button class="track-btn" onclick="selectTrack(3)"><i class="fas fa-tree"></i> Nature Sounds</button>
+    <button class="track-btn" onclick="selectTrack(4)"><i class="fas fa-brain"></i> Focus Ambient</button>
   </div>
 </div>
 
 <!-- MAIN APP -->
 <div class="screen hidden" id="appScreen">
   <div class="container" id="mainPage">
-    <div style="position:absolute; top:20px; right:20px; cursor:pointer; display:flex; gap:10px;">
-      <span onclick="toggleMusicPlayer()">🎵</span>
-      <span onclick="openCalendar()">📅</span>
+    <!-- Header Navigation -->
+    <div class="header-nav">
+      <div class="user-info" id="userLabel">
+        <i class="fas fa-user"></i> Guest
+      </div>
+      <div class="nav-icons">
+        <button class="nav-btn" onclick="toggleMusicPlayer()" title="Music">
+          <i class="fas fa-music"></i>
+        </button>
+        <button class="nav-btn" onclick="openCalendar()" title="Calendar">
+          <i class="fas fa-calendar"></i>
+        </button>
+        <button class="nav-btn" onclick="openStats()" title="Stats">
+          <i class="fas fa-chart-bar"></i>
+        </button>
+        <button class="nav-btn" onclick="openRank()" title="Rank & Levels">
+          <i class="fas fa-trophy"></i>
+        </button>
+      </div>
     </div>
-    <div style="position:absolute; top:20px; left:20px; font-size:14px;" id="userLabel"></div>
 
-    <h1>📚 Padh lo</h1>
+    <!-- XP Progress Bar -->
+    <div class="xp-container">
+      <div class="xp-header">
+        <span><i class="fas fa-star"></i> XP: <span id="currentXP">0</span></span>
+        <span>Level: <span id="currentLevel">1</span></span>
+      </div>
+      <div class="xp-progress-bar">
+        <div class="xp-progress-fill" id="xpProgressFill"></div>
+      </div>
+      <div class="xp-footer">
+        <span id="xpToNext">50 XP to next level</span>
+      </div>
+    </div>
+
+    <!-- Timer Section -->
+    <h1 class="main-title"><i class="fas fa-clock"></i> Study Timer</h1>
     <div class="timer" id="display">00:00:00</div>
-    <div id="status">Ready to study 📖</div>
+    <div class="status" id="status">Ready to study <i class="fas fa-book-open"></i></div>
 
+    <!-- Time Inputs -->
     <div class="inputs">
-      <input type="number" id="setHr" placeholder="Hr" min="0">
-      <input type="number" id="setMin" placeholder="Min" min="0" max="59">
-      <input type="number" id="setSec" placeholder="Sec" min="0" max="59">
+      <div class="input-group">
+        <label>Hours</label>
+        <input type="number" id="setHr" placeholder="0" min="0" max="24">
+      </div>
+      <div class="input-group">
+        <label>Minutes</label>
+        <input type="number" id="setMin" placeholder="0" min="0" max="59">
+      </div>
+      <div class="input-group">
+        <label>Seconds</label>
+        <input type="number" id="setSec" placeholder="0" min="0" max="59">
+      </div>
     </div>
 
-    <div class="row">
-      <button onclick="startTimer()">Start</button>
-      <button onclick="pauseTimer()">Pause</button>
-      <button onclick="resetTimer()">Reset</button>
+    <!-- Timer Controls -->
+    <div class="button-row">
+      <button class="btn-primary" onclick="startTimer()">
+        <i class="fas fa-play"></i> Start
+      </button>
+      <button class="btn-secondary" onclick="pauseTimer()">
+        <i class="fas fa-pause"></i> Pause
+      </button>
+      <button class="btn-danger" onclick="resetTimer()">
+        <i class="fas fa-redo"></i> Reset
+      </button>
     </div>
 
-    <div class="row">
-      <button onclick="toggleBreak()">☕ Break</button>
-      <button onclick="toggleBg()">🎨 Background</button>
-      <button onclick="openStats()">📊 Stats</button>
+    <!-- Options -->
+    <div class="button-row">
+      <button class="btn-option" onclick="toggleBreak()">
+        <i class="fas fa-coffee"></i> Break
+      </button>
+      <button class="btn-option" onclick="toggleBg()">
+        <i class="fas fa-palette"></i> Theme
+      </button>
     </div>
 
-    <div id="breakOptions" class="row hidden">
-      <button onclick="startBreak(5)">5 Min</button>
-      <button onclick="startBreak(10)">10 Min</button>
+    <!-- Break Options -->
+    <div id="breakOptions" class="options-container hidden">
+      <h3>Break Duration</h3>
+      <div class="break-buttons">
+        <button class="btn-break" onclick="startBreak(5)">
+          <i class="fas fa-clock"></i> 5 Min
+        </button>
+        <button class="btn-break" onclick="startBreak(10)">
+          <i class="fas fa-clock"></i> 10 Min
+        </button>
+        <button class="btn-break" onclick="startBreak(15)">
+          <i class="fas fa-clock"></i> 15 Min
+        </button>
+      </div>
     </div>
 
-    <div id="bgOptions" class="row hidden">
-      <button onclick="changeBg(1)">Purple</button>
-      <button onclick="changeBg(2)">Ocean</button>
-      <button onclick="changeBg(3)">Sunset</button>
+    <!-- Theme Options -->
+    <div id="bgOptions" class="options-container hidden">
+      <h3>Select Theme</h3>
+      <div class="theme-buttons">
+        <button class="btn-theme theme-purple" onclick="changeBg(1)">
+          <i class="fas fa-moon"></i> Purple
+        </button>
+        <button class="btn-theme theme-ocean" onclick="changeBg(2)">
+          <i class="fas fa-water"></i> Ocean
+        </button>
+        <button class="btn-theme theme-sunset" onclick="changeBg(3)">
+          <i class="fas fa-sun"></i> Sunset
+        </button>
+      </div>
+    </div>
+
+    <!-- Session Info -->
+    <div class="session-info">
+      <p><i class="fas fa-info-circle"></i> Earn 25 XP for 30 min study, 50 XP for 1 hour!</p>
     </div>
   </div>
 </div>
 
-<!-- CALENDAR -->
+<!-- CALENDAR PAGE -->
 <div class="screen hidden" id="calendarPage">
   <div class="container">
-    <div style="position:absolute; top:20px; left:20px; cursor:pointer;" onclick="closeCalendar()">⬅️</div>
-    <h1>📅 Calendar</h1>
-    
-    <div class="calendar-header">
-      <button class="calendar-nav-btn" onclick="changeCalendarMonth(-1)">◀</button>
-      <div class="calendar-month-year" id="calendarMonthYear"></div>
-      <button class="calendar-nav-btn" onclick="changeCalendarMonth(1)">▶</button>
+    <div class="page-header">
+      <button class="back-btn" onclick="closeCalendar()">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+      <h1><i class="fas fa-calendar-alt"></i> Study Calendar</h1>
     </div>
     
-    <div id="streak"></div>
+    <div class="calendar-header">
+      <button class="calendar-nav-btn" onclick="changeCalendarMonth(-1)">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <div class="calendar-month-year" id="calendarMonthYear"></div>
+      <button class="calendar-nav-btn" onclick="changeCalendarMonth(1)">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
     
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:15px;margin-bottom:15px;">
+    <div class="streak-display" id="streak">
+      <i class="fas fa-fire"></i> Current Streak: 0 days
+    </div>
+    
+    <div class="calendar-grid">
       <div class="calendar-day-header">Sun</div>
       <div class="calendar-day-header">Mon</div>
       <div class="calendar-day-header">Tue</div>
@@ -364,262 +193,190 @@
       <div class="calendar-day-header">Sat</div>
     </div>
     
-    <div id="calendarDays" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:20px;"></div>
+    <div id="calendarDays" class="calendar-days"></div>
     
     <div id="dateDetails" class="date-details hidden">
       <h3 id="selectedDateTitle"></h3>
-      <p id="selectedDateStudyTime"></p>
+      <div class="date-stats">
+        <p id="selectedDateStudyTime"></p>
+        <p id="selectedDateXP"></p>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- STATS -->
+<!-- STATS PAGE -->
 <div class="screen hidden" id="statsPage">
   <div class="container">
-    <div style="position:absolute; top:20px; left:20px; cursor:pointer;" onclick="closeStats()">⬅️</div>
-    <h1>📊 Stats</h1>
-    <div id="weekly"></div>
-    <div id="monthly" style="margin-top:15px"></div>
+    <div class="page-header">
+      <button class="back-btn" onclick="closeStats()">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+      <h1><i class="fas fa-chart-line"></i> Statistics</h1>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-value" id="totalStudyTime">0h 0m</div>
+        <div class="stat-label">Total Study Time</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-star"></i>
+        </div>
+        <div class="stat-value" id="totalXP">0</div>
+        <div class="stat-label">Total XP Earned</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="stat-value" id="studyDays">0</div>
+        <div class="stat-label">Study Days</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <div class="stat-value" id="currentLevelStat">1</div>
+        <div class="stat-label">Current Level</div>
+      </div>
+    </div>
+    
+    <div class="stats-section">
+      <h3><i class="fas fa-history"></i> Recent Study Sessions</h3>
+      <div id="weeklyStats" class="stats-details"></div>
+    </div>
+    
+    <div class="stats-section">
+      <h3><i class="fas fa-calendar-week"></i> This Week</h3>
+      <div id="weekly" class="stats-details"></div>
+    </div>
+    
+    <div class="stats-section">
+      <h3><i class="fas fa-calendar-month"></i> This Month</h3>
+      <div id="monthly" class="stats-details"></div>
+    </div>
+    
+    <div class="stats-section">
+      <h3><i class="fas fa-award"></i> XP History</h3>
+      <div id="xpHistory" class="stats-details"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RANK PAGE -->
+<div class="screen hidden" id="rankPage">
+  <div class="container">
+    <div class="page-header">
+      <button class="back-btn" onclick="closeRank()">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+      <h1><i class="fas fa-trophy"></i> Rank & Levels</h1>
+    </div>
+    
+    <div class="level-card">
+      <div class="level-header">
+        <div class="level-icon">
+          <i class="fas fa-user-graduate"></i>
+        </div>
+        <div class="level-info">
+          <h2 id="currentRank">Beginner</h2>
+          <div class="level-progress">
+            <div class="level-progress-bar">
+              <div class="level-progress-fill" id="levelProgressFill"></div>
+            </div>
+            <span class="level-text">Level <span id="levelNumber">1</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="level-stats">
+        <div class="level-stat">
+          <span>Current XP</span>
+          <strong id="rankCurrentXP">0</strong>
+        </div>
+        <div class="level-stat">
+          <span>XP to Next Level</span>
+          <strong id="rankXpToNext">50</strong>
+        </div>
+      </div>
+    </div>
+    
+    <div class="levels-container">
+      <h3><i class="fas fa-mountain"></i> Level System</h3>
+      <div class="levels-list">
+        <div class="level-item active" data-level="1">
+          <div class="level-badge beginner">
+            <i class="fas fa-seedling"></i>
+          </div>
+          <div class="level-details">
+            <h4>Beginner</h4>
+            <p>0 - 50 XP</p>
+          </div>
+        </div>
+        
+        <div class="level-item" data-level="2">
+          <div class="level-badge learner">
+            <i class="fas fa-book-reader"></i>
+          </div>
+          <div class="level-details">
+            <h4>Learner</h4>
+            <p>51 - 150 XP</p>
+          </div>
+        </div>
+        
+        <div class="level-item" data-level="3">
+          <div class="level-badge focused">
+            <i class="fas fa-brain"></i>
+          </div>
+          <div class="level-details">
+            <h4>Focused</h4>
+            <p>151 - 400 XP</p>
+          </div>
+        </div>
+        
+        <div class="level-item" data-level="4">
+          <div class="level-badge elite">
+            <i class="fas fa-crown"></i>
+          </div>
+          <div class="level-details">
+            <h4>Elite</h4>
+            <p>401 - 750 XP</p>
+          </div>
+        </div>
+        
+        <div class="level-item" data-level="5">
+          <div class="level-badge master">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="level-details">
+            <h4>Master</h4>
+            <p>751 - 1000 XP</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="rank-tips">
+      <h3><i class="fas fa-lightbulb"></i> Tips to Level Up</h3>
+      <ul>
+        <li><i class="fas fa-check-circle"></i> Study 30 minutes = 25 XP</li>
+        <li><i class="fas fa-check-circle"></i> Study 1 hour = 50 XP</li>
+        <li><i class="fas fa-check-circle"></i> Maintain a daily streak for bonus XP</li>
+        <li><i class="fas fa-check-circle"></i> Complete study sessions without breaks for extra XP</li>
+      </ul>
+    </div>
   </div>
 </div>
 
 <audio id="endSound" src="zapsplat_multimedia_end_ping_timer_003_68790.mp3"></audio>
 
-<script>
-// ========== MUSIC SETUP - WITH YOUR MP3 FILE ==========
-const MUSIC_TRACKS = [
-  "drifting-away-full-version-binaural-beats-409329.mp3",
-  "https://cdn.pixabay.com/download/audio/2022/03/10/audio_4b8a1d9a4d.mp3?filename=relaxing-piano-111573.mp3",
-  "https://cdn.pixabay.com/download/audio/2022/03/19/audio_1e5b5d9a0a.mp3?filename=nature-sounds-112364.mp3",
-  "https://cdn.pixabay.com/download/audio/2022/03/07/audio_8b8a1d9a4d.mp3?filename=ambient-study-111208.mp3"
-];
-
-let interval=null, totalCs=0, studyStart=null;
-let currentCalendarMonth = new Date().getMonth();
-let currentCalendarYear = new Date().getFullYear();
-let currentMusicTrack = 1;
-let audioPlayer = new Audio();
-
-// Music player functions
-function toggleMusicPlayer() {
-  const player = document.getElementById('musicPlayer');
-  player.classList.toggle('hidden');
-}
-
-function playMusic() {
-  audioPlayer.play();
-}
-
-function pauseMusic() {
-  audioPlayer.pause();
-}
-
-function stopMusic() {
-  audioPlayer.pause();
-  audioPlayer.currentTime = 0;
-}
-
-function selectTrack(track) {
-  currentMusicTrack = track;
-  
-  // Remove active class from all buttons
-  document.querySelectorAll('.track-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  
-  // Add active class to selected button
-  event.target.classList.add('active');
-  
-  // Set music source from the array (your MP3 is track 1)
-  audioPlayer.src = MUSIC_TRACKS[track - 1];
-  audioPlayer.loop = true;
-  
-  // If already playing, continue playing with new track
-  if (!audioPlayer.paused) {
-    audioPlayer.play();
-  }
-}
-
-// Initialize music player with first track (your MP3)
-window.addEventListener('load', () => {
-  selectTrack(1);
-});
-
-// Calendar functions
-function renderCalendar() {
-  const data = JSON.parse(localStorage.getItem('studyData') || '{}');
-  const calendarDays = document.getElementById('calendarDays');
-  const monthYear = document.getElementById('calendarMonthYear');
-  
-  // Set month and year
-  const monthNames = ["January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"];
-  monthYear.textContent = `${monthNames[currentCalendarMonth]} ${currentCalendarYear}`;
-  
-  // Get first day of month and total days
-  const firstDay = new Date(currentCalendarYear, currentCalendarMonth, 1);
-  const lastDay = new Date(currentCalendarYear, currentCalendarMonth + 1, 0);
-  const totalDays = lastDay.getDate();
-  const startingDay = firstDay.getDay();
-  
-  calendarDays.innerHTML = '';
-  
-  // Add empty cells for days before first day of month
-  for (let i = 0; i < startingDay; i++) {
-    const emptyDiv = document.createElement('div');
-    calendarDays.appendChild(emptyDiv);
-  }
-  
-  const today = new Date();
-  
-  // Add days of the month
-  for (let day = 1; day <= totalDays; day++) {
-    const dayDiv = document.createElement('div');
-    dayDiv.className = 'calendar-day';
-    
-    const dateStr = `${currentCalendarYear}-${String(currentCalendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    
-    // Check if today
-    if (currentCalendarYear === today.getFullYear() && 
-        currentCalendarMonth === today.getMonth() && 
-        day === today.getDate()) {
-      dayDiv.classList.add('today');
-    }
-    
-    // Check if has study data
-    if (data[dateStr]) {
-      dayDiv.classList.add('has-data');
-      const minutesDiv = document.createElement('div');
-      minutesDiv.className = 'study-minutes';
-      minutesDiv.textContent = `${data[dateStr]}m`;
-      dayDiv.appendChild(minutesDiv);
-    }
-    
-    dayDiv.textContent = day;
-    dayDiv.onclick = () => showDateStudyTime(dateStr, day);
-    calendarDays.appendChild(dayDiv);
-  }
-  
-  // Calculate streak
-  let streak = 0;
-  let checkDate = new Date();
-  while (data[checkDate.toISOString().split('T')[0]] >= 15) {
-    streak++;
-    checkDate.setDate(checkDate.getDate() - 1);
-  }
-  document.getElementById('streak').innerHTML = `🔥 Current Streak: ${streak} day(s)`;
-}
-
-function changeCalendarMonth(change) {
-  currentCalendarMonth += change;
-  if (currentCalendarMonth < 0) {
-    currentCalendarMonth = 11;
-    currentCalendarYear--;
-  } else if (currentCalendarMonth > 11) {
-    currentCalendarMonth = 0;
-    currentCalendarYear++;
-  }
-  renderCalendar();
-}
-
-function showDateStudyTime(dateStr, day) {
-  const data = JSON.parse(localStorage.getItem('studyData') || '{}');
-  const minutes = data[dateStr] || 0;
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-  
-  const monthNames = ["January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"];
-  
-  document.getElementById('selectedDateTitle').textContent = 
-    `${monthNames[currentCalendarMonth]} ${day}, ${currentCalendarYear}`;
-  
-  if (minutes > 0) {
-    document.getElementById('selectedDateStudyTime').innerHTML = 
-      `📚 Padh lo: <strong>${hours > 0 ? `${hours}h ` : ''}${remainingMinutes}m</strong>`;
-  } else {
-    document.getElementById('selectedDateStudyTime').textContent = 
-      'No study recorded for this date';
-  }
-  
-  document.getElementById('dateDetails').classList.remove('hidden');
-}
-
-// Existing functions (unchanged)
-function login(){
-  const name=usernameInput.value.trim();
-  if(!name) return alert('Enter name');
-  localStorage.setItem('username',name);
-  initApp();
-}
-
-function initApp(){
-  const name=localStorage.getItem('username');
-  if(!name) return;
-  loginScreen.classList.add('hidden');
-  appScreen.classList.remove('hidden');
-  userLabel.innerText='👤 '+name;
-}
-
-window.onload=function() {
-  initApp();
-  renderCalendar();
-};
-
-function updateDisplay(){
-  let s=Math.floor(totalCs/100);
-  display.innerText=`${String(Math.floor(s/3600)).padStart(2,'0')}:${String(Math.floor(s/60)%60).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
-}
-
-function startTimer(){
-  if(interval) return;
-  if(totalCs===0){ totalCs=((+setHr.value||0)*3600+(+setMin.value||0)*60+(+setSec.value||0))*100; }
-  studyStart=Date.now();
-  status.innerText='📖 Study started';
-  interval=setInterval(()=>{ totalCs>0?(totalCs--,updateDisplay()):finishTimer(); },10);
-}
-
-function finishTimer(){ clearInterval(interval); interval=null; endSound.play(); saveStudy(); }
-function pauseTimer(){ if(!interval) return; clearInterval(interval); interval=null; saveStudy(); }
-function resetTimer(){ pauseTimer(); totalCs=0; updateDisplay(); status.innerText='Ready to study 📖'; }
-function startBreak(m){ resetTimer(); totalCs=m*6000; status.innerText='☕ Break started'; startTimer(); }
-
-function saveStudy(){
-  if(!studyStart) return;
-  const min=Math.floor((Date.now()-studyStart)/60000);
-  studyStart=null;
-  if(min<=0) return;
-  const d=new Date().toISOString().split('T')[0];
-  const data=JSON.parse(localStorage.getItem('studyData')||'{}');
-  data[d]=(data[d]||0)+min;
-  localStorage.setItem('studyData',JSON.stringify(data));
-  renderCalendar();
-}
-
-function toggleBreak(){ breakOptions.classList.toggle('hidden'); bgOptions.classList.add('hidden'); }
-function toggleBg(){ bgOptions.classList.toggle('hidden'); breakOptions.classList.add('hidden'); }
-function changeBg(v){ document.body.style.background=v==1?'var(--bg1)':v==2?'var(--bg2)':'var(--bg3)'; }
-
-function openCalendar(){ 
-  appScreen.classList.add('hidden'); 
-  calendarPage.classList.remove('hidden'); 
-  renderCalendar(); 
-}
-function closeCalendar(){ 
-  calendarPage.classList.add('hidden'); 
-  appScreen.classList.remove('hidden'); 
-}
-
-function openStats(){ appScreen.classList.add('hidden'); statsPage.classList.remove('hidden'); renderStats(); }
-function closeStats(){ statsPage.classList.add('hidden'); appScreen.classList.remove('hidden'); }
-
-function renderStats(){
-  const data=JSON.parse(localStorage.getItem('studyData')||'{}');
-  let week=0, month=0; const now=new Date();
-  for(let k in data){ const d=new Date(k); if((now-d)/86400000<7) week+=data[k]; if(d.getMonth()==now.getMonth()) month+=data[k]; }
-  weekly.innerText=`🗓️ Last 7 days: ${Math.floor(week/60)}h ${week%60}m`;
-  monthly.innerText=`📆 This month: ${Math.floor(month/60)}h ${month%60}m`;
-}
-</script>
+<script src="studytimer.js"></script>
 </body>
 </html>
