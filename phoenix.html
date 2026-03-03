@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Phoenix AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --fire1: #ff4500; --fire2: #ff7300; --fire3: #ffae00;
+      --dark: #060608; --dark2: #0e0e14;
+    }
+    body {
+      background: var(--dark); color: #fff;
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,80,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,80,0,0.03) 1px, transparent 1px);
+      background-size: 40px 40px; pointer-events: none; z-index: 0;
+    }
+    main {
+      position: relative; z-index: 1; display: flex; flex-direction: column;
+      align-items: center; padding: 50px 20px 130px; width: 100%; max-width: 700px;
+    }
+    .title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900; letter-spacing: 10px;
+      background: linear-gradient(135deg, var(--fire1), var(--fire2), var(--fire3));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; text-align: center; animation: flicker 3s infinite alternate;
+    }
+    @keyframes flicker {
+      0%,100% { filter: drop-shadow(0 0 16px rgba(255,100,0,0.8)); }
+      50%      { filter: drop-shadow(0 0 32px rgba(255,160,0,1)); }
+    }
+    .subtitle { font-size: 0.85rem; letter-spacing: 4px; color: rgba(255,160,0,0.5); margin-top: 6px; text-transform: uppercase; }
+
+    /* POPUP */
+    .popup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); z-index: 999; align-items: center; justify-content: center; }
+    .popup-overlay.show { display: flex; }
+    .popup { background: #0e0e14; border: 1px solid rgba(255,100,0,0.35); border-radius: 20px; padding: 34px 30px; max-width: 420px; width: 90%; box-shadow: 0 0 60px rgba(255,80,0,0.25); animation: popIn 0.3s ease; text-align: center; }
+    @keyframes popIn { from { opacity:0; transform: scale(0.9) translateY(20px); } to { opacity:1; transform: scale(1) translateY(0); } }
+    .popup-icon { font-size: 3rem; margin-bottom: 12px; }
+    .popup h2 { font-family: 'Orbitron', sans-serif; font-size: 1rem; letter-spacing: 3px; color: var(--fire2); margin-bottom: 10px; }
+    .popup p { font-size: 1rem; color: #aaa; line-height: 1.7; margin-bottom: 20px; }
+    .steps { text-align: left; margin-bottom: 24px; display: flex; flex-direction: column; gap: 12px; }
+    .step { display: flex; align-items: flex-start; gap: 14px; background: rgba(255,100,0,0.06); border: 1px solid rgba(255,100,0,0.12); border-radius: 10px; padding: 12px 14px; }
+    .step-num { min-width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--fire1), var(--fire2)); display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 700; }
+    .step-text { font-size: 0.95rem; color: #ccc; line-height: 1.5; }
+    .step-text strong { color: var(--fire3); }
+    .popup-btns { display: flex; gap: 12px; justify-content: center; }
+    .btn-try { padding: 12px 28px; border-radius: 999px; background: linear-gradient(135deg, var(--fire1), var(--fire2)); border: none; color: #fff; font-family: 'Orbitron', sans-serif; font-size: 0.7rem; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; }
+    .btn-try:hover { transform: scale(1.05); }
+    .btn-close { padding: 12px 20px; border-radius: 999px; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #666; font-family: 'Orbitron', sans-serif; font-size: 0.7rem; letter-spacing: 2px; cursor: pointer; }
+
+    /* AVATAR */
+    .avatar-wrap { margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .avatar { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #1a0800, #2d1200); border: 2px solid var(--fire2); display: flex; align-items: center; justify-content: center; font-size: 2.6rem; box-shadow: 0 0 28px rgba(255,100,0,0.35); transition: all 0.3s; }
+    .avatar.listening { animation: avatarPulse 1s infinite alternate; }
+    .avatar.speaking  { animation: avatarSpeak 0.4s infinite alternate; }
+    @keyframes avatarPulse { from { box-shadow: 0 0 20px rgba(255,100,0,0.3); } to { box-shadow: 0 0 60px rgba(255,180,0,0.9); } }
+    @keyframes avatarSpeak { from { box-shadow: 0 0 20px rgba(255,100,0,0.4); transform: scale(1); } to { box-shadow: 0 0 70px rgba(255,200,0,1); transform: scale(1.06); } }
+    .status-pill { display: flex; align-items: center; gap: 8px; padding: 7px 18px; border-radius: 999px; border: 1px solid rgba(255,100,0,0.2); background: var(--dark2); font-family: 'Orbitron', sans-serif; font-size: 0.6rem; letter-spacing: 2px; color: #555; transition: all 0.3s; }
+    .status-pill.listening { border-color: var(--fire2); color: var(--fire2); }
+    .status-pill.speaking  { border-color: var(--fire3); color: var(--fire3); }
+    .status-pill.error     { border-color: #ff3333; color: #ff3333; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .dot.pulse { animation: dotBlink 1s infinite; }
+    @keyframes dotBlink { 0%,100%{opacity:1} 50%{opacity:0.15} }
+
+    /* ── LIVE TRANSCRIPT BAR ── */
+    .live-bar {
+      margin-top: 16px; width: 100%;
+      background: rgba(255,100,0,0.05);
+      border: 1px dashed rgba(255,100,0,0.25);
+      border-radius: 12px; padding: 12px 18px;
+      min-height: 46px; display: flex; align-items: center; gap: 12px;
+      transition: all 0.3s;
+    }
+    .live-bar.active {
+      border-color: var(--fire2);
+      background: rgba(255,100,0,0.08);
+      box-shadow: 0 0 16px rgba(255,100,0,0.15);
+    }
+    .live-label {
+      font-family: 'Orbitron', sans-serif; font-size: 0.55rem;
+      letter-spacing: 2px; color: rgba(255,120,0,0.5);
+      white-space: nowrap;
+    }
+    .live-text {
+      font-size: 1rem; color: rgba(255,200,100,0.5);
+      font-style: italic; flex: 1;
+      transition: color 0.2s;
+    }
+    .live-text.active { color: rgba(255,200,100,0.9); }
+    .live-cursor {
+      display: inline-block; width: 2px; height: 1em;
+      background: var(--fire2); margin-left: 3px;
+      animation: cursorBlink 0.7s infinite;
+      vertical-align: middle; opacity: 0;
+    }
+    .live-cursor.show { opacity: 1; }
+    @keyframes cursorBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* CHAT */
+    .chat-box { margin-top: 14px; width: 100%; background: var(--dark2); border: 1px solid rgba(255,100,0,0.1); border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-height: 280px; max-height: 360px; overflow-y: auto; }
+    .bubble { max-width: 82%; padding: 11px 16px; border-radius: 18px; font-size: 1rem; line-height: 1.5; animation: bubbleIn 0.3s ease; }
+    @keyframes bubbleIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    .bubble.phoenix { background: linear-gradient(135deg, #1e0d00, #2c1500); border: 1px solid rgba(255,100,0,0.22); color: #f0c080; border-bottom-left-radius: 4px; align-self: flex-start; }
+    .bubble.phoenix .sender { font-family: 'Orbitron', sans-serif; font-size: 0.58rem; letter-spacing: 2px; color: var(--fire2); margin-bottom: 4px; }
+    .bubble.user { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07); color: #bbb; border-bottom-right-radius: 4px; align-self: flex-end; }
+    .bubble.user .sender { font-family: 'Orbitron', sans-serif; font-size: 0.58rem; letter-spacing: 2px; color: #444; margin-bottom: 4px; text-align: right; }
+    .bubble.system { background: rgba(255,50,0,0.08); border: 1px solid rgba(255,50,0,0.2); color: #ff6644; font-size: 0.88rem; align-self: center; max-width: 100%; text-align: center; border-radius: 10px; }
+    .typing { display: flex; gap: 5px; align-items: center; padding: 13px 16px; background: linear-gradient(135deg, #1e0d00, #2c1500); border: 1px solid rgba(255,100,0,0.18); border-radius: 18px; border-bottom-left-radius: 4px; align-self: flex-start; animation: bubbleIn 0.3s ease; }
+    .typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--fire2); animation: typeDot 1.2s infinite; }
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typeDot { 0%,60%,100% { transform:translateY(0); opacity:0.35; } 30% { transform:translateY(-6px); opacity:1; } }
+
+    /* COMMANDS */
+    .commands { margin-top: 16px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .cmd { background: rgba(255,100,0,0.04); border: 1px solid rgba(255,100,0,0.11); border-radius: 10px; padding: 10px 14px; font-size: 0.87rem; color: #777; }
+    .cmd span { display: block; color: var(--fire2); font-weight: 600; margin-bottom: 2px; }
+
+    /* BOTTOM BAR */
+    .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 14px 20px; background: rgba(6,6,8,0.97); border-top: 1px solid rgba(255,100,0,0.14); display: flex; justify-content: center; align-items: center; gap: 18px; z-index: 50; }
+    .bar-hint { font-family: 'Orbitron', sans-serif; font-size: 0.58rem; letter-spacing: 2px; color: #333; }
+    .mic-btn { width: 62px; height: 62px; border-radius: 50%; background: linear-gradient(135deg, #1a0800, #2d1200); border: 2px solid var(--fire2); box-shadow: 0 0 18px rgba(255,100,0,0.35); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; transition: all 0.2s; }
+    .mic-btn:hover { transform: scale(1.08); }
+    .mic-btn.active { animation: micGlow 0.8s infinite alternate; }
+    @keyframes micGlow { from { box-shadow: 0 0 18px rgba(255,100,0,0.35); } to { box-shadow: 0 0 55px rgba(255,200,0,0.9); } }
+
+    footer { margin-bottom: 100px; color: rgba(255,255,255,0.1); font-size: 0.7rem; letter-spacing: 2px; z-index: 1; margin-top: 10px; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--fire1); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup">
+    <div class="popup-icon">🎙️</div>
+    <h2>MICROPHONE ACCESS</h2>
+    <p>Phoenix needs your microphone. Follow these steps:</p>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-text">Look at the <strong>top of Chrome</strong> for a mic popup and click <strong>Allow</strong></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">If no popup, click <strong>🔒 lock icon</strong> → Site Settings → Microphone → <strong>Allow</strong></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Click <strong>Try Again</strong> below</div></div>
+    </div>
+    <div class="popup-btns">
+      <button class="btn-try" id="btnTryAgain">TRY AGAIN</button>
+      <button class="btn-close" id="btnClose">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="title">PHOENIX</div>
+  <div class="subtitle">AI Voice Assistant</div>
+
+  <div class="avatar-wrap">
+    <div class="avatar" id="avatar">🔥</div>
+    <div class="status-pill" id="statusPill">
+      <div class="dot" id="dot"></div>
+      <span id="statusText">CLICK MIC TO START</span>
+    </div>
+  </div>
+
+  <!-- ✅ LIVE TRANSCRIPT BAR -->
+  <div class="live-bar" id="liveBar">
+    <span class="live-label">HEARING</span>
+    <span class="live-text" id="liveText">waiting...</span>
+    <span class="live-cursor" id="liveCursor"></span>
+  </div>
+
+  <div class="chat-box" id="chatBox">
+    <div class="bubble phoenix">
+      <div class="sender">PHOENIX</div>
+      Hey! Click the mic and say <strong>"Phoenix"</strong> to wake me up 🔥
+    </div>
+  </div>
+
+  <div class="commands">
+    <div class="cmd"><span>"Phoenix"</span>Wake up assistant</div>
+    <div class="cmd"><span>"open google [query]"</span>Search Google</div>
+    <div class="cmd"><span>"open youtube [query]"</span>Search YouTube</div>
+    <div class="cmd"><span>"play [song/playlist]"</span>Play music on YT</div>
+    <div class="cmd"><span>"open github"</span>Open GitHub</div>
+    <div class="cmd"><span>"stop phoenix"</span>Stop listening</div>
+  </div>
+</main>
+
+<footer>© 2025 LAVISH | PHOENIX AI</footer>
+
+<div class="bottom-bar">
+  <span class="bar-hint" id="barLeft">OFFLINE</span>
+  <button class="mic-btn" id="micBtn">🎙️</button>
+  <span class="bar-hint" id="barRight">TAP TO START</span>
+</div>
+
+<script>
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const chatBox      = document.getElementById('chatBox');
+  const avatar       = document.getElementById('avatar');
+  const statusPill   = document.getElementById('statusPill');
+  const statusText   = document.getElementById('statusText');
+  const dot          = document.getElementById('dot');
+  const micBtn       = document.getElementById('micBtn');
+  const barLeft      = document.getElementById('barLeft');
+  const barRight     = document.getElementById('barRight');
+  const popupOverlay = document.getElementById('popupOverlay');
+  const liveBar      = document.getElementById('liveBar');
+  const liveText     = document.getElementById('liveText');
+  const liveCursor   = document.getElementById('liveCursor');
+
+  let isRunning = false, phoenixActive = false, isSpeaking = false, recognition;
+
+  document.getElementById('btnClose').onclick    = () => popupOverlay.classList.remove('show');
+  document.getElementById('btnTryAgain').onclick = () => { popupOverlay.classList.remove('show'); requestMicAndStart(); };
+
+  // ✅ Fuzzy wake word list
+  const WAKE_WORDS = [
+    'phoenix', 'fenix', 'phenix', 'fénix', 'finix', 'finish',
+    'phoenicks', 'feenix', 'phonics', 'finik', 'phinix',
+    'hey phoenix', 'ok phoenix', 'yo phoenix', 'wake up phoenix'
+  ];
+
+  function isWakeWord(text) {
+    const t = text.toLowerCase().trim();
+    if (WAKE_WORDS.some(w => t.includes(w))) return true;
+    return t.split(' ').some(w => levenshtein(w, 'phoenix') <= 2);
+  }
+
+  function levenshtein(a, b) {
+    const m = a.length, n = b.length;
+    const dp = Array.from({length: m+1}, (_, i) =>
+      Array.from({length: n+1}, (_, j) => i === 0 ? j : j === 0 ? i : 0));
+    for (let i = 1; i <= m; i++)
+      for (let j = 1; j <= n; j++)
+        dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    return dp[m][n];
+  }
+
+  // ✅ Update live transcript bar
+  function setLive(text, active = true) {
+    liveText.textContent = text || '...';
+    liveText.className = 'live-text' + (active && text ? ' active' : '');
+    liveBar.className  = 'live-bar'  + (active && text ? ' active' : '');
+    liveCursor.className = 'live-cursor' + (active ? ' show' : '');
+  }
+
+  function clearLive() {
+    liveText.textContent = 'waiting...';
+    liveText.className = 'live-text';
+    liveBar.className  = 'live-bar';
+    liveCursor.className = 'live-cursor';
+  }
+
+  function setStatus(text, mode) {
+    statusText.textContent = text;
+    statusPill.className = 'status-pill ' + mode;
+    avatar.className = 'avatar ' + (mode === 'listening' ? 'listening' : mode === 'speaking' ? 'speaking' : '');
+    dot.className = 'dot ' + (mode && mode !== 'error' ? 'pulse' : '');
+    barLeft.textContent  = { listening:'LISTENING', speaking:'SPEAKING', error:'ERROR' }[mode] || 'OFFLINE';
+    barRight.textContent = isRunning ? 'TAP TO STOP' : 'TAP TO START';
+  }
+
+  function scrollBottom() { chatBox.scrollTop = chatBox.scrollHeight; }
+
+  function addUserMsg(text) {
+    const b = document.createElement('div');
+    b.className = 'bubble user';
+    b.innerHTML = `<div class="sender">YOU</div>${text}`;
+    chatBox.appendChild(b); scrollBottom();
+  }
+
+  function showSystem(text) {
+    const b = document.createElement('div');
+    b.className = 'bubble system';
+    b.textContent = text;
+    chatBox.appendChild(b); scrollBottom();
+  }
+
+  function addPhoenixMsg(text) {
+    return new Promise(resolve => {
+      const t = document.createElement('div');
+      t.className = 'typing';
+      t.innerHTML = '<span></span><span></span><span></span>';
+      chatBox.appendChild(t); scrollBottom();
+      setTimeout(() => {
+        t.remove();
+        const b = document.createElement('div');
+        b.className = 'bubble phoenix';
+        b.innerHTML = `<div class="sender">PHOENIX</div>${text}`;
+        chatBox.appendChild(b); scrollBottom();
+        resolve();
+      }, 500);
+    });
+  }
+
+  function speak(text) {
+    return new Promise(resolve => {
+      isSpeaking = true;
+      clearLive();
+      setStatus('SPEAKING...', 'speaking');
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 1.05; u.pitch = 0.85;
+      u.onend = u.onerror = () => { isSpeaking = false; resolve(); };
+      window.speechSynthesis.speak(u);
+    });
+  }
+
+  async function phoenixSay(text, then) {
+    await addPhoenixMsg(text);
+    await speak(text);
+    if (then) then();
+  }
+
+  function processCommand(cmd) {
+    const c = cmd.toLowerCase();
+    if (c.includes('stop phoenix') || c.includes('stop fenix')) {
+      phoenixSay('Goodbye sir! Have a great day.', stopAll);
+    } else if (c.includes('open google')) {
+      const q = c.replace('open google','').trim();
+      phoenixSay(q ? `Searching Google for "${q}" sir.` : 'Opening Google sir.', () => {
+        window.open(q ? `https://www.google.com/search?q=${encodeURIComponent(q)}` : 'https://www.google.com', '_blank');
+        restartListening();
+      });
+    } else if (c.includes('open youtube')) {
+      const q = c.replace('open youtube','').trim();
+      phoenixSay(q ? `Searching YouTube for "${q}" sir.` : 'Opening YouTube sir.', () => {
+        window.open(q ? `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}` : 'https://www.youtube.com', '_blank');
+        restartListening();
+      });
+    } else if (c.includes('play')) {
+      const q = c.replace('play','').trim();
+      phoenixSay(`Playing ${q || 'music'} playlist on YouTube sir.`, () => {
+        window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent((q||'top hits')+' full playlist')}`, '_blank');
+        restartListening();
+      });
+    } else if (c.includes('open github')) {
+      phoenixSay('Opening GitHub sir.', () => {
+        window.open('https://www.github.com', '_blank');
+        restartListening();
+      });
+    } else {
+      phoenixSay(`Sorry sir, I didn't understand that. Please try again.`, restartListening);
+    }
+  }
+
+  function startListening() {
+    if (!isRunning || isSpeaking || !SR) return;
+
+    recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = true;  // ✅ get live text as you speak
+    recognition.lang = 'en-US';
+    recognition.maxAlternatives = 3;
+
+    recognition.onstart = () => {
+      setStatus(phoenixActive ? 'LISTENING FOR COMMAND...' : 'LISTENING FOR "PHOENIX"...', 'listening');
+      setLive('', true);
+    };
+
+    recognition.onresult = (e) => {
+      const result   = e.results[e.results.length - 1];
+      const isFinal  = result.isFinal;
+      let transcripts = [];
+      for (let i = 0; i < result.length; i++) transcripts.push(result[i].transcript.trim());
+      const best = transcripts[0];
+
+      // ✅ Always show live what browser is hearing
+      setLive(best, true);
+
+      if (!phoenixActive) {
+        const wakeDetected = transcripts.some(t => isWakeWord(t));
+        if (wakeDetected && isFinal) {
+          clearLive();
+          addUserMsg(best);
+          recognition.stop();
+          phoenixActive = true;
+          phoenixSay('Yes sir, how can I help you?', () => startListening());
+        } else if (isFinal && (best.toLowerCase().includes('stop'))) {
+          clearLive();
+          addUserMsg(best);
+          recognition.stop();
+          phoenixSay('Goodbye sir!', stopAll);
+        } else if (!isFinal && wakeDetected) {
+          // interim wake word — give visual feedback
+          setLive('🔥 ' + best, true);
+          setStatus('PHOENIX DETECTED!', 'listening');
+        }
+      } else {
+        if (isFinal) {
+          clearLive();
+          addUserMsg(best);
+          recognition.stop();
+          phoenixActive = false;
+          processCommand(best);
+        }
+      }
+    };
+
+    recognition.onerror = (e) => {
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        popupOverlay.classList.add('show');
+        setStatus('MIC BLOCKED', 'error');
+        clearLive();
+        stopAll(); return;
+      }
+      if (isRunning && !isSpeaking) setTimeout(() => startListening(), 300);
+    };
+
+    recognition.onend = () => {
+      if (isRunning && !isSpeaking) setTimeout(() => startListening(), 150);
+    };
+
+    try { recognition.start(); } catch(e) {
+      if (isRunning) setTimeout(() => startListening(), 500);
+    }
+  }
+
+  function restartListening() { phoenixActive = false; setTimeout(() => startListening(), 400); }
+
+  function stopAll() {
+    isRunning = false; phoenixActive = false; isSpeaking = false;
+    try { recognition && recognition.stop(); } catch(e){}
+    micBtn.classList.remove('active');
+    setStatus('CLICK MIC TO START', '');
+    clearLive();
+  }
+
+  function requestMicAndStart() {
+    if (!SR) { showSystem('❌ Please use Google Chrome.'); return; }
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(() => {
+        isRunning = true;
+        micBtn.classList.add('active');
+        phoenixSay('Hello sir! I am Phoenix. Say my name to activate me.', () => startListening());
+      })
+      .catch(() => popupOverlay.classList.add('show'));
+  }
+
+  micBtn.addEventListener('click', () => {
+    if (!isRunning) {
+      requestMicAndStart();
+    } else {
+      stopAll();
+      addPhoenixMsg('Stopped. Click the mic to start again.');
+    }
+  });
+</script>
+</body>
+</html>
