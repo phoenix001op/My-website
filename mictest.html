@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>Speech Test</title>
+  <style>
+    body { background:#111; color:#fff; font-family:monospace; text-align:center; padding:40px; }
+    button { padding:20px 50px; font-size:1.4rem; background:#ff6600; color:#fff; border:none; border-radius:12px; cursor:pointer; }
+    #out { margin-top:30px; font-size:1.3rem; background:#222; padding:20px; border-radius:10px; min-height:60px; }
+    .g{color:#44ff88} .r{color:#ff4444} .y{color:#ffaa00}
+  </style>
+</head>
+<body>
+  <h2>Speech Test</h2>
+  <button onclick="go()">PRESS AND SPEAK</button>
+  <div id="out">Result appears here...</div>
+<script>
+function go() {
+  var out = document.getElementById('out');
+  out.innerHTML = '';
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { out.innerHTML = '<span class="r">ERROR: Use Chrome!</span>'; return; }
+  var r = new SR();
+  r.lang = 'en-US';
+  r.interimResults = true;
+  r.onstart  = function(){ out.innerHTML += '<div class="g">Started! Speak now...</div>'; };
+  r.onresult = function(e){
+    var t = e.results[e.results.length-1][0].transcript;
+    var f = e.results[e.results.length-1].isFinal;
+    out.innerHTML += '<div class="'+(f?'g':'y')+'">'+(f?'FINAL: ':'live: ')+t+'</div>';
+  };
+  r.onerror  = function(e){ out.innerHTML += '<div class="r">ERROR: '+e.error+'</div>'; };
+  r.onend    = function(){ out.innerHTML += '<div class="y">Ended.</div>'; };
+  r.start();
+}
+</script>
+</body>
+</html>
