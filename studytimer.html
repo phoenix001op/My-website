@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Study Timer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Padh Lo</title>
   <link rel="stylesheet" href="studytimer.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -12,53 +12,51 @@
 <!-- LOGIN SCREEN -->
 <div class="screen" id="loginScreen">
   <div class="container login-container">
-    <h1 class="welcome-title"><i class="fas fa-graduation-cap"></i> Padh lo</h1>
+    <div class="login-logo"><i class="fas fa-graduation-cap"></i></div>
+    <h1 class="welcome-title">Padh Lo</h1>
     <p class="login-subtitle">Track study time, earn XP, and level up!</p>
-    <input id="usernameInput" placeholder="Enter your name" class="login-input" />
-    <br><br>
+    <input id="usernameInput" placeholder="Enter your name" class="login-input" onkeydown="if(event.key==='Enter') login()" />
     <button class="login-btn" onclick="login()">
-      <i class="fas fa-play"></i> Start Studying
+      <i class="fas fa-rocket"></i> Start Studying
     </button>
   </div>
 </div>
 
 <!-- MUSIC PLAYER -->
 <div class="music-player hidden" id="musicPlayer">
-  <div class="music-title"><i class="fas fa-music"></i> Relax Music</div>
+  <div class="music-header">
+    <span class="music-title"><i class="fas fa-music"></i> Music</span>
+    <button class="music-close-btn" onclick="toggleMusicPlayer()"><i class="fas fa-times"></i></button>
+  </div>
   <div class="music-controls">
     <button class="music-btn" onclick="playMusic()"><i class="fas fa-play"></i></button>
     <button class="music-btn" onclick="pauseMusic()"><i class="fas fa-pause"></i></button>
     <button class="music-btn" onclick="stopMusic()"><i class="fas fa-stop"></i></button>
   </div>
   <div class="track-selector">
-    <button class="track-btn active" onclick="selectTrack(1)"><i class="fas fa-water"></i> Drifting Away</button>
-    <button class="track-btn" onclick="selectTrack(2)"><i class="fas fa-piano"></i> Piano Relaxation</button>
-    <button class="track-btn" onclick="selectTrack(3)"><i class="fas fa-tree"></i> Nature Sounds</button>
-    <button class="track-btn" onclick="selectTrack(4)"><i class="fas fa-brain"></i> Focus Ambient</button>
+    <button class="track-btn active" onclick="selectTrack(1, this)"><i class="fas fa-water"></i> Drifting Away</button>
+    <button class="track-btn" onclick="selectTrack(2, this)"><i class="fas fa-music"></i> Piano Relax</button>
+    <button class="track-btn" onclick="selectTrack(3, this)"><i class="fas fa-tree"></i> Nature Sounds</button>
+    <button class="track-btn" onclick="selectTrack(4, this)"><i class="fas fa-brain"></i> Focus Ambient</button>
   </div>
 </div>
 
 <!-- MAIN APP -->
 <div class="screen hidden" id="appScreen">
   <div class="container" id="mainPage">
+
     <!-- Header Navigation -->
     <div class="header-nav">
       <div class="user-info" id="userLabel">
         <i class="fas fa-user"></i> Guest
       </div>
       <div class="nav-icons">
-        <button class="nav-btn" onclick="toggleMusicPlayer()" title="Music">
-          <i class="fas fa-music"></i>
-        </button>
-        <button class="nav-btn" onclick="openCalendar()" title="Calendar">
-          <i class="fas fa-calendar"></i>
-        </button>
-        <button class="nav-btn" onclick="openStats()" title="Stats">
-          <i class="fas fa-chart-bar"></i>
-        </button>
-        <button class="nav-btn" onclick="openRank()" title="Rank & Levels">
-          <i class="fas fa-trophy"></i>
-        </button>
+        <button class="nav-btn" onclick="toggleMusicPlayer()" title="Music"><i class="fas fa-music"></i></button>
+        <button class="nav-btn" onclick="openTodo()" title="Tasks"><i class="fas fa-list-check"></i></button>
+        <button class="nav-btn" onclick="openCalendar()" title="Calendar"><i class="fas fa-calendar"></i></button>
+        <button class="nav-btn" onclick="openStats()" title="Stats"><i class="fas fa-chart-bar"></i></button>
+        <button class="nav-btn" onclick="openRank()" title="Rank"><i class="fas fa-trophy"></i></button>
+        <button class="nav-btn logout-btn" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
       </div>
     </div>
 
@@ -66,7 +64,7 @@
     <div class="xp-container">
       <div class="xp-header">
         <span><i class="fas fa-star"></i> XP: <span id="currentXP">0</span></span>
-        <span>Level: <span id="currentLevel">1</span></span>
+        <span>Level <span id="currentLevel">1</span></span>
       </div>
       <div class="xp-progress-bar">
         <div class="xp-progress-fill" id="xpProgressFill"></div>
@@ -77,62 +75,48 @@
     </div>
 
     <!-- Timer Section -->
-    <h1 class="main-title"><i class="fas fa-clock"></i> Study Timer</h1>
+    <h2 class="main-title"><i class="fas fa-clock"></i> Study Timer</h2>
     <div class="timer" id="display">00:00:00</div>
     <div class="status" id="status">Ready to study <i class="fas fa-book-open"></i></div>
 
     <!-- Time Inputs -->
     <div class="inputs">
       <div class="input-group">
-        <label>Hours</label>
+        <label>HH</label>
         <input type="number" id="setHr" placeholder="0" min="0" max="24">
       </div>
+      <div class="input-divider">:</div>
       <div class="input-group">
-        <label>Minutes</label>
+        <label>MM</label>
         <input type="number" id="setMin" placeholder="0" min="0" max="59">
       </div>
+      <div class="input-divider">:</div>
       <div class="input-group">
-        <label>Seconds</label>
+        <label>SS</label>
         <input type="number" id="setSec" placeholder="0" min="0" max="59">
       </div>
     </div>
 
     <!-- Timer Controls -->
     <div class="button-row">
-      <button class="btn-primary" onclick="startTimer()">
-        <i class="fas fa-play"></i> Start
-      </button>
-      <button class="btn-secondary" onclick="pauseTimer()">
-        <i class="fas fa-pause"></i> Pause
-      </button>
-      <button class="btn-danger" onclick="resetTimer()">
-        <i class="fas fa-redo"></i> Reset
-      </button>
+      <button class="btn-primary" onclick="startTimer()"><i class="fas fa-play"></i> Start</button>
+      <button class="btn-secondary" onclick="pauseTimer()"><i class="fas fa-pause"></i> Pause</button>
+      <button class="btn-danger" onclick="resetTimer()"><i class="fas fa-redo"></i> Reset</button>
     </div>
 
     <!-- Options -->
     <div class="button-row">
-      <button class="btn-option" onclick="toggleBreak()">
-        <i class="fas fa-coffee"></i> Break
-      </button>
-      <button class="btn-option" onclick="toggleBg()">
-        <i class="fas fa-palette"></i> Theme
-      </button>
+      <button class="btn-option" onclick="toggleBreak()"><i class="fas fa-coffee"></i> Break</button>
+      <button class="btn-option" onclick="toggleBg()"><i class="fas fa-palette"></i> Theme</button>
     </div>
 
     <!-- Break Options -->
     <div id="breakOptions" class="options-container hidden">
       <h3>Break Duration</h3>
       <div class="break-buttons">
-        <button class="btn-break" onclick="startBreak(5)">
-          <i class="fas fa-clock"></i> 5 Min
-        </button>
-        <button class="btn-break" onclick="startBreak(10)">
-          <i class="fas fa-clock"></i> 10 Min
-        </button>
-        <button class="btn-break" onclick="startBreak(15)">
-          <i class="fas fa-clock"></i> 15 Min
-        </button>
+        <button class="btn-break" onclick="startBreak(5)"><i class="fas fa-clock"></i> 5 Min</button>
+        <button class="btn-break" onclick="startBreak(10)"><i class="fas fa-clock"></i> 10 Min</button>
+        <button class="btn-break" onclick="startBreak(15)"><i class="fas fa-clock"></i> 15 Min</button>
       </div>
     </div>
 
@@ -140,21 +124,40 @@
     <div id="bgOptions" class="options-container hidden">
       <h3>Select Theme</h3>
       <div class="theme-buttons">
-        <button class="btn-theme theme-purple" onclick="changeBg(1)">
-          <i class="fas fa-moon"></i> Purple
-        </button>
-        <button class="btn-theme theme-ocean" onclick="changeBg(2)">
-          <i class="fas fa-water"></i> Ocean
-        </button>
-        <button class="btn-theme theme-sunset" onclick="changeBg(3)">
-          <i class="fas fa-sun"></i> Sunset
-        </button>
+        <button class="btn-theme theme-purple" onclick="changeBg(1)"><i class="fas fa-moon"></i> Purple</button>
+        <button class="btn-theme theme-ocean" onclick="changeBg(2)"><i class="fas fa-water"></i> Ocean</button>
+        <button class="btn-theme theme-sunset" onclick="changeBg(3)"><i class="fas fa-sun"></i> Sunset</button>
       </div>
     </div>
 
-    <!-- Session Info -->
     <div class="session-info">
-      <p><i class="fas fa-info-circle"></i> Earn 25 XP for 30 min study, 50 XP for 1 hour!</p>
+      <p><i class="fas fa-info-circle"></i> 30 min = 25 XP &nbsp;|&nbsp; 1 hour = 50 XP</p>
+    </div>
+  </div>
+</div>
+
+<!-- TODO PAGE -->
+<div class="screen hidden" id="todoPage">
+  <div class="container">
+    <div class="page-header">
+      <button class="back-btn" onclick="closeTodo()"><i class="fas fa-arrow-left"></i> Back</button>
+      <h1><i class="fas fa-list-check"></i> Today's Tasks</h1>
+    </div>
+
+    <div class="todo-date" id="todoDateLabel"></div>
+
+    <div class="todo-input-row">
+      <input type="text" id="todoInput" class="todo-input" placeholder="What do you want to do today?" onkeydown="if(event.key==='Enter') addTodo()" maxlength="100" />
+      <button class="todo-add-btn" onclick="addTodo()"><i class="fas fa-plus"></i></button>
+    </div>
+
+    <div class="todo-stats-row">
+      <span id="todoProgress">0 / 0 done</span>
+      <button class="todo-clear-btn" onclick="clearDoneTodos()"><i class="fas fa-broom"></i> Clear Done</button>
+    </div>
+
+    <div id="todoList" class="todo-list">
+      <div class="todo-empty" id="todoEmpty"><i class="fas fa-clipboard-list"></i><br>No tasks yet. Add something!</div>
     </div>
   </div>
 </div>
@@ -163,26 +166,15 @@
 <div class="screen hidden" id="calendarPage">
   <div class="container">
     <div class="page-header">
-      <button class="back-btn" onclick="closeCalendar()">
-        <i class="fas fa-arrow-left"></i> Back
-      </button>
-      <h1><i class="fas fa-calendar-alt"></i> Study Calendar</h1>
+      <button class="back-btn" onclick="closeCalendar()"><i class="fas fa-arrow-left"></i> Back</button>
+      <h1><i class="fas fa-calendar-alt"></i> Calendar</h1>
     </div>
-    
     <div class="calendar-header">
-      <button class="calendar-nav-btn" onclick="changeCalendarMonth(-1)">
-        <i class="fas fa-chevron-left"></i>
-      </button>
+      <button class="calendar-nav-btn" onclick="changeCalendarMonth(-1)"><i class="fas fa-chevron-left"></i></button>
       <div class="calendar-month-year" id="calendarMonthYear"></div>
-      <button class="calendar-nav-btn" onclick="changeCalendarMonth(1)">
-        <i class="fas fa-chevron-right"></i>
-      </button>
+      <button class="calendar-nav-btn" onclick="changeCalendarMonth(1)"><i class="fas fa-chevron-right"></i></button>
     </div>
-    
-    <div class="streak-display" id="streak">
-      <i class="fas fa-fire"></i> Current Streak: 0 days
-    </div>
-    
+    <div class="streak-display" id="streak"><i class="fas fa-fire"></i> Current Streak: 0 days</div>
     <div class="calendar-grid">
       <div class="calendar-day-header">Sun</div>
       <div class="calendar-day-header">Mon</div>
@@ -192,9 +184,7 @@
       <div class="calendar-day-header">Fri</div>
       <div class="calendar-day-header">Sat</div>
     </div>
-    
     <div id="calendarDays" class="calendar-days"></div>
-    
     <div id="dateDetails" class="date-details hidden">
       <h3 id="selectedDateTitle"></h3>
       <div class="date-stats">
@@ -209,61 +199,43 @@
 <div class="screen hidden" id="statsPage">
   <div class="container">
     <div class="page-header">
-      <button class="back-btn" onclick="closeStats()">
-        <i class="fas fa-arrow-left"></i> Back
-      </button>
+      <button class="back-btn" onclick="closeStats()"><i class="fas fa-arrow-left"></i> Back</button>
       <h1><i class="fas fa-chart-line"></i> Statistics</h1>
     </div>
-    
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-icon">
-          <i class="fas fa-clock"></i>
-        </div>
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
         <div class="stat-value" id="totalStudyTime">0h 0m</div>
         <div class="stat-label">Total Study Time</div>
       </div>
-      
       <div class="stat-card">
-        <div class="stat-icon">
-          <i class="fas fa-star"></i>
-        </div>
+        <div class="stat-icon"><i class="fas fa-star"></i></div>
         <div class="stat-value" id="totalXP">0</div>
         <div class="stat-label">Total XP Earned</div>
       </div>
-      
       <div class="stat-card">
-        <div class="stat-icon">
-          <i class="fas fa-calendar-check"></i>
-        </div>
+        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
         <div class="stat-value" id="studyDays">0</div>
         <div class="stat-label">Study Days</div>
       </div>
-      
       <div class="stat-card">
-        <div class="stat-icon">
-          <i class="fas fa-trophy"></i>
-        </div>
+        <div class="stat-icon"><i class="fas fa-trophy"></i></div>
         <div class="stat-value" id="currentLevelStat">1</div>
         <div class="stat-label">Current Level</div>
       </div>
     </div>
-    
     <div class="stats-section">
-      <h3><i class="fas fa-history"></i> Recent Study Sessions</h3>
+      <h3><i class="fas fa-history"></i> Recent Sessions</h3>
       <div id="weeklyStats" class="stats-details"></div>
     </div>
-    
     <div class="stats-section">
       <h3><i class="fas fa-calendar-week"></i> This Week</h3>
       <div id="weekly" class="stats-details"></div>
     </div>
-    
     <div class="stats-section">
-      <h3><i class="fas fa-calendar-month"></i> This Month</h3>
+      <h3><i class="fas fa-calendar-alt"></i> This Month</h3>
       <div id="monthly" class="stats-details"></div>
     </div>
-    
     <div class="stats-section">
       <h3><i class="fas fa-award"></i> XP History</h3>
       <div id="xpHistory" class="stats-details"></div>
@@ -275,17 +247,12 @@
 <div class="screen hidden" id="rankPage">
   <div class="container">
     <div class="page-header">
-      <button class="back-btn" onclick="closeRank()">
-        <i class="fas fa-arrow-left"></i> Back
-      </button>
+      <button class="back-btn" onclick="closeRank()"><i class="fas fa-arrow-left"></i> Back</button>
       <h1><i class="fas fa-trophy"></i> Rank & Levels</h1>
     </div>
-    
     <div class="level-card">
       <div class="level-header">
-        <div class="level-icon">
-          <i class="fas fa-user-graduate"></i>
-        </div>
+        <div class="level-icon"><i class="fas fa-user-graduate"></i></div>
         <div class="level-info">
           <h2 id="currentRank">Beginner</h2>
           <div class="level-progress">
@@ -307,76 +274,44 @@
         </div>
       </div>
     </div>
-    
     <div class="levels-container">
       <h3><i class="fas fa-mountain"></i> Level System</h3>
       <div class="levels-list">
-        <div class="level-item active" data-level="1">
-          <div class="level-badge beginner">
-            <i class="fas fa-seedling"></i>
-          </div>
-          <div class="level-details">
-            <h4>Beginner</h4>
-            <p>0 - 50 XP</p>
-          </div>
+        <div class="level-item" data-level="1">
+          <div class="level-badge beginner"><i class="fas fa-seedling"></i></div>
+          <div class="level-details"><h4>Beginner</h4><p>0 - 50 XP</p></div>
         </div>
-        
         <div class="level-item" data-level="2">
-          <div class="level-badge learner">
-            <i class="fas fa-book-reader"></i>
-          </div>
-          <div class="level-details">
-            <h4>Learner</h4>
-            <p>51 - 150 XP</p>
-          </div>
+          <div class="level-badge learner"><i class="fas fa-book-reader"></i></div>
+          <div class="level-details"><h4>Learner</h4><p>51 - 150 XP</p></div>
         </div>
-        
         <div class="level-item" data-level="3">
-          <div class="level-badge focused">
-            <i class="fas fa-brain"></i>
-          </div>
-          <div class="level-details">
-            <h4>Focused</h4>
-            <p>151 - 400 XP</p>
-          </div>
+          <div class="level-badge focused"><i class="fas fa-brain"></i></div>
+          <div class="level-details"><h4>Focused</h4><p>151 - 400 XP</p></div>
         </div>
-        
         <div class="level-item" data-level="4">
-          <div class="level-badge elite">
-            <i class="fas fa-crown"></i>
-          </div>
-          <div class="level-details">
-            <h4>Elite</h4>
-            <p>401 - 750 XP</p>
-          </div>
+          <div class="level-badge elite"><i class="fas fa-crown"></i></div>
+          <div class="level-details"><h4>Elite</h4><p>401 - 750 XP</p></div>
         </div>
-        
         <div class="level-item" data-level="5">
-          <div class="level-badge master">
-            <i class="fas fa-star"></i>
-          </div>
-          <div class="level-details">
-            <h4>Master</h4>
-            <p>751 - 1000 XP</p>
-          </div>
+          <div class="level-badge master"><i class="fas fa-star"></i></div>
+          <div class="level-details"><h4>Master</h4><p>751 - 1000 XP</p></div>
         </div>
       </div>
     </div>
-    
     <div class="rank-tips">
       <h3><i class="fas fa-lightbulb"></i> Tips to Level Up</h3>
       <ul>
         <li><i class="fas fa-check-circle"></i> Study 30 minutes = 25 XP</li>
         <li><i class="fas fa-check-circle"></i> Study 1 hour = 50 XP</li>
         <li><i class="fas fa-check-circle"></i> Maintain a daily streak for bonus XP</li>
-        <li><i class="fas fa-check-circle"></i> Complete study sessions without breaks for extra XP</li>
+        <li><i class="fas fa-check-circle"></i> Complete sessions without breaks for extra XP</li>
       </ul>
     </div>
   </div>
 </div>
 
 <audio id="endSound" src="zapsplat_multimedia_end_ping_timer_003_68790.mp3"></audio>
-
 <script src="studytimer.js"></script>
 </body>
 </html>
