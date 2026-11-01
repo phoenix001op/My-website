@@ -127,11 +127,9 @@ a:focus-visible, .btn:focus-visible {
   border-radius: 24px;
   object-fit: cover;
   object-position: 50% 8%;            /* keep the face in view */
-  background:
-    radial-gradient(circle at 70% 18%, rgba(63, 207, 142, 0.18) 0%, transparent 55%),
-    linear-gradient(165deg, #2d2d2d 0%, #1b1b1b 60%, #111 100%);   /* same blacks as the site */
+  background: linear-gradient(165deg, #2d2d2d 0%, #1b1b1b 60%, #111 100%);   /* same blacks as the site */
   border: 3px solid #64ffda;
-  box-shadow: 0 0 0 4px #2d2d2d, 0 8px 24px rgba(63, 207, 142, 0.25);
+  box-shadow: 0 0 0 4px #2d2d2d, 0 8px 24px rgba(0, 0, 0, 0.45);
   display: block;
   margin: 0 auto 20px auto;
 }
