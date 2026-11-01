@@ -120,14 +120,16 @@ a:focus-visible, .btn:focus-visible {
 }
 
 .profile-pic {
-  --pic: clamp(100px, 30vw, 140px);   /* photo size: scales with the screen */
+  --pic: clamp(120px, 34vw, 170px);   /* photo width: scales with the screen */
   width: var(--pic);
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 5;                /* portrait frame */
   height: auto;
-  border-radius: 50%;
-  object-fit: contain;
-  padding: calc(var(--pic) * 0.17);   /* keeps the character off the edge of the circle */
-  background: radial-gradient(circle at 50% 30%, #7df0bd 0%, #3fcf8e 55%, #1f8f63 100%);
+  border-radius: 24px;
+  object-fit: cover;
+  object-position: 50% 8%;            /* keep the face in view */
+  background:
+    radial-gradient(circle at 70% 18%, rgba(125, 240, 189, 0.55) 0%, transparent 55%),
+    linear-gradient(165deg, #2fbf86 0%, #138a6c 52%, #0b5a55 100%);
   border: 3px solid #64ffda;
   box-shadow: 0 0 0 4px #2d2d2d, 0 8px 24px rgba(63, 207, 142, 0.25);
   display: block;
@@ -153,7 +155,7 @@ a:focus-visible, .btn:focus-visible {
 @media (min-width: 900px) {
   .home {
     display: grid;
-    grid-template-columns: clamp(170px, 20vw, 260px) 1fr;
+    grid-template-columns: clamp(190px, 20vw, 280px) 1fr;
     grid-template-areas:
       "pic bio"
       "pic skills";
@@ -165,7 +167,7 @@ a:focus-visible, .btn:focus-visible {
     text-align: left;
   }
   .profile-pic {
-    --pic: clamp(170px, 20vw, 260px);
+    --pic: clamp(190px, 20vw, 280px);
     grid-area: pic;
     margin: 0;
     justify-self: center;
