@@ -3,11 +3,18 @@
     font-family: 'Arial', sans-serif;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+}
+
 body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    min-height: 100dvh;      /* correct height on phones with collapsing browser bars */
+    padding: 16px;
     background: linear-gradient(135deg, #74ebd5, #ACB6E5);
     margin: 0;
 }
@@ -15,35 +22,50 @@ body {
 .game-container {
     text-align: center;
     background: rgba(255,255,255,0.9);
-    padding: 20px;
+    padding: clamp(14px, 4vw, 28px);
     border-radius: 20px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    max-width: 400px;
-    width: 90%;
+    width: 100%;
+    max-width: 440px;
 }
 
 h1 {
-    margin-bottom: 20px;
+    margin: 0 0 clamp(12px, 3vw, 20px);
+    font-size: clamp(1.5rem, 7vw, 2.2rem);
 }
 
 .settings {
-    margin-bottom: 20px;
+    margin-bottom: clamp(12px, 3vw, 20px);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px 12px;
+}
+
+.settings label {
+    font-size: 0.95rem;
 }
 
 .settings select, .settings button {
-    margin: 5px;
-    padding: 5px 10px;
+    margin: 0;
+    padding: 8px 12px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    font-size: 16px;
+    font-size: 16px;          /* 16px stops iOS from zooming into the dropdowns */
+    min-height: 40px;
 }
 
+/* Square board that always fits inside the card */
 .board {
     display: grid;
-    grid-template-columns: repeat(3, 100px);
-    grid-template-rows: repeat(3, 100px);
-    gap: 10px;
-    justify-content: center;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: clamp(6px, 2vw, 10px);
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+    aspect-ratio: 1 / 1;
 }
 
 .cell {
@@ -52,9 +74,13 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2.5rem;
+    font-size: clamp(2rem, 11vw, 3.2rem);
     cursor: pointer;
     transition: 0.3s;
+    min-width: 0;
+    min-height: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .cell:hover {
@@ -75,11 +101,30 @@ h1 {
 
 .info {
     margin-top: 15px;
-    font-size: 18px;
+    font-size: clamp(1rem, 4.5vw, 1.2rem);
     font-weight: bold;
+}
+
+#play-again {
+    margin-top: 10px;
+    padding: 10px 18px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
 }
 
 .scoreboard {
     margin-top: 15px;
-    font-size: 16px;
+    font-size: clamp(0.9rem, 3.8vw, 1rem);
+}
+
+/* Short landscape phones: shrink the board so everything is reachable */
+@media (max-height: 520px) and (orientation: landscape) {
+    body { align-items: flex-start; }
+    .board { max-width: min(240px, 55vh); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cell.win { animation: none; }
 }

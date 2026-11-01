@@ -15,7 +15,8 @@
 
     body {
       background: linear-gradient(145deg, #0f0f0f, #1a1a1a);
-      height: 100vh;
+      min-height: 100vh;
+      min-height: 100dvh;   /* never cut off on short / landscape screens */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -29,7 +30,7 @@
       border-radius: 20px;
       padding: 20px;
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
@@ -37,13 +38,14 @@
       background: rgba(255, 255, 255, 0.05);
       border-radius: 12px;
       padding: 16px;
-      font-size: 28px;
+      font-size: clamp(24px, 7vw, 32px);
       color: #ffffff;
       text-align: right;
       margin-bottom: 20px;
       min-height: 60px;
       overflow: hidden;
       word-wrap: break-word;
+      overflow-wrap: anywhere;
     }
 
     .buttons {
@@ -62,6 +64,8 @@
       cursor: pointer;
       transition: all 0.2s ease;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      touch-action: manipulation;
+      min-width: 0;
     }
 
     button:hover {
@@ -93,15 +97,29 @@
     }
 
     @media (max-width: 400px) {
+      body { padding: 12px; }
+
+      .calculator { padding: 14px; }
+
+      .buttons { gap: 8px; }
+
       .display {
-        font-size: 24px;
         padding: 14px;
       }
 
       button {
-        padding: 16px;
+        padding: 16px 0;
         font-size: 16px;
       }
+    }
+
+    /* Short landscape screens: compact keys so the whole calculator is visible */
+    @media (max-height: 560px) and (orientation: landscape) {
+      body { align-items: flex-start; padding: 10px; }
+      .calculator { padding: 12px; max-width: 420px; }
+      .display { margin-bottom: 10px; min-height: 44px; padding: 8px 14px; font-size: 22px; }
+      .buttons { gap: 6px; }
+      button { padding: 8px 0; font-size: 15px; border-radius: 10px; }
     }
   </style>
 </head>

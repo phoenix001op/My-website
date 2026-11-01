@@ -11,6 +11,7 @@ html, body {
   padding: 0;
   width: 100%;
   height: 100%;
+  height: 100dvh;       /* matches the visible area on phones with collapsing browser bars */
   font-family: Arial, sans-serif;
   overflow: hidden;
   background: #1f1f1f;   /* not pure black */
@@ -79,6 +80,8 @@ body.light-mode button:hover {
 #home h1 {
   margin-bottom: 20px;
   letter-spacing: 1px;
+  font-size: clamp(1.5rem, 6vw, 2.6rem);
+  padding: 0 16px;
 }
 
 /* ===============================
@@ -87,7 +90,7 @@ body.light-mode button:hover {
 #settings {
   display: none;
   background: rgba(0,0,0,0.85);
-  padding: 25px 35px;
+  padding: clamp(16px, 4vw, 25px) clamp(18px, 5vw, 35px);
   border-radius: 12px;
   text-align: center;
 }
@@ -104,6 +107,7 @@ body.light-mode #settings {
   display: none;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   position: relative;
   overflow: hidden;
 }
@@ -146,8 +150,9 @@ body.light-mode #bulletCounter {
    PISTOL IMAGE
 ================================ */
 #pistol {
-  width: min(75vw, 320px);
+  width: min(75vw, 320px, 55vh);
   max-width: 85vw;
+  height: auto;
   position: absolute;
   bottom: 12vh;
   left: 50%;
@@ -165,8 +170,8 @@ body.light-mode #bulletCounter {
 ================================ */
 #flash {
   position: absolute;
-  width: 180px;
-  height: 180px;
+  width: clamp(120px, 30vmin, 220px);
+  height: clamp(120px, 30vmin, 220px);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -243,4 +248,38 @@ body.light-mode #howToPlayBtn::after {
   margin-left: auto;
   margin-right: auto;
   display: block;
+}
+
+/* ===== LARGE SCREENS (laptop / desktop / TV) ===== */
+@media (min-width: 1100px) and (min-height: 700px) {
+  #pistol {
+    width: min(34vw, 520px);
+  }
+  #bulletCounter {
+    font-size: 1.3rem;
+  }
+}
+
+/* ===== SHORT LANDSCAPE PHONES ===== */
+@media (max-height: 480px) and (orientation: landscape) {
+  #pistol {
+    bottom: 6vh;
+    width: min(40vw, 260px);
+  }
+  #home h1 {
+    margin-bottom: 8px;
+  }
+  button {
+    margin: 4px;
+    padding: 8px 20px;
+  }
+  #home button {
+    display: inline-block;
+  }
+  .home-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
 }
