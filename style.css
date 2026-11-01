@@ -128,8 +128,8 @@ a:focus-visible, .btn:focus-visible {
   object-fit: cover;
   object-position: 50% 8%;            /* keep the face in view */
   background:
-    radial-gradient(circle at 70% 18%, rgba(125, 240, 189, 0.55) 0%, transparent 55%),
-    linear-gradient(165deg, #2fbf86 0%, #138a6c 52%, #0b5a55 100%);
+    radial-gradient(circle at 70% 18%, rgba(63, 207, 142, 0.18) 0%, transparent 55%),
+    linear-gradient(165deg, #2d2d2d 0%, #1b1b1b 60%, #111 100%);   /* same blacks as the site */
   border: 3px solid #64ffda;
   box-shadow: 0 0 0 4px #2d2d2d, 0 8px 24px rgba(63, 207, 142, 0.25);
   display: block;
