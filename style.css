@@ -120,12 +120,16 @@ a:focus-visible, .btn:focus-visible {
 }
 
 .profile-pic {
-  width: clamp(120px, 38vw, 170px);
+  --pic: clamp(100px, 30vw, 140px);   /* photo size: scales with the screen */
+  width: var(--pic);
   aspect-ratio: 1 / 1;
   height: auto;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: contain;
+  padding: calc(var(--pic) * 0.17);   /* keeps the character off the edge of the circle */
+  background: radial-gradient(circle at 50% 30%, #7df0bd 0%, #3fcf8e 55%, #1f8f63 100%);
   border: 3px solid #64ffda;
+  box-shadow: 0 0 0 4px #2d2d2d, 0 8px 24px rgba(63, 207, 142, 0.25);
   display: block;
   margin: 0 auto 20px auto;
 }
@@ -149,7 +153,7 @@ a:focus-visible, .btn:focus-visible {
 @media (min-width: 900px) {
   .home {
     display: grid;
-    grid-template-columns: clamp(220px, 26vw, 340px) 1fr;
+    grid-template-columns: clamp(170px, 20vw, 260px) 1fr;
     grid-template-areas:
       "pic bio"
       "pic skills";
@@ -161,8 +165,8 @@ a:focus-visible, .btn:focus-visible {
     text-align: left;
   }
   .profile-pic {
+    --pic: clamp(170px, 20vw, 260px);
     grid-area: pic;
-    width: 100%;
     margin: 0;
     justify-self: center;
   }
