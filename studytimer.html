@@ -2,36 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#11151c" id="themeColor" />
   <title>Padh Lo</title>
-  <link rel="stylesheet" href="studytimer.css">
+  <script>
+    /* apply the saved theme before first paint so there is no flash */
+    (function () {
+      try {
+        var t = localStorage.getItem('padhlo_theme');
+        if (t !== 'night' && t !== 'notebook' && t !== 'board') {
+          t = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'notebook' : 'night';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'night');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Martian+Mono:wght@400..600&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="studytimer.css">
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
-<div class="screen" id="loginScreen">
-  <div class="container login-container">
-    <div class="login-logo"><i class="fas fa-graduation-cap"></i></div>
-    <h1 class="welcome-title">Padh Lo</h1>
-    <p class="login-subtitle">Track study time, earn XP, and level up!</p>
-    <input id="usernameInput" placeholder="Enter your name" class="login-input" onkeydown="if(event.key==='Enter') login()" />
-    <button class="login-btn" onclick="login()">
-      <i class="fas fa-rocket"></i> Start Studying
-    </button>
-  </div>
+<!-- LOGIN -->
+<div class="screen screen--center" id="loginScreen">
+  <main class="login">
+    <div class="login-mark" aria-hidden="true"><i class="fas fa-graduation-cap"></i></div>
+    <h1>Padh Lo</h1>
+    <p>Time your study sessions, earn XP, and see how far you get this month.</p>
+    <label for="usernameInput" class="sr-only">Your name</label>
+    <input id="usernameInput" class="field" placeholder="Your name" maxlength="30" autocomplete="given-name"
+           onkeydown="if(event.key==='Enter') login()" />
+    <button class="btn btn-primary btn-block" onclick="login()">Start studying</button>
+  </main>
 </div>
 
-<!-- MUSIC PLAYER -->
-<div class="music-player hidden" id="musicPlayer">
+<!-- MUSIC -->
+<div class="music-player hidden" id="musicPlayer" role="region" aria-label="Music player">
   <div class="music-header">
     <span class="music-title"><i class="fas fa-music"></i> Music</span>
-    <button class="music-close-btn" onclick="toggleMusicPlayer()"><i class="fas fa-times"></i></button>
+    <button class="music-close" onclick="toggleMusicPlayer()" aria-label="Close music player"><i class="fas fa-times"></i></button>
   </div>
   <div class="music-controls">
-    <button class="music-btn" onclick="playMusic()"><i class="fas fa-play"></i></button>
-    <button class="music-btn" onclick="pauseMusic()"><i class="fas fa-pause"></i></button>
-    <button class="music-btn" onclick="stopMusic()"><i class="fas fa-stop"></i></button>
+    <button class="music-btn" onclick="playMusic()" aria-label="Play"><i class="fas fa-play"></i></button>
+    <button class="music-btn alt" onclick="pauseMusic()" aria-label="Pause music"><i class="fas fa-pause"></i></button>
+    <button class="music-btn alt" onclick="stopMusic()" aria-label="Stop"><i class="fas fa-stop"></i></button>
   </div>
   <div class="track-selector">
     <button class="track-btn active" onclick="selectTrack(1, this)"><i class="fas fa-water"></i> Drifting Away</button>
@@ -41,153 +59,172 @@
   </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- HOME -->
 <div class="screen hidden" id="appScreen">
-  <div class="container" id="mainPage">
+  <div class="shell" id="mainPage">
 
-    <!-- Header Navigation -->
-    <div class="header-nav">
-      <div class="user-info" id="userLabel">
-        <i class="fas fa-user"></i> Guest
-      </div>
-      <div class="nav-icons">
-        <button class="nav-btn" onclick="toggleMusicPlayer()" title="Music"><i class="fas fa-music"></i></button>
-        <button class="nav-btn" onclick="openTodo()" title="Tasks"><i class="fas fa-list-check"></i></button>
-        <button class="nav-btn" onclick="openCalendar()" title="Calendar"><i class="fas fa-calendar"></i></button>
-        <button class="nav-btn" onclick="openStats()" title="Stats"><i class="fas fa-chart-bar"></i></button>
-        <button class="nav-btn" onclick="openRank()" title="Rank"><i class="fas fa-trophy"></i></button>
-        <button class="nav-btn logout-btn" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
-      </div>
-    </div>
+    <header class="topbar">
+      <div class="user" id="userLabel"><i class="fas fa-user" aria-hidden="true"></i><span id="userName">Guest</span></div>
+      <nav class="nav" aria-label="Main">
+        <button class="nav-btn" onclick="toggleMusicPlayer()" aria-label="Music"><i class="fas fa-music"></i><span>Music</span></button>
+        <button class="nav-btn" onclick="openTodo()" aria-label="Tasks"><i class="fas fa-list-check"></i><span>Tasks</span></button>
+        <button class="nav-btn" onclick="openCalendar()" aria-label="Calendar"><i class="fas fa-calendar"></i><span>Calendar</span></button>
+        <button class="nav-btn" onclick="openStats()" aria-label="Stats"><i class="fas fa-chart-simple"></i><span>Stats</span></button>
+        <button class="nav-btn" onclick="openRank()" aria-label="Rank"><i class="fas fa-trophy"></i><span>Rank</span></button>
+        <button class="nav-btn logout" onclick="logout()" aria-label="Log out"><i class="fas fa-right-from-bracket"></i><span>Log out</span></button>
+      </nav>
+    </header>
 
-    <!-- XP Progress Bar -->
-    <div class="xp-container">
-      <div class="xp-header">
-        <span><i class="fas fa-star"></i> XP: <span id="currentXP">0</span></span>
-        <span>Level <span id="currentLevel">1</span></span>
-      </div>
-      <div class="xp-progress-bar">
-        <div class="xp-progress-fill" id="xpProgressFill"></div>
-      </div>
-      <div class="xp-footer">
-        <span id="xpToNext">50 XP to next level</span>
-      </div>
-    </div>
+    <div class="home">
+      <section class="timer-panel" id="timerCard" data-state="idle" data-mode="study" aria-label="Study timer">
+        <div class="ring" id="ring">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle class="ring-track" cx="50" cy="50" r="46" />
+            <circle class="ring-fill" id="ringFill" cx="50" cy="50" r="46" pathLength="100" />
+          </svg>
+          <div class="ring-center">
+            <div class="timer" id="display" role="timer">00:00:00</div>
+            <div class="status" id="status">Ready to study</div>
+          </div>
+        </div>
 
-    <!-- Timer Section -->
-    <h2 class="main-title"><i class="fas fa-clock"></i> Study Timer</h2>
-    <div class="timer" id="display">00:00:00</div>
-    <div class="status" id="status">Ready to study <i class="fas fa-book-open"></i></div>
+        <div class="setup" id="setup">
+          <div class="presets" role="group" aria-label="Quick durations">
+            <button class="preset" data-min="25" onclick="applyPreset(25)">25 min</button>
+            <button class="preset" data-min="45" onclick="applyPreset(45)">45 min</button>
+            <button class="preset" data-min="60" onclick="applyPreset(60)">1 hour</button>
+            <button class="preset" data-min="90" onclick="applyPreset(90)">90 min</button>
+          </div>
+          <div class="time-inputs">
+            <div class="tfield">
+              <label for="setHr">hours</label>
+              <input type="number" id="setHr" placeholder="0" min="0" max="24" inputmode="numeric" oninput="previewFromInputs()">
+            </div>
+            <span class="colon" aria-hidden="true">:</span>
+            <div class="tfield">
+              <label for="setMin">min</label>
+              <input type="number" id="setMin" placeholder="0" min="0" max="59" inputmode="numeric" oninput="previewFromInputs()">
+            </div>
+            <span class="colon" aria-hidden="true">:</span>
+            <div class="tfield">
+              <label for="setSec">sec</label>
+              <input type="number" id="setSec" placeholder="0" min="0" max="59" inputmode="numeric" oninput="previewFromInputs()">
+            </div>
+          </div>
+        </div>
 
-    <!-- Time Inputs -->
-    <div class="inputs">
-      <div class="input-group">
-        <label>HH</label>
-        <input type="number" id="setHr" placeholder="0" min="0" max="24">
-      </div>
-      <div class="input-divider">:</div>
-      <div class="input-group">
-        <label>MM</label>
-        <input type="number" id="setMin" placeholder="0" min="0" max="59">
-      </div>
-      <div class="input-divider">:</div>
-      <div class="input-group">
-        <label>SS</label>
-        <input type="number" id="setSec" placeholder="0" min="0" max="59">
-      </div>
-    </div>
+        <div class="controls">
+          <button class="btn btn-primary" id="startBtn" onclick="startTimer()"><i class="fas fa-play"></i> <span id="startLabel">Start</span></button>
+          <button class="btn btn-secondary" id="pauseBtn" onclick="pauseTimer()"><i class="fas fa-pause"></i> Pause</button>
+          <button class="btn btn-danger" id="resetBtn" onclick="resetTimer()"><i class="fas fa-rotate-left"></i> Reset</button>
+        </div>
 
-    <!-- Timer Controls -->
-    <div class="button-row">
-      <button class="btn-primary" onclick="startTimer()"><i class="fas fa-play"></i> Start</button>
-      <button class="btn-secondary" onclick="pauseTimer()"><i class="fas fa-pause"></i> Pause</button>
-      <button class="btn-danger" onclick="resetTimer()"><i class="fas fa-redo"></i> Reset</button>
-    </div>
+        <div class="extras">
+          <button class="btn btn-quiet" id="breakToggle" onclick="toggleBreak()" aria-expanded="false" aria-controls="breakOptions"><i class="fas fa-mug-hot"></i> Break</button>
+          <button class="btn btn-quiet" id="themeToggle" onclick="toggleBg()" aria-expanded="false" aria-controls="bgOptions"><i class="fas fa-circle-half-stroke"></i> Theme</button>
+        </div>
 
-    <!-- Options -->
-    <div class="button-row">
-      <button class="btn-option" onclick="toggleBreak()"><i class="fas fa-coffee"></i> Break</button>
-      <button class="btn-option" onclick="toggleBg()"><i class="fas fa-palette"></i> Theme</button>
-    </div>
+        <div id="breakOptions" class="panel hidden">
+          <h3>Break length</h3>
+          <div class="panel-grid">
+            <button class="btn btn-secondary" onclick="startBreak(5)">5 min</button>
+            <button class="btn btn-secondary" onclick="startBreak(10)">10 min</button>
+            <button class="btn btn-secondary" onclick="startBreak(15)">15 min</button>
+          </div>
+        </div>
 
-    <!-- Break Options -->
-    <div id="breakOptions" class="options-container hidden">
-      <h3>Break Duration</h3>
-      <div class="break-buttons">
-        <button class="btn-break" onclick="startBreak(5)"><i class="fas fa-clock"></i> 5 Min</button>
-        <button class="btn-break" onclick="startBreak(10)"><i class="fas fa-clock"></i> 10 Min</button>
-        <button class="btn-break" onclick="startBreak(15)"><i class="fas fa-clock"></i> 15 Min</button>
-      </div>
-    </div>
+        <div id="bgOptions" class="panel hidden">
+          <h3>Theme</h3>
+          <div class="panel-grid">
+            <button class="theme-btn" data-theme-btn="night" aria-pressed="false" onclick="setTheme('night')"><span class="swatch swatch-night"></span>Night</button>
+            <button class="theme-btn" data-theme-btn="notebook" aria-pressed="false" onclick="setTheme('notebook')"><span class="swatch swatch-notebook"></span>Notebook</button>
+            <button class="theme-btn" data-theme-btn="board" aria-pressed="false" onclick="setTheme('board')"><span class="swatch swatch-board"></span>Board</button>
+          </div>
+        </div>
 
-    <!-- Theme Options -->
-    <div id="bgOptions" class="options-container hidden">
-      <h3>Select Theme</h3>
-      <div class="theme-buttons">
-        <button class="btn-theme theme-purple" onclick="changeBg(1)"><i class="fas fa-moon"></i> Purple</button>
-        <button class="btn-theme theme-ocean" onclick="changeBg(2)"><i class="fas fa-water"></i> Ocean</button>
-        <button class="btn-theme theme-sunset" onclick="changeBg(3)"><i class="fas fa-sun"></i> Sunset</button>
-      </div>
-    </div>
+        <p class="xp-rule">30 min earns 25 XP. 1 hour earns 50 XP.</p>
+      </section>
 
-    <div class="session-info">
-      <p><i class="fas fa-info-circle"></i> 30 min = 25 XP &nbsp;|&nbsp; 1 hour = 50 XP</p>
+      <aside class="side" aria-label="Your progress">
+        <section class="side-block">
+          <div class="block-head">
+            <h2>This month</h2>
+            <span class="muted small" id="homeMonth"></span>
+          </div>
+          <div class="rank-now">
+            <span class="badge" id="homeBadge" data-rank="1"><i class="fas fa-seedling"></i></span>
+            <div>
+              <strong id="homeRank">Beginner</strong>
+              <span class="muted"><span id="currentXP">0</span> XP</span>
+            </div>
+          </div>
+          <div class="ladder" role="presentation">
+            <div class="ladder-fill" id="xpProgressFill"></div>
+            <i class="tick" style="left:10%"></i><i class="tick" style="left:20%"></i><i class="tick" style="left:40%"></i><i class="tick" style="left:75%"></i>
+          </div>
+          <p class="muted small" id="xpToNext"></p>
+          <p class="muted small" id="homeReset"></p>
+        </section>
+
+        <section class="side-block">
+          <div class="block-head"><h2>Today</h2></div>
+          <dl class="rows">
+            <div><dt>Studied</dt><dd id="todayTime">0m</dd></div>
+            <div><dt>Sessions</dt><dd id="todaySessions">0</dd></div>
+            <div><dt>Streak</dt><dd id="streakHome">0 days</dd></div>
+          </dl>
+          <p class="muted small" id="todayDelta"></p>
+        </section>
+      </aside>
     </div>
   </div>
 </div>
 
-<!-- TODO PAGE -->
+<!-- TASKS -->
 <div class="screen hidden" id="todoPage">
-  <div class="container">
-    <div class="page-header">
-      <button class="back-btn" onclick="closeTodo()"><i class="fas fa-arrow-left"></i> Back</button>
-      <h1><i class="fas fa-list-check"></i> Today's Tasks</h1>
+  <div class="shell shell--page">
+    <div class="page-head">
+      <button class="btn btn-quiet back-btn" onclick="closeTodo()"><i class="fas fa-arrow-left"></i> Back</button>
+      <h1>Today's tasks</h1>
     </div>
-
     <div class="todo-date" id="todoDateLabel"></div>
-
     <div class="todo-input-row">
-      <input type="text" id="todoInput" class="todo-input" placeholder="What do you want to do today?" onkeydown="if(event.key==='Enter') addTodo()" maxlength="100" />
-      <button class="todo-add-btn" onclick="addTodo()"><i class="fas fa-plus"></i></button>
+      <label for="todoInput" class="sr-only">New task</label>
+      <input type="text" id="todoInput" class="field" placeholder="What do you want to get done?" maxlength="100"
+             onkeydown="if(event.key==='Enter') addTodo()" />
+      <button class="btn btn-primary" onclick="addTodo()" aria-label="Add task"><i class="fas fa-plus"></i></button>
     </div>
-
     <div class="todo-stats-row">
-      <span id="todoProgress">0 / 0 done</span>
-      <button class="todo-clear-btn" onclick="clearDoneTodos()"><i class="fas fa-broom"></i> Clear Done</button>
+      <span id="todoProgress">0 of 0 done</span>
+      <button class="btn btn-quiet todo-clear-btn" onclick="clearDoneTodos()">Clear done</button>
     </div>
-
-    <div id="todoList" class="todo-list">
-      <div class="todo-empty" id="todoEmpty"><i class="fas fa-clipboard-list"></i><br>No tasks yet. Add something!</div>
-    </div>
+    <div id="todoList" class="todo-list"></div>
   </div>
 </div>
 
-<!-- CALENDAR PAGE -->
+<!-- CALENDAR -->
 <div class="screen hidden" id="calendarPage">
-  <div class="container">
-    <div class="page-header">
-      <button class="back-btn" onclick="closeCalendar()"><i class="fas fa-arrow-left"></i> Back</button>
-      <h1><i class="fas fa-calendar-alt"></i> Calendar</h1>
+  <div class="shell shell--page">
+    <div class="page-head">
+      <button class="btn btn-quiet back-btn" onclick="closeCalendar()"><i class="fas fa-arrow-left"></i> Back</button>
+      <h1>Calendar</h1>
     </div>
-    <div class="calendar-header">
-      <button class="calendar-nav-btn" onclick="changeCalendarMonth(-1)"><i class="fas fa-chevron-left"></i></button>
-      <div class="calendar-month-year" id="calendarMonthYear"></div>
-      <button class="calendar-nav-btn" onclick="changeCalendarMonth(1)"><i class="fas fa-chevron-right"></i></button>
-    </div>
-    <div class="streak-display" id="streak"><i class="fas fa-fire"></i> Current Streak: 0 days</div>
-    <div class="calendar-grid">
-      <div class="calendar-day-header">Sun</div>
-      <div class="calendar-day-header">Mon</div>
-      <div class="calendar-day-header">Tue</div>
-      <div class="calendar-day-header">Wed</div>
-      <div class="calendar-day-header">Thu</div>
-      <div class="calendar-day-header">Fri</div>
-      <div class="calendar-day-header">Sat</div>
-    </div>
-    <div id="calendarDays" class="calendar-days"></div>
-    <div id="dateDetails" class="date-details hidden">
-      <h3 id="selectedDateTitle"></h3>
-      <div class="date-stats">
+    <div class="calendar">
+      <div class="calendar-header">
+        <button class="calendar-nav" onclick="changeCalendarMonth(-1)" aria-label="Previous month"><i class="fas fa-chevron-left"></i></button>
+        <div class="calendar-month-year" id="calendarMonthYear" aria-live="polite"></div>
+        <button class="calendar-nav" onclick="changeCalendarMonth(1)" aria-label="Next month"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <p class="streak-line" id="streak"></p>
+      <div class="calendar-grid" aria-hidden="true">
+        <div class="calendar-day-header">Sun</div><div class="calendar-day-header">Mon</div>
+        <div class="calendar-day-header">Tue</div><div class="calendar-day-header">Wed</div>
+        <div class="calendar-day-header">Thu</div><div class="calendar-day-header">Fri</div>
+        <div class="calendar-day-header">Sat</div>
+      </div>
+      <div id="calendarDays" class="calendar-grid"></div>
+      <div id="dateDetails" class="date-details hidden">
+        <h3 id="selectedDateTitle"></h3>
         <p id="selectedDateStudyTime"></p>
         <p id="selectedDateXP"></p>
       </div>
@@ -195,119 +232,87 @@
   </div>
 </div>
 
-<!-- STATS PAGE -->
+<!-- STATS -->
 <div class="screen hidden" id="statsPage">
-  <div class="container">
-    <div class="page-header">
-      <button class="back-btn" onclick="closeStats()"><i class="fas fa-arrow-left"></i> Back</button>
-      <h1><i class="fas fa-chart-line"></i> Statistics</h1>
+  <div class="shell shell--wide">
+    <div class="page-head">
+      <button class="btn btn-quiet back-btn" onclick="closeStats()"><i class="fas fa-arrow-left"></i> Back</button>
+      <h1>Statistics</h1>
     </div>
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon"><i class="fas fa-clock"></i></div>
-        <div class="stat-value" id="totalStudyTime">0h 0m</div>
-        <div class="stat-label">Total Study Time</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon"><i class="fas fa-star"></i></div>
-        <div class="stat-value" id="totalXP">0</div>
-        <div class="stat-label">Total XP Earned</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
-        <div class="stat-value" id="studyDays">0</div>
-        <div class="stat-label">Study Days</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon"><i class="fas fa-trophy"></i></div>
-        <div class="stat-value" id="currentLevelStat">1</div>
-        <div class="stat-label">Current Level</div>
-      </div>
+    <div class="metrics">
+      <div class="metric"><div class="metric-value" id="totalStudyTime">0m</div><div class="metric-label">Total study time</div></div>
+      <div class="metric"><div class="metric-value" id="totalXP">0</div><div class="metric-label">XP earned, all time</div></div>
+      <div class="metric"><div class="metric-value" id="studyDays">0</div><div class="metric-label">Days studied</div></div>
+      <div class="metric"><div class="metric-value" id="currentLevelStat">Beginner</div><div class="metric-label">Rank this month</div></div>
     </div>
-    <div class="stats-section">
-      <h3><i class="fas fa-history"></i> Recent Sessions</h3>
-      <div id="weeklyStats" class="stats-details"></div>
-    </div>
-    <div class="stats-section">
-      <h3><i class="fas fa-calendar-week"></i> This Week</h3>
-      <div id="weekly" class="stats-details"></div>
-    </div>
-    <div class="stats-section">
-      <h3><i class="fas fa-calendar-alt"></i> This Month</h3>
-      <div id="monthly" class="stats-details"></div>
-    </div>
-    <div class="stats-section">
-      <h3><i class="fas fa-award"></i> XP History</h3>
-      <div id="xpHistory" class="stats-details"></div>
+    <div class="stats-cols">
+      <section class="section">
+        <h2>Time studied</h2>
+        <div id="weekly"></div>
+        <div id="monthly"></div>
+      </section>
+      <section class="section">
+        <h2>Recent sessions</h2>
+        <div id="weeklyStats"></div>
+      </section>
+      <section class="section">
+        <h2>XP history</h2>
+        <div id="xpHistory"></div>
+      </section>
     </div>
   </div>
 </div>
 
-<!-- RANK PAGE -->
+<!-- RANK -->
 <div class="screen hidden" id="rankPage">
-  <div class="container">
-    <div class="page-header">
-      <button class="back-btn" onclick="closeRank()"><i class="fas fa-arrow-left"></i> Back</button>
-      <h1><i class="fas fa-trophy"></i> Rank & Levels</h1>
+  <div class="shell shell--page">
+    <div class="page-head">
+      <button class="btn btn-quiet back-btn" onclick="closeRank()"><i class="fas fa-arrow-left"></i> Back</button>
+      <h1>Rank</h1>
     </div>
-    <div class="level-card">
-      <div class="level-header">
-        <div class="level-icon"><i class="fas fa-user-graduate"></i></div>
-        <div class="level-info">
-          <h2 id="currentRank">Beginner</h2>
-          <div class="level-progress">
-            <div class="level-progress-bar">
-              <div class="level-progress-fill" id="levelProgressFill"></div>
-            </div>
-            <span class="level-text">Level <span id="levelNumber">1</span></span>
-          </div>
-        </div>
-      </div>
-      <div class="level-stats">
-        <div class="level-stat">
-          <span>Current XP</span>
-          <strong id="rankCurrentXP">0</strong>
-        </div>
-        <div class="level-stat">
-          <span>XP to Next Level</span>
-          <strong id="rankXpToNext">50</strong>
-        </div>
+
+    <div class="rank-hero">
+      <span class="badge badge--lg" id="rankBadge" data-rank="1"><i class="fas fa-seedling"></i></span>
+      <div>
+        <h2 id="rankName">Beginner</h2>
+        <p><span id="rankXP">0</span> XP in <span id="rankMonth"></span></p>
       </div>
     </div>
-    <div class="levels-container">
-      <h3><i class="fas fa-mountain"></i> Level System</h3>
-      <div class="levels-list">
-        <div class="level-item" data-level="1">
-          <div class="level-badge beginner"><i class="fas fa-seedling"></i></div>
-          <div class="level-details"><h4>Beginner</h4><p>0 - 50 XP</p></div>
-        </div>
-        <div class="level-item" data-level="2">
-          <div class="level-badge learner"><i class="fas fa-book-reader"></i></div>
-          <div class="level-details"><h4>Learner</h4><p>51 - 150 XP</p></div>
-        </div>
-        <div class="level-item" data-level="3">
-          <div class="level-badge focused"><i class="fas fa-brain"></i></div>
-          <div class="level-details"><h4>Focused</h4><p>151 - 400 XP</p></div>
-        </div>
-        <div class="level-item" data-level="4">
-          <div class="level-badge elite"><i class="fas fa-crown"></i></div>
-          <div class="level-details"><h4>Elite</h4><p>401 - 750 XP</p></div>
-        </div>
-        <div class="level-item" data-level="5">
-          <div class="level-badge master"><i class="fas fa-star"></i></div>
-          <div class="level-details"><h4>Master</h4><p>751 - 1000 XP</p></div>
-        </div>
-      </div>
+    <div class="ladder ladder--lg" role="presentation">
+      <div class="ladder-fill" id="rankFill"></div>
+      <i class="tick" style="left:10%"></i><i class="tick" style="left:20%"></i><i class="tick" style="left:40%"></i><i class="tick" style="left:75%"></i>
     </div>
-    <div class="rank-tips">
-      <h3><i class="fas fa-lightbulb"></i> Tips to Level Up</h3>
-      <ul>
-        <li><i class="fas fa-check-circle"></i> Study 30 minutes = 25 XP</li>
-        <li><i class="fas fa-check-circle"></i> Study 1 hour = 50 XP</li>
-        <li><i class="fas fa-check-circle"></i> Maintain a daily streak for bonus XP</li>
-        <li><i class="fas fa-check-circle"></i> Complete sessions without breaks for extra XP</li>
-      </ul>
-    </div>
+    <p class="muted" id="rankToNext"></p>
+    <p class="muted small" id="rankReset"></p>
+    <p class="muted small" id="rankLevelText"></p>
+
+    <ul class="rank-list" aria-label="All ranks">
+      <li class="rank-item" data-level="1"><span class="badge" data-rank="1"><i class="fas fa-seedling"></i></span><div><strong>Beginner</strong><span class="muted">0 to 100 XP</span></div><i class="fas fa-check reached-mark" aria-label="Passed"></i></li>
+      <li class="rank-item" data-level="2"><span class="badge" data-rank="2"><i class="fas fa-book-open-reader"></i></span><div><strong>Learner</strong><span class="muted">101 to 200 XP</span></div><i class="fas fa-check reached-mark" aria-label="Passed"></i></li>
+      <li class="rank-item" data-level="3"><span class="badge" data-rank="3"><i class="fas fa-brain"></i></span><div><strong>Focused</strong><span class="muted">201 to 400 XP</span></div><i class="fas fa-check reached-mark" aria-label="Passed"></i></li>
+      <li class="rank-item" data-level="4"><span class="badge" data-rank="4"><i class="fas fa-crown"></i></span><div><strong>Elite</strong><span class="muted">401 to 750 XP</span></div><i class="fas fa-check reached-mark" aria-label="Passed"></i></li>
+      <li class="rank-item" data-level="5"><span class="badge" data-rank="5"><i class="fas fa-star"></i></span><div><strong>Master</strong><span class="muted">751 to 1000 XP</span></div><i class="fas fa-check reached-mark" aria-label="Passed"></i></li>
+    </ul>
+
+    <section class="section">
+      <h2>Past months</h2>
+      <div id="rankHistory"></div>
+    </section>
+
+    <section class="section">
+      <h2>How XP works</h2>
+      <table class="xp-table">
+        <tbody>
+          <tr><th scope="row">1 to 4 minutes</th><td>1 XP</td></tr>
+          <tr><th scope="row">5 to 14 minutes</th><td>5 XP</td></tr>
+          <tr><th scope="row">15 to 29 minutes</th><td>10 XP</td></tr>
+          <tr><th scope="row">30 to 59 minutes</th><td>25 XP</td></tr>
+          <tr><th scope="row">1 hour</th><td>50 XP</td></tr>
+          <tr><th scope="row">Each extra 30 minutes after 1 hour</th><td>+25 XP</td></tr>
+        </tbody>
+      </table>
+      <p class="note">XP is added when you pause or when the timer ends. Your rank resets to Beginner on the 1st of every month. Past months are saved above.</p>
+    </section>
   </div>
 </div>
 
