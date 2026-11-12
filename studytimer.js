@@ -943,6 +943,7 @@ const ST_CAT_LABEL = { productive: 'Productive', distracting: 'Distracting', oth
 let stView = 'daily';
 let stDate = new Date();
 let stOpenRow = null;
+let stExtSeen = false; // the tracker said hello on this page load
 
 function stIsSite(name) { return name.includes('.') && !/\.exe$/i.test(name); }
 
@@ -989,6 +990,9 @@ function stDayData(dateStr) {
     for (const [k, v] of Object.entries(day)) out[k] = (out[k] || 0) + (Number(v) || 0);
   });
   return out;
+}
+function stDayOpens(dateStr) {
+  return getData('stOpens', {})[dateStr] || {};
 }
 function stSum(data) {
   const t = { productive: 0, distracting: 0, other: 0, total: 0 };
@@ -1083,17 +1087,22 @@ function renderScreenTime() {
   // dimmed bars still need a visible height: paint them with the neutral colour
   document.querySelectorAll('#stChart .bar--dim').forEach(b => { b.style.background = 'var(--st-dim)'; });
 
-  renderScreenList(weekly ? perDay : [perDay[selIndex]]);
+  renderScreenList(weekly ? perDay : [perDay[selIndex]], weekly ? days : [days[selIndex]]);
   renderTrackerStatus();
 }
 
-function renderScreenList(sources) {
+function renderScreenList(sources, dates) {
   const list = document.getElementById('stList');
   if (!list) return;
   if (!sources) {
     const days = stWeekDays(stDate);
-    sources = stView === 'weekly' ? days.map(d => stDayData(localDateStr(d))) : [stDayData(localDateStr(stDate))];
+    dates = stView === 'weekly' ? days : [stDate];
+    sources = dates.map(d => stDayData(localDateStr(d)));
   }
+  const openCount = {};
+  (dates || []).forEach(d => {
+    for (const [k, v] of Object.entries(stDayOpens(localDateStr(d)))) openCount[k] = (openCount[k] || 0) + v;
+  });
   const merged = {};
   sources.forEach(day => { for (const [k, v] of Object.entries(day)) merged[k] = (merged[k] || 0) + v; });
 
@@ -1106,7 +1115,7 @@ function renderScreenList(sources) {
   if (!rows.length) {
     const p = document.createElement('p');
     p.className = 'st-empty';
-    p.textContent = q ? 'No apps match your search.' : 'Nothing tracked for this period yet. Install the tracker below, or import your data.';
+    p.textContent = q ? 'No apps match your search.' : 'Nothing tracked for this period yet. Install the tracker above, or import your data.';
     list.appendChild(p);
     return;
   }
@@ -1145,6 +1154,12 @@ function renderScreenList(sources) {
     chip.innerHTML = '<i class="dot"></i>';
     chip.append(ST_CAT_LABEL[cat] === 'Others' ? 'Others' : ST_CAT_LABEL[cat]);
     mid.append(title, chip);
+    if (openCount[name]) {
+      const op = document.createElement('span');
+      op.className = 'st-opens';
+      op.textContent = `Opened ${openCount[name]} ${openCount[name] === 1 ? 'time' : 'times'}`;
+      mid.appendChild(op);
+    }
 
     const time = document.createElement('span');
     time.className = 'st-time';
@@ -1155,7 +1170,7 @@ function renderScreenList(sources) {
     chev.setAttribute('aria-hidden', 'true');
 
     row.append(icon, mid, time, chev);
-    row.onclick = () => { stOpenRow = open ? null : name; renderScreenList(sources); };
+    row.onclick = () => { stOpenRow = open ? null : name; renderScreenList(sources, dates); };
     wrap.appendChild(row);
 
     if (open) {
@@ -1179,11 +1194,18 @@ function renderScreenList(sources) {
   });
 }
 
+function trackerInstalled() {
+  return stExtSeen || !!getData('stLastSync', 0);
+}
 function renderTrackerStatus() {
   const last = getData('stLastSync', 0);
+  const card = document.getElementById('stInstall');
+  if (card) card.classList.toggle('hidden', stExtSeen);
   const el = document.getElementById('stTrackerStatus');
   if (!el) return;
-  if (last && Date.now() - last < 10 * 60 * 1000) {
+  if (stExtSeen) {
+    el.textContent = 'Browser tracker connected. Websites update here automatically.';
+  } else if (last && Date.now() - last < 10 * 60 * 1000) {
     el.textContent = 'Browser tracker connected. Websites sync while this page is open.';
   } else if (last) {
     el.textContent = `Browser tracker last synced ${new Date(last).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}. Open this page with the extension on to refresh.`;
@@ -1202,6 +1224,20 @@ function stCleanDays(raw) {
       const n = Number(sec);
       if (!name || name.length > 120 || !isFinite(n) || n <= 0 || n > 86400) continue;
       (out[date] = out[date] || {})[name] = n;
+    }
+  }
+  return out;
+}
+// Same shape as stCleanDays but the numbers are whole counts of visits.
+function stCleanOpens(raw) {
+  const out = {};
+  if (!raw || typeof raw !== 'object') return out;
+  for (const [date, day] of Object.entries(raw)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !day || typeof day !== 'object') continue;
+    for (const [name, n] of Object.entries(day)) {
+      const v = Math.floor(Number(n));
+      if (!name || name.length > 120 || !isFinite(v) || v <= 0 || v > 5000) continue;
+      (out[date] = out[date] || {})[name] = v;
     }
   }
   return out;
@@ -1247,11 +1283,27 @@ window.addEventListener('message', (e) => {
   const d = e.data;
   if (!d || d.source !== 'padhlo-tracker' || d.type !== 'screentime') return;
   if (!getUser()) return;
+  stExtSeen = true;
   stMerge('stSynced', stCleanDays(d.days));
+  stMerge('stOpens', stCleanOpens(d.opens));
   setData('stLastSync', Date.now());
+  updateTrackerPrompt();
   const page = document.getElementById('screenPage');
   if (page && !page.classList.contains('hidden')) renderScreenTime();
 });
+
+// Banner on the home page until the tracker is installed. "Not now" hides it for a week.
+function updateTrackerPrompt() {
+  const el = document.getElementById('trackerPrompt');
+  if (!el) return;
+  let snoozed = false;
+  try { snoozed = Date.now() < Number(localStorage.getItem('padhlo_tracker_snooze') || 0); } catch (e) { /* ignore */ }
+  el.classList.toggle('hidden', stExtSeen || trackerInstalled() || snoozed);
+}
+function dismissTrackerPrompt() {
+  try { localStorage.setItem('padhlo_tracker_snooze', String(Date.now() + 7 * 86400000)); } catch (e) { /* ignore */ }
+  updateTrackerPrompt();
+}
 
 function openScreenTime() {
   stDate = new Date();
@@ -1316,6 +1368,8 @@ function initApp() {
   updateXPDisplay();
   renderHome();
   renderTimer();
+  requestTrackerSync();
+  setTimeout(updateTrackerPrompt, 1500); // give the extension a moment to say hello
   selectTrack(1, document.querySelector('.track-btn'));
 
   if (monthTimer) clearInterval(monthTimer);

@@ -595,3 +595,24 @@ button.bar-col:hover .bar { filter: brightness(1.12); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* ---- tracker install prompt ---- */
+.tracker-prompt { display: flex; align-items: center; gap: 0.85rem; margin: 0 0 1rem; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: 0.9rem; background: var(--accent-soft); }
+.tracker-prompt > i.fa-display { font-size: 1.3rem; color: var(--accent); }
+.tp-text { flex: 1; min-width: 0; display: grid; gap: 0.1rem; font-size: 0.9rem; }
+.tp-text span { color: var(--muted); }
+.tp-close { background: none; border: 0; color: var(--muted); min-width: 2.25rem; min-height: 2.25rem; cursor: pointer; border-radius: 0.5rem; }
+.tp-close:hover { color: var(--text); }
+.st-install { margin: 1rem 0 1.5rem; padding: 1.1rem; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); display: grid; gap: 0.75rem; }
+.st-install h2 { font-size: 1.1rem; display: flex; gap: 0.5rem; align-items: center; }
+.st-install p, .st-install li { color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+.st-install ol { padding-left: 1.2rem; display: grid; gap: 0.6rem; list-style: decimal; }
+.st-install li::marker { color: var(--accent); font-weight: 700; }
+.st-install code { font-family: var(--font-num); font-size: 0.8em; padding: 0.1rem 0.3rem; border-radius: 0.3rem; background: var(--raised); color: var(--text); word-break: break-all; }
+.st-install .btn { display: inline-flex; text-decoration: none; }
+.st-opens { display: block; font-size: 0.78rem; color: var(--muted); margin-top: 0.1rem; }
+@media (max-width: 30rem) {
+  .tracker-prompt { flex-wrap: wrap; }
+  .tracker-prompt .btn { order: 3; flex: 1 1 100%; }
+  .tp-text { flex: 1 1 60%; }
+}

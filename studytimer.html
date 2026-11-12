@@ -74,6 +74,13 @@
       </nav>
     </header>
 
+    <div class="tracker-prompt hidden" id="trackerPrompt" role="region" aria-label="Install the screen time tracker">
+      <i class="fas fa-display" aria-hidden="true"></i>
+      <div class="tp-text"><strong>Turn on Screen time</strong><span>Install the free tracker to see how long you use every website.</span></div>
+      <button class="btn btn-primary" onclick="openScreenTime()">Set up</button>
+      <button class="tp-close" onclick="dismissTrackerPrompt()" aria-label="Not now"><i class="fas fa-times"></i></button>
+    </div>
+
     <div class="home">
       <section class="timer-panel" id="timerCard" data-state="idle" data-mode="study" aria-label="Study timer">
         <div class="ring" id="ring">
@@ -240,6 +247,19 @@
       <button class="btn btn-quiet back-btn" onclick="closeScreenTime()"><i class="fas fa-arrow-left"></i> Back</button>
       <h1>Screen time</h1>
     </div>
+
+
+    <section class="st-install hidden" id="stInstall">
+      <h2><i class="fas fa-puzzle-piece" aria-hidden="true"></i> Install the tracker to use Screen time</h2>
+      <p>A web page cannot see your other tabs, so a small browser extension counts the time and visits for every website you use. It runs quietly, stores only site names on your computer, and does not slow your browser.</p>
+      <ol>
+        <li><a class="btn btn-primary" href="studytimer-tracker.zip" download><i class="fas fa-download"></i> Download tracker</a></li>
+        <li>Unzip it, then open <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>) and turn on <strong>Developer mode</strong>.</li>
+        <li>Click <strong>Load unpacked</strong> and choose the unzipped <code>studytimer-tracker</code> folder.</li>
+        <li>Come back to this page. It connects by itself and your data appears here.</li>
+      </ol>
+      <p class="small">Works on laptops with Chrome, Edge or Brave. Phones cannot run it.</p>
+    </section>
 
     <div class="st-tabs" role="tablist" aria-label="Range">
       <button type="button" role="tab" id="stTabDaily" aria-selected="true" onclick="setScreenView('daily')">Daily</button>
