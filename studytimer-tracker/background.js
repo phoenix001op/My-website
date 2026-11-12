@@ -67,7 +67,14 @@ async function currentHost() {
   try {
     const u = new URL(tab.url);
     if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
-    return u.hostname.replace(/^www\./, '');
+    const host = u.hostname.replace(/^www\./, '');
+    if (/^(m\.)?youtube\.com$/.test(host)) {
+      // YouTube is split by channel so study channels can count as productive.
+      let channel = null;
+      try { channel = (await chrome.tabs.sendMessage(tab.id, { type: 'padhlo-channel' })).channel; } catch (e) { /* tab opened before install */ }
+      return channel ? `youtube.com \u203a ${String(channel).slice(0, 80)}` : 'youtube.com';
+    }
+    return host;
   } catch (e) { return null; }
 }
 

@@ -916,7 +916,7 @@ function renderStatsChart() {
 // and is stored per user as { 'YYYY-MM-DD': { 'youtube.com': seconds } }.
 const ST_RULES = {
   productive: [
-    'pw.live', 'physicswallah', 'khanacademy.org', 'wikipedia.org', 'github.com', 'stackoverflow.com',
+    'pw.live', 'physicswallah.live', 'pwskills.com', 'physicswallah', 'khanacademy.org', 'wikipedia.org', 'github.com', 'stackoverflow.com',
     'classroom.google.com', 'docs.google.com', 'coursera.org', 'leetcode.com', 'unacademy.com', 'vedantu.com',
     'byjus.com', 'w3schools.com', 'developer.mozilla.org', 'claude.ai', 'chatgpt.com', 'notion.so',
     'geeksforgeeks.org', 'desmos.com', 'geogebra.org', 'scholar.google.com', 'arxiv.org', 'ncert.nic.in',
@@ -937,6 +937,10 @@ const ST_NAMES = {
   'chatgpt.com': 'ChatGPT', 'web.whatsapp.com': 'WhatsApp Web', 'mail.google.com': 'Gmail',
   'docs.google.com': 'Google Docs', 'phoenix001op.github.io': 'Padh Lo', 'code': 'VS Code'
 };
+// YouTube channels that count as productive (study and coding). Anything else on YouTube is distracting.
+// Tap a channel row to change one; your choice is remembered.
+const YT_SEP = ' \u203a ';
+const ST_YT_STUDY = /\b(pw|physics ?wallah|alakh|apna college|apnacollege|freecodecamp|code ?with ?harry|codewithharry|traversy|fireship|cs50|neso academy|khan academy|3blue1brown|mit opencourseware|nptel|take u forward|striver|gate smashers|love babbar|kunal kushwaha|programming with mosh|the coding train|web dev simplified|net ninja|sheriyans|chai aur code|hitesh choudhary|ncert|unacademy|vedantu|physics ?galaxy|organic chemistry tutor|crashcourse)\b/i;
 const ST_CATS = ['productive', 'distracting', 'other'];
 const ST_CAT_LABEL = { productive: 'Productive', distracting: 'Distracting', other: 'Others' };
 
@@ -948,6 +952,10 @@ let stExtSeen = false; // the tracker said hello on this page load
 function stIsSite(name) { return name.includes('.') && !/\.exe$/i.test(name); }
 
 function stClassify(name) {
+  if (name.startsWith('youtube.com' + YT_SEP)) {
+    const ch = name.slice(('youtube.com' + YT_SEP).length);
+    return ST_YT_STUDY.test(ch) ? 'productive' : 'distracting';
+  }
   const n = name.toLowerCase().replace(/\.exe$/, '');
   for (const cat of ['distracting', 'productive']) {
     for (const rule of ST_RULES[cat]) {
@@ -971,6 +979,7 @@ function stSetCategory(name, cat) {
   renderScreenTime();
 }
 function stDisplayName(name) {
+  if (name.startsWith('youtube.com' + YT_SEP)) return name.slice(('youtube.com' + YT_SEP).length) + ' (YouTube)';
   if (ST_NAMES[name]) return ST_NAMES[name];
   if (stIsSite(name)) return name;
   const n = name.replace(/\.exe$/i, '');
@@ -1138,7 +1147,7 @@ function renderScreenList(sources, dates) {
       const img = document.createElement('img');
       img.alt = '';
       img.loading = 'lazy';
-      img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(name)}&sz=64`;
+      img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(name.split(YT_SEP)[0])}&sz=64`;
       img.onerror = () => { img.remove(); icon.textContent = stDisplayName(name).charAt(0).toUpperCase(); };
       icon.appendChild(img);
     } else {
