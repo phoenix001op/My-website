@@ -67,10 +67,9 @@
       <div class="user" id="userLabel"><i class="fas fa-user" aria-hidden="true"></i><span id="userName">Guest</span></div>
       <nav class="nav" aria-label="Main">
         <button class="nav-btn" onclick="toggleMusicPlayer()" aria-label="Music"><i class="fas fa-music"></i><span>Music</span></button>
-        <button class="nav-btn" onclick="openTodo()" aria-label="Tasks"><i class="fas fa-list-check"></i><span>Tasks</span></button>
         <button class="nav-btn" onclick="openCalendar()" aria-label="Calendar"><i class="fas fa-calendar"></i><span>Calendar</span></button>
         <button class="nav-btn" onclick="openStats()" aria-label="Stats"><i class="fas fa-chart-simple"></i><span>Stats</span></button>
-        <button class="nav-btn" onclick="openRank()" aria-label="Rank"><i class="fas fa-trophy"></i><span>Rank</span></button>
+        <button class="nav-btn" onclick="openScreenTime()" aria-label="Screen time"><i class="fas fa-display"></i><span>Screen time</span></button>
         <button class="nav-btn logout" onclick="logout()" aria-label="Log out"><i class="fas fa-right-from-bracket"></i><span>Log out</span></button>
       </nav>
     </header>
@@ -147,26 +146,6 @@
 
       <aside class="side" aria-label="Your progress">
         <section class="side-block">
-          <div class="block-head">
-            <h2>This month</h2>
-            <span class="muted small" id="homeMonth"></span>
-          </div>
-          <div class="rank-now">
-            <span class="badge" id="homeBadge" data-rank="1"><i class="fas fa-seedling"></i></span>
-            <div>
-              <strong id="homeRank">Beginner</strong>
-              <span class="muted"><span id="currentXP">0</span> XP</span>
-            </div>
-          </div>
-          <div class="ladder" role="presentation">
-            <div class="ladder-fill" id="xpProgressFill"></div>
-            <i class="tick" style="left:10%"></i><i class="tick" style="left:20%"></i><i class="tick" style="left:40%"></i><i class="tick" style="left:75%"></i>
-          </div>
-          <p class="muted small" id="xpToNext"></p>
-          <p class="muted small" id="homeReset"></p>
-        </section>
-
-        <section class="side-block">
           <div class="block-head"><h2>Today</h2></div>
           <dl class="rows">
             <div><dt>Studied</dt><dd id="todayTime">0m</dd></div>
@@ -177,28 +156,6 @@
         </section>
       </aside>
     </div>
-  </div>
-</div>
-
-<!-- TASKS -->
-<div class="screen hidden" id="todoPage">
-  <div class="shell shell--page">
-    <div class="page-head">
-      <button class="btn btn-quiet back-btn" onclick="closeTodo()"><i class="fas fa-arrow-left"></i> Back</button>
-      <h1>Today's tasks</h1>
-    </div>
-    <div class="todo-date" id="todoDateLabel"></div>
-    <div class="todo-input-row">
-      <label for="todoInput" class="sr-only">New task</label>
-      <input type="text" id="todoInput" class="field" placeholder="What do you want to get done?" maxlength="100"
-             onkeydown="if(event.key==='Enter') addTodo()" />
-      <button class="btn btn-primary" onclick="addTodo()" aria-label="Add task"><i class="fas fa-plus"></i></button>
-    </div>
-    <div class="todo-stats-row">
-      <span id="todoProgress">0 of 0 done</span>
-      <button class="btn btn-quiet todo-clear-btn" onclick="clearDoneTodos()">Clear done</button>
-    </div>
-    <div id="todoList" class="todo-list"></div>
   </div>
 </div>
 
@@ -245,6 +202,18 @@
       <div class="metric"><div class="metric-value" id="studyDays">0</div><div class="metric-label">Days studied</div></div>
       <div class="metric"><div class="metric-value" id="currentLevelStat">Beginner</div><div class="metric-label">Rank this month</div></div>
     </div>
+    <section class="section">
+      <div class="block-head">
+        <h2>Study graph</h2>
+        <div class="seg-toggle" role="group" aria-label="Graph range">
+          <button type="button" data-range="7d" aria-pressed="true" onclick="setStatsRange('7d')">7 days</button>
+          <button type="button" data-range="30d" aria-pressed="false" onclick="setStatsRange('30d')">30 days</button>
+          <button type="button" data-range="12m" aria-pressed="false" onclick="setStatsRange('12m')">12 months</button>
+        </div>
+      </div>
+      <div id="statsChart" class="chart" role="img" aria-label="Bar chart of time studied"></div>
+      <p class="muted small chart-note" id="statsChartNote"></p>
+    </section>
     <div class="stats-cols">
       <section class="section">
         <h2>Time studied</h2>
@@ -258,8 +227,66 @@
       <section class="section">
         <h2>XP history</h2>
         <div id="xpHistory"></div>
+        <button class="btn btn-quiet rank-link" onclick="openRank()"><i class="fas fa-trophy"></i> View rank</button>
       </section>
     </div>
+  </div>
+</div>
+
+<!-- SCREEN TIME -->
+<div class="screen hidden" id="screenPage">
+  <div class="shell shell--page">
+    <div class="page-head">
+      <button class="btn btn-quiet back-btn" onclick="closeScreenTime()"><i class="fas fa-arrow-left"></i> Back</button>
+      <h1>Screen time</h1>
+    </div>
+
+    <div class="st-tabs" role="tablist" aria-label="Range">
+      <button type="button" role="tab" id="stTabDaily" aria-selected="true" onclick="setScreenView('daily')">Daily</button>
+      <button type="button" role="tab" id="stTabWeekly" aria-selected="false" onclick="setScreenView('weekly')">Weekly</button>
+    </div>
+
+    <div class="st-hero">
+      <button type="button" class="st-nav" id="stPrev" onclick="shiftScreenRange(-1)" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+      <div class="st-hero-mid">
+        <div class="st-total" id="stTotal">0m</div>
+        <div class="st-sub" id="stSub"></div>
+      </div>
+      <button type="button" class="st-nav" id="stNext" onclick="shiftScreenRange(1)" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <div id="stChart" class="chart chart--tall"></div>
+
+    <div class="st-legend">
+      <div><span class="dot dot-distracting"></span><strong id="stDist">0m</strong><span>Distracting</span></div>
+      <div><span class="dot dot-productive"></span><strong id="stProd">0m</strong><span>Productive</span></div>
+      <div><span class="dot dot-other"></span><strong id="stOther">0m</strong><span>Others</span></div>
+    </div>
+
+    <label class="st-search">
+      <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
+      <span class="sr-only">Search apps</span>
+      <input id="stSearch" type="search" placeholder="Search apps" autocomplete="off" oninput="renderScreenList()">
+    </label>
+
+    <div id="stList" class="st-list"></div>
+
+    <section class="st-source">
+      <p class="small" id="stTrackerStatus"></p>
+      <div class="st-source-actions">
+        <button type="button" class="btn btn-quiet" onclick="document.getElementById('stImportFile').click()"><i class="fas fa-file-import"></i> Import data</button>
+        <input type="file" id="stImportFile" accept="application/json,.json" class="sr-only" onchange="importScreenTime(this)">
+      </div>
+      <details class="st-help">
+        <summary>How laptop tracking works</summary>
+        <p>A web page cannot see your other tabs or programs, so two small helpers collect the numbers and send them here.</p>
+        <ul>
+          <li><strong>Websites:</strong> install the <code>studytimer-tracker</code> browser extension (Chrome, Edge, Brave). Keep this page open once in a while and it syncs by itself.</li>
+          <li><strong>Apps (Windows):</strong> run <code>desktop_tracker.py</code>, then use Import data to load <code>padhlo_apps.json</code>.</li>
+          <li>Tap any row to move a site or app between Productive, Distracting and Others.</li>
+        </ul>
+      </details>
+    </section>
   </div>
 </div>
 

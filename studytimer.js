@@ -38,7 +38,7 @@ const MUSIC_TRACKS = [
   'https://cdn.pixabay.com/download/audio/2022/03/07/audio_8b8a1d9a4d.mp3'
 ];
 
-const PAGES = ['appScreen', 'todoPage', 'calendarPage', 'statsPage', 'rankPage'];
+const PAGES = ['appScreen', 'calendarPage', 'statsPage', 'screenPage', 'rankPage'];
 
 // ========== SMALL HELPERS ==========
 function pad(n) { return String(n).padStart(2, '0'); }
@@ -250,8 +250,6 @@ function addXP(xpToAdd) {
   setData('xpHistory', hist);
 
   updateXPDisplay();
-  const el = document.getElementById('currentXP');
-  if (el) { el.classList.add('xp-gain'); setTimeout(() => el.classList.remove('xp-gain'), 500); }
 
   const after = getRankInfo(d.xp);
   return after.level > before ? after.rank : null;
@@ -271,24 +269,17 @@ function updateXPDisplay() {
   const toNext = ul.next ? `${ul.xpNeeded} XP to ${ul.next.name}` : 'Top rank reached this month.';
   const pct = Math.min(100, ul.xp / 10); // the bar covers 0 to 1000 XP
 
-  setText('currentXP', ul.xp);
-  setText('homeRank', ul.rank);
-  setText('homeMonth', label);
   setText('rankName', ul.rank);
   setText('rankXP', ul.xp);
   setText('rankMonth', label);
   setText('rankLevelText', `Rank ${ul.level} of ${RANKS.length}`);
-  setText('xpToNext', toNext);
   setText('rankToNext', toNext);
-  setText('homeReset', resetNote());
   setText('rankReset', resetNote());
 
-  ['xpProgressFill', 'rankFill'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.width = `${pct}%`;
-  });
+  const fill = document.getElementById('rankFill');
+  if (fill) fill.style.width = `${pct}%`;
 
-  ['homeBadge', 'rankBadge'].forEach(id => {
+  ['rankBadge'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     el.dataset.rank = ul.level;
@@ -638,95 +629,6 @@ function showNotification(message) {
   }, 4500);
 }
 
-// ========== TASKS ==========
-function getTodos() {
-  return getData('todos', []);
-}
-
-function saveTodos(todos) {
-  setData('todos', todos);
-}
-
-function renderTodos() {
-  const todos = getTodos();
-  const list = document.getElementById('todoList');
-  const progress = document.getElementById('todoProgress');
-  if (!list) return;
-
-  list.innerHTML = '';
-
-  if (todos.length === 0) {
-    const empty = document.createElement('div');
-    empty.className = 'todo-empty';
-    empty.textContent = 'No tasks yet. Add your first one above.';
-    list.appendChild(empty);
-    if (progress) progress.textContent = '0 of 0 done';
-    return;
-  }
-
-  const done = todos.filter(t => t.done).length;
-  if (progress) progress.textContent = `${done} of ${todos.length} done`;
-
-  todos.forEach((todo, i) => {
-    const item = document.createElement('div');
-    item.className = `todo-item${todo.done ? ' done' : ''}`;
-
-    const checkbox = document.createElement('button');
-    checkbox.className = 'todo-check';
-    checkbox.setAttribute('role', 'checkbox');
-    checkbox.setAttribute('aria-checked', String(!!todo.done));
-    checkbox.setAttribute('aria-label', `Mark "${todo.text}" as done`);
-    checkbox.innerHTML = todo.done ? '<i class="fas fa-check"></i>' : '';
-    checkbox.onclick = () => toggleTodo(i);
-
-    const text = document.createElement('span');
-    text.className = 'todo-text';
-    text.textContent = todo.text;
-
-    const del = document.createElement('button');
-    del.className = 'todo-delete';
-    del.setAttribute('aria-label', `Delete "${todo.text}"`);
-    del.innerHTML = '<i class="fas fa-trash"></i>';
-    del.onclick = () => deleteTodo(i);
-
-    item.append(checkbox, text, del);
-    list.appendChild(item);
-  });
-}
-
-function addTodo() {
-  const input = document.getElementById('todoInput');
-  const text = input.value.trim();
-  if (!text) return;
-
-  const todos = getTodos();
-  todos.push({ text, done: false, createdAt: new Date().toISOString() });
-  saveTodos(todos);
-  input.value = '';
-  renderTodos();
-}
-
-function toggleTodo(index) {
-  const todos = getTodos();
-  if (todos[index]) {
-    todos[index].done = !todos[index].done;
-    saveTodos(todos);
-    renderTodos();
-  }
-}
-
-function deleteTodo(index) {
-  const todos = getTodos();
-  todos.splice(index, 1);
-  saveTodos(todos);
-  renderTodos();
-}
-
-function clearDoneTodos() {
-  saveTodos(getTodos().filter(t => !t.done));
-  renderTodos();
-}
-
 // ========== CALENDAR ==========
 function renderCalendar() {
   const data = getData('studyData', {});
@@ -848,6 +750,7 @@ function renderStats() {
   setText('totalXP', userData.lifetimeXP != null ? userData.lifetimeXP : (userData.xp || 0));
   setText('studyDays', studyDays);
   setText('currentLevelStat', getUserLevel().rank);
+  renderStatsChart();
 
   const weekly = document.getElementById('weekly');
   weekly.innerHTML = '';
@@ -882,6 +785,482 @@ function renderStats() {
     xpEl.appendChild(p);
   }
 }
+
+// ========== BAR CHART (shared by Stats and Screen time) ==========
+// o: { labels[], stacks[][{value,color,cls}] (minutes), unit('min'), labelEvery, selected, dim[], onSelect(i), titles[] }
+function niceMax(minutes) {
+  const steps = [15, 30, 60, 120, 180, 240, 300, 360, 480, 600, 720, 960, 1200, 1440];
+  for (const v of steps) if (minutes <= v) return v;
+  return Math.ceil(minutes / 360) * 360;
+}
+function axisLabel(min) {
+  if (min === 0) return '0';
+  if (min < 60) return `${Math.round(min)}m`;
+  const h = min / 60;
+  return `${Number.isInteger(h) ? h : h.toFixed(1)}h`;
+}
+function drawBarChart(el, o) {
+  el.innerHTML = '';
+  const totals = o.stacks.map(st => st.reduce((a, x) => a + x.value, 0));
+  const max = niceMax(Math.max(0, ...totals));
+
+  const axis = document.createElement('div');
+  axis.className = 'chart-axis';
+  [max, max / 2, 0].forEach(v => {
+    const t = document.createElement('span');
+    t.textContent = axisLabel(v);
+    axis.appendChild(t);
+  });
+
+  const plot = document.createElement('div');
+  plot.className = 'chart-plot';
+  const grid = document.createElement('div');
+  grid.className = 'chart-grid';
+  grid.innerHTML = '<i></i><i></i><i></i>';
+  const bars = document.createElement('div');
+  bars.className = 'chart-bars';
+  const labels = document.createElement('div');
+  labels.className = 'chart-labels';
+
+  o.stacks.forEach((stack, i) => {
+    const col = document.createElement(o.onSelect ? 'button' : 'div');
+    col.className = 'bar-col';
+    if (o.onSelect) { col.type = 'button'; col.onclick = () => o.onSelect(i); }
+    if (o.titles && o.titles[i]) {
+      col.title = o.titles[i];
+      col.setAttribute('aria-label', o.titles[i]);
+    }
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    const total = totals[i];
+    bar.style.height = `${Math.min(100, (total / max) * 100)}%`;
+    if (total > 0 && total / max < 0.015) bar.style.minHeight = '3px';
+    const dimmed = o.selected != null && o.selected !== i;
+    if (dimmed) bar.classList.add('bar--dim');
+    else stack.forEach(seg => {
+      if (seg.value <= 0) return;
+      const d = document.createElement('div');
+      d.className = `seg ${seg.cls || ''}`;
+      d.style.flexGrow = String(seg.value);
+      if (seg.color) d.style.background = seg.color;
+      bar.appendChild(d);
+    });
+    col.appendChild(bar);
+    bars.appendChild(col);
+
+    const lab = document.createElement('span');
+    const every = o.labelEvery || 1;
+    lab.textContent = i % every === 0 ? o.labels[i] : '';
+    if (o.selected === i) lab.classList.add('on');
+    labels.appendChild(lab);
+  });
+
+  plot.append(grid, bars);
+  const body = document.createElement('div');
+  body.className = 'chart-body';
+  body.append(plot, labels);
+  el.append(axis, body);
+}
+
+// ========== STATS GRAPH ==========
+let statsRange = '7d';
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+function setStatsRange(r) {
+  statsRange = r;
+  document.querySelectorAll('[data-range]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.range === r)));
+  renderStatsChart();
+}
+
+function renderStatsChart() {
+  const el = document.getElementById('statsChart');
+  if (!el) return;
+  const studyData = getData('studyData', {});
+  const labels = [], vals = [], titles = [];
+  const now = new Date();
+
+  if (statsRange === '12m') {
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = monthKey(d);
+      let sum = 0;
+      for (const [k, m] of Object.entries(studyData)) if (k.startsWith(key)) sum += m;
+      labels.push(MONTH_NAMES[d.getMonth()].slice(0, 3));
+      vals.push(sum);
+      titles.push(`${monthLabel(key)}: ${formatMinutes(sum)}`);
+    }
+  } else {
+    const days = statsRange === '30d' ? 30 : 7;
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      const m = studyData[localDateStr(d)] || 0;
+      labels.push(days === 7 ? WEEKDAYS[d.getDay()] : String(d.getDate()));
+      vals.push(m);
+      titles.push(`${d.getDate()} ${MONTH_NAMES[d.getMonth()].slice(0, 3)}: ${formatMinutes(m)}`);
+    }
+  }
+
+  const stacks = vals.map(v => [{ value: v, cls: 'seg-study' }]);
+  drawBarChart(el, { labels, stacks, titles, labelEvery: statsRange === '30d' ? 5 : 1 });
+
+  const total = vals.reduce((a, b) => a + b, 0);
+  const unit = statsRange === '12m' ? 'month' : 'day';
+  const avg = Math.round(total / vals.length);
+  setText('statsChartNote', total > 0
+    ? `Total ${formatMinutes(total)}. Average ${formatMinutes(avg)} per ${unit}.`
+    : 'No study time in this range yet. Start the timer to fill the graph.');
+}
+
+// ========== SCREEN TIME ==========
+// Data comes from the studytimer-tracker extension (websites), the desktop tracker (apps, via Import),
+// and is stored per user as { 'YYYY-MM-DD': { 'youtube.com': seconds } }.
+const ST_RULES = {
+  productive: [
+    'pw.live', 'physicswallah', 'khanacademy.org', 'wikipedia.org', 'github.com', 'stackoverflow.com',
+    'classroom.google.com', 'docs.google.com', 'coursera.org', 'leetcode.com', 'unacademy.com', 'vedantu.com',
+    'byjus.com', 'w3schools.com', 'developer.mozilla.org', 'claude.ai', 'chatgpt.com', 'notion.so',
+    'geeksforgeeks.org', 'desmos.com', 'geogebra.org', 'scholar.google.com', 'arxiv.org', 'ncert.nic.in',
+    'nptel.ac.in', 'swayam.gov.in', 'toppr.com', 'doubtnut.com', 'phoenix001op.github.io',
+    'code', 'devenv', 'pycharm', 'idea64', 'winword', 'excel', 'powerpnt', 'acrobat', 'onenote', 'sublime', 'notepad++', 'obsidian'
+  ],
+  distracting: [
+    'instagram.com', 'youtube.com', 'facebook.com', 'twitter.com', 'x.com', 'netflix.com', 'reddit.com',
+    'snapchat.com', 'hotstar.com', 'primevideo.com', 'discord.com', 'twitch.tv', 'tiktok.com', 'pinterest.com',
+    'sonyliv.com', 'jiocinema.com', 'zee5.com', 'crunchyroll.com', '9gag.com', 'store.steampowered.com',
+    'steam', 'epicgames', 'roblox', 'minecraft', 'valorant', 'fortnite', 'bgmi', 'pubg', 'leagueclient', 'discord', 'gta'
+  ]
+};
+const ST_NAMES = {
+  'youtube.com': 'YouTube', 'instagram.com': 'Instagram', 'pw.live': 'PW', 'facebook.com': 'Facebook',
+  'x.com': 'X', 'twitter.com': 'Twitter', 'reddit.com': 'Reddit', 'netflix.com': 'Netflix',
+  'github.com': 'GitHub', 'google.com': 'Google', 'wikipedia.org': 'Wikipedia', 'claude.ai': 'Claude',
+  'chatgpt.com': 'ChatGPT', 'web.whatsapp.com': 'WhatsApp Web', 'mail.google.com': 'Gmail',
+  'docs.google.com': 'Google Docs', 'phoenix001op.github.io': 'Padh Lo', 'code': 'VS Code'
+};
+const ST_CATS = ['productive', 'distracting', 'other'];
+const ST_CAT_LABEL = { productive: 'Productive', distracting: 'Distracting', other: 'Others' };
+
+let stView = 'daily';
+let stDate = new Date();
+let stOpenRow = null;
+
+function stIsSite(name) { return name.includes('.') && !/\.exe$/i.test(name); }
+
+function stClassify(name) {
+  const n = name.toLowerCase().replace(/\.exe$/, '');
+  for (const cat of ['distracting', 'productive']) {
+    for (const rule of ST_RULES[cat]) {
+      if (rule.includes('.')) {
+        if (n === rule || n.endsWith('.' + rule)) return cat;
+      } else if (!stIsSite(name) && (n === rule || n.includes(rule))) {
+        return cat;
+      }
+    }
+  }
+  return 'other';
+}
+function stCategory(name) {
+  const o = getData('stCategories', {});
+  return ST_CATS.includes(o[name]) ? o[name] : stClassify(name);
+}
+function stSetCategory(name, cat) {
+  const o = getData('stCategories', {});
+  o[name] = cat;
+  setData('stCategories', o);
+  renderScreenTime();
+}
+function stDisplayName(name) {
+  if (ST_NAMES[name]) return ST_NAMES[name];
+  if (stIsSite(name)) return name;
+  const n = name.replace(/\.exe$/i, '');
+  return n.charAt(0).toUpperCase() + n.slice(1);
+}
+
+function formatDur(sec) {
+  const m = Math.round(sec / 60);
+  if (sec > 0 && m < 1) return '<1m';
+  return formatMinutes(m);
+}
+
+function stDayData(dateStr) {
+  const out = {};
+  [getData('stSynced', {}), getData('stImported', {})].forEach(src => {
+    const day = src[dateStr] || {};
+    for (const [k, v] of Object.entries(day)) out[k] = (out[k] || 0) + (Number(v) || 0);
+  });
+  return out;
+}
+function stSum(data) {
+  const t = { productive: 0, distracting: 0, other: 0, total: 0 };
+  for (const [name, sec] of Object.entries(data)) {
+    const c = stCategory(name);
+    t[c] += sec;
+    t.total += sec;
+  }
+  return t;
+}
+function stWeekStart(d) {
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); // Monday
+  return x;
+}
+function stWeekDays(d) {
+  const start = stWeekStart(d);
+  return Array.from({ length: 7 }, (_, i) => new Date(start.getFullYear(), start.getMonth(), start.getDate() + i));
+}
+function stFmtShort(d) { return `${d.getDate()} ${MONTH_NAMES[d.getMonth()].slice(0, 3)}`; }
+
+function setScreenView(v) {
+  stView = v;
+  stOpenRow = null;
+  renderScreenTime();
+}
+function shiftScreenRange(dir) {
+  const step = stView === 'weekly' ? 7 : 1;
+  const next = new Date(stDate.getFullYear(), stDate.getMonth(), stDate.getDate() + dir * step);
+  if (next > new Date()) return;
+  stDate = next;
+  stOpenRow = null;
+  renderScreenTime();
+}
+
+function renderScreenTime() {
+  const today = new Date();
+  const days = stWeekDays(stDate);
+  const weekly = stView === 'weekly';
+
+  document.getElementById('stTabDaily').setAttribute('aria-selected', String(!weekly));
+  document.getElementById('stTabWeekly').setAttribute('aria-selected', String(weekly));
+
+  const perDay = days.map(d => stDayData(localDateStr(d)));
+  const sums = perDay.map(stSum);
+  const selIndex = days.findIndex(d => localDateStr(d) === localDateStr(stDate));
+
+  // headline numbers
+  let head, sub, legend;
+  if (weekly) {
+    legend = sums.reduce((a, s) => ({
+      productive: a.productive + s.productive, distracting: a.distracting + s.distracting,
+      other: a.other + s.other, total: a.total + s.total
+    }), { productive: 0, distracting: 0, other: 0, total: 0 });
+    head = legend.total;
+    const thisWeek = localDateStr(stWeekStart(today)) === localDateStr(days[0]);
+    sub = `${thisWeek ? 'This week' : 'Week'} - ${stFmtShort(days[0])} to ${stFmtShort(days[6])}`;
+  } else {
+    legend = sums[selIndex];
+    head = legend.total;
+    const isToday = localDateStr(stDate) === localDateStr(today);
+    sub = `${isToday ? 'Today - ' : ''}${WEEKDAYS[stDate.getDay()]}, ${stFmtShort(stDate)}`;
+  }
+  setText('stTotal', formatDur(head));
+  setText('stSub', sub);
+  setText('stDist', formatDur(legend.distracting));
+  setText('stProd', formatDur(legend.productive));
+  setText('stOther', formatDur(legend.other));
+
+  const nextStart = weekly ? new Date(days[0].getFullYear(), days[0].getMonth(), days[0].getDate() + 7) : new Date(stDate.getFullYear(), stDate.getMonth(), stDate.getDate() + 1);
+  document.getElementById('stNext').disabled = nextStart > today;
+
+  // chart: Monday to Sunday of the selected week
+  const letters = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  const stacks = sums.map(s => [
+    { value: s.productive / 60, cls: 'seg-productive' },
+    { value: s.other / 60, cls: 'seg-other' },
+    { value: s.distracting / 60, cls: 'seg-distracting' }
+  ]);
+  drawBarChart(document.getElementById('stChart'), {
+    labels: letters,
+    stacks,
+    selected: weekly ? null : selIndex,
+    titles: days.map((d, i) => `${WEEKDAYS[d.getDay()]} ${stFmtShort(d)}: ${formatDur(sums[i].total)}`),
+    onSelect: weekly ? null : (i) => {
+      if (days[i] > today) return;
+      stDate = days[i];
+      stOpenRow = null;
+      renderScreenTime();
+    }
+  });
+  // dimmed bars still need a visible height: paint them with the neutral colour
+  document.querySelectorAll('#stChart .bar--dim').forEach(b => { b.style.background = 'var(--st-dim)'; });
+
+  renderScreenList(weekly ? perDay : [perDay[selIndex]]);
+  renderTrackerStatus();
+}
+
+function renderScreenList(sources) {
+  const list = document.getElementById('stList');
+  if (!list) return;
+  if (!sources) {
+    const days = stWeekDays(stDate);
+    sources = stView === 'weekly' ? days.map(d => stDayData(localDateStr(d))) : [stDayData(localDateStr(stDate))];
+  }
+  const merged = {};
+  sources.forEach(day => { for (const [k, v] of Object.entries(day)) merged[k] = (merged[k] || 0) + v; });
+
+  const q = (document.getElementById('stSearch').value || '').trim().toLowerCase();
+  const rows = Object.entries(merged)
+    .filter(([name]) => !q || name.toLowerCase().includes(q) || stDisplayName(name).toLowerCase().includes(q))
+    .sort((a, b) => b[1] - a[1]);
+
+  list.innerHTML = '';
+  if (!rows.length) {
+    const p = document.createElement('p');
+    p.className = 'st-empty';
+    p.textContent = q ? 'No apps match your search.' : 'Nothing tracked for this period yet. Install the tracker below, or import your data.';
+    list.appendChild(p);
+    return;
+  }
+
+  rows.forEach(([name, sec]) => {
+    const cat = stCategory(name);
+    const open = stOpenRow === name;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'st-item';
+
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.className = 'st-row';
+    row.setAttribute('aria-expanded', String(open));
+
+    const icon = document.createElement('span');
+    icon.className = 'st-icon';
+    if (stIsSite(name)) {
+      const img = document.createElement('img');
+      img.alt = '';
+      img.loading = 'lazy';
+      img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(name)}&sz=64`;
+      img.onerror = () => { img.remove(); icon.textContent = stDisplayName(name).charAt(0).toUpperCase(); };
+      icon.appendChild(img);
+    } else {
+      icon.textContent = stDisplayName(name).charAt(0).toUpperCase();
+    }
+
+    const mid = document.createElement('span');
+    mid.className = 'st-mid';
+    const title = document.createElement('strong');
+    title.textContent = stDisplayName(name);
+    const chip = document.createElement('span');
+    chip.className = `st-chip st-chip--${cat}`;
+    chip.innerHTML = '<i class="dot"></i>';
+    chip.append(ST_CAT_LABEL[cat] === 'Others' ? 'Others' : ST_CAT_LABEL[cat]);
+    mid.append(title, chip);
+
+    const time = document.createElement('span');
+    time.className = 'st-time';
+    time.textContent = formatDur(sec);
+
+    const chev = document.createElement('i');
+    chev.className = `fas fa-chevron-${open ? 'down' : 'right'} st-chev`;
+    chev.setAttribute('aria-hidden', 'true');
+
+    row.append(icon, mid, time, chev);
+    row.onclick = () => { stOpenRow = open ? null : name; renderScreenList(sources); };
+    wrap.appendChild(row);
+
+    if (open) {
+      const pick = document.createElement('div');
+      pick.className = 'st-pick';
+      pick.setAttribute('role', 'group');
+      pick.setAttribute('aria-label', `Category for ${stDisplayName(name)}`);
+      ST_CATS.forEach(c => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = `st-chip st-chip--${c}`;
+        b.setAttribute('aria-pressed', String(c === cat));
+        b.innerHTML = '<i class="dot"></i>';
+        b.append(ST_CAT_LABEL[c]);
+        b.onclick = () => stSetCategory(name, c);
+        pick.appendChild(b);
+      });
+      wrap.appendChild(pick);
+    }
+    list.appendChild(wrap);
+  });
+}
+
+function renderTrackerStatus() {
+  const last = getData('stLastSync', 0);
+  const el = document.getElementById('stTrackerStatus');
+  if (!el) return;
+  if (last && Date.now() - last < 10 * 60 * 1000) {
+    el.textContent = 'Browser tracker connected. Websites sync while this page is open.';
+  } else if (last) {
+    el.textContent = `Browser tracker last synced ${new Date(last).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}. Open this page with the extension on to refresh.`;
+  } else {
+    el.textContent = 'No tracker detected yet. Install the extension to track websites, and import app data from the desktop tracker.';
+  }
+}
+
+// Accepts { 'YYYY-MM-DD': { name: seconds } } and ignores anything else.
+function stCleanDays(raw) {
+  const out = {};
+  if (!raw || typeof raw !== 'object') return out;
+  for (const [date, day] of Object.entries(raw)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !day || typeof day !== 'object') continue;
+    for (const [name, sec] of Object.entries(day)) {
+      const n = Number(sec);
+      if (!name || name.length > 120 || !isFinite(n) || n <= 0 || n > 86400) continue;
+      (out[date] = out[date] || {})[name] = n;
+    }
+  }
+  return out;
+}
+function stMerge(storeKey, incoming) {
+  const store = getData(storeKey, {});
+  let changed = 0;
+  for (const [date, day] of Object.entries(incoming)) {
+    for (const [name, sec] of Object.entries(day)) {
+      const cur = (store[date] || {})[name] || 0;
+      if (sec > cur) { (store[date] = store[date] || {})[name] = sec; changed++; }
+    }
+  }
+  if (changed) setData(storeKey, store);
+  return changed;
+}
+
+function importScreenTime(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const json = JSON.parse(reader.result);
+      const days = stCleanDays(json && json.days ? json.days : json);
+      const n = stMerge('stImported', days);
+      showNotification(n ? `Imported ${n} entries.` : 'Nothing new in that file.');
+      renderScreenTime();
+    } catch (e) {
+      showNotification('That file could not be read. Use the JSON made by the tracker.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function requestTrackerSync() {
+  window.postMessage({ source: 'padhlo-page', type: 'request' }, '*');
+}
+
+window.addEventListener('message', (e) => {
+  if (e.source !== window) return;
+  const d = e.data;
+  if (!d || d.source !== 'padhlo-tracker' || d.type !== 'screentime') return;
+  if (!getUser()) return;
+  stMerge('stSynced', stCleanDays(d.days));
+  setData('stLastSync', Date.now());
+  const page = document.getElementById('screenPage');
+  if (page && !page.classList.contains('hidden')) renderScreenTime();
+});
+
+function openScreenTime() {
+  stDate = new Date();
+  stOpenRow = null;
+  showPage('screenPage');
+  renderScreenTime();
+  requestTrackerSync();
+}
+function closeScreenTime() { showPage('appScreen'); }
 
 // ========== LOGIN / LOGOUT ==========
 function login() {
@@ -928,7 +1307,6 @@ function initApp() {
   if (!getData('studyData', null)) setData('studyData', {});
   if (!getData('studySessions', null)) setData('studySessions', []);
   if (!getData('xpHistory', null)) setData('xpHistory', []);
-  if (!getData('todos', null)) setData('todos', []);
 
   document.getElementById('loginScreen').classList.add('hidden');
   showPage('appScreen');
@@ -951,14 +1329,6 @@ function showPage(id) {
   if (id === 'appScreen') { updateXPDisplay(); renderHome(); }
 }
 
-function openTodo() {
-  showPage('todoPage');
-  const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  setText('todoDateLabel', new Date().toLocaleDateString('en-IN', opts));
-  renderTodos();
-}
-function closeTodo() { showPage('appScreen'); }
-
 function openCalendar() {
   currentCalendarMonth = new Date().getMonth();
   currentCalendarYear = new Date().getFullYear();
@@ -980,7 +1350,7 @@ function openRank() {
   showPage('rankPage');
   updateXPDisplay();
 }
-function closeRank() { showPage('appScreen'); }
+function closeRank() { showPage('statsPage'); renderStats(); }
 
 // ========== PANELS ==========
 function setPanel(panelId, buttonId, open) {

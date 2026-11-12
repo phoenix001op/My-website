@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Padh Lo Screen Time Tracker",
+  "version": "1.0.0",
+  "description": "Counts the time you spend on each website and sends it to your Padh Lo study timer. Data stays on your computer.",
+  "permissions": ["tabs", "storage", "idle", "alarms"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*studytimer*", "file:///*studytimer*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
