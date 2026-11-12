@@ -29,14 +29,19 @@
 
 <!-- LOGIN -->
 <div class="screen screen--center" id="loginScreen">
+  <svg class="login-waves" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+    <path d="M0 0H520C470 70 380 110 280 135C170 163 70 190 0 260Z" fill="#16224f" opacity=".7"/>
+    <path d="M1600 260C1500 300 1430 380 1440 500C1450 620 1530 690 1600 700Z" fill="#131d46" opacity=".6"/>
+    <path d="M0 820C120 780 260 800 380 850C520 905 640 900 700 900H0Z" fill="#16224f" opacity=".8"/>
+    <path d="M1600 700C1500 720 1420 790 1330 840C1260 880 1200 895 1160 900H1600Z" fill="#16224f" opacity=".75"/>
+  </svg>
   <main class="login">
-    <div class="login-mark" aria-hidden="true"><i class="fas fa-graduation-cap"></i></div>
-    <h1>Padh Lo</h1>
-    <p>Time your study sessions, earn XP, and see how far you get this month.</p>
+    <h1>Padh <span>Lo</span></h1>
     <label for="usernameInput" class="sr-only">Your name</label>
     <input id="usernameInput" class="field" placeholder="Your name" maxlength="30" autocomplete="given-name"
            onkeydown="if(event.key==='Enter') login()" />
-    <button class="btn btn-primary btn-block" onclick="login()">Start studying</button>
+    <button class="btn btn-primary btn-block" onclick="login()">Submit</button>
+    <p>Time your study, earn XP, climb the ranks.</p>
   </main>
 </div>
 

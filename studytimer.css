@@ -166,17 +166,50 @@ ul { padding: 0; list-style: none; }
 .field.is-error { border-color: var(--danger); }
 
 /* ---------- login ---------- */
-.login { width: min(100%, 24rem); text-align: center; display: grid; gap: 1rem; }
-.login-mark {
-  width: 4rem; height: 4rem; margin: 0 auto 0.25rem;
-  display: grid; place-items: center;
-  border-radius: 1.1rem;
-  background: var(--accent); color: var(--on-accent);
-  font-size: 1.6rem;
+/* The login screen is always dark navy with a glass card, whatever theme the app uses later. */
+#loginScreen {
+  position: relative; overflow: hidden; isolation: isolate;
+  background: radial-gradient(120% 90% at 50% 0%, #0f1736 0%, #090d24 55%, #070a1c 100%);
+  color: #f4f6ff;
 }
-.login h1 { font-size: clamp(2rem, 8vw, 2.75rem); }
-.login p { color: var(--muted); }
-.login .field { text-align: center; }
+.login-waves { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+.login {
+  width: min(100%, 30rem); display: grid; gap: 1.1rem; text-align: center;
+  padding: clamp(1.5rem, 6vw, 3rem) clamp(1.25rem, 6vw, 3.25rem);
+  border-radius: 1.5rem;
+  background: linear-gradient(160deg, rgba(26, 34, 76, 0.72), rgba(14, 19, 46, 0.78));
+  border: 1px solid rgba(130, 148, 255, 0.22);
+  box-shadow: 0 1.5rem 4rem rgba(2, 4, 20, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.login h1 {
+  font-size: clamp(2.6rem, 12vw, 4rem); font-weight: 800; font-style: italic;
+  letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 0.4rem; color: #fff;
+}
+.login h1 span {
+  background: linear-gradient(135deg, #6fa8ff 0%, #7a63ff 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+  padding-right: 0.08em; /* keeps the slanted "o" from being clipped */
+}
+.login .field {
+  text-align: left; min-height: 3.4rem; padding: 0 1.2rem; border-radius: 999px;
+  background: rgba(8, 12, 34, 0.55); color: #f4f6ff;
+  border: 2px solid rgba(120, 135, 220, 0.35); font-size: 1.05rem;
+}
+.login .field::placeholder { color: #8d96c4; }
+.login .field:focus { outline: none; border-color: #7a8cff; box-shadow: 0 0 0 4px rgba(122, 140, 255, 0.2); }
+.login .field.is-error { border-color: #ff7a8a; }
+.login .btn-primary {
+  min-height: 3.4rem; border-radius: 999px; border: 0; color: #fff; font-size: 1.1rem; font-weight: 700;
+  background: linear-gradient(120deg, #66a3ff 0%, #6a5cff 100%);
+  box-shadow: 0 0.6rem 1.6rem rgba(98, 100, 255, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+.login .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.08); box-shadow: 0 0.8rem 2rem rgba(98, 100, 255, 0.45); }
+.login .btn-primary:active { transform: translateY(0); }
+.login .btn-primary:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.login p { color: #8d96c4; font-size: 0.85rem; margin: 0.2rem 0 0; }
+@media (prefers-reduced-motion: reduce) { .login .btn-primary { transition: none; } }
 
 /* ---------- top bar ---------- */
 .topbar {
