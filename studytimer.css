@@ -616,3 +616,16 @@ button.bar-col:hover .bar { filter: brightness(1.12); }
   .tracker-prompt .btn { order: 3; flex: 1 1 100%; }
   .tp-text { flex: 1 1 60%; }
 }
+
+.st-browsers { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.chip-btn { min-height: 2.25rem; padding: 0 0.9rem; border-radius: 999px; border: 1px solid var(--line); background: var(--raised); color: var(--text); font: inherit; font-weight: 600; cursor: pointer; }
+.chip-btn[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.st-steps > li { display: grid; gap: 0.45rem; justify-items: start; }
+.st-steps > li > strong { color: var(--text); font-size: 1rem; }
+.st-copyrow { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.st-copyrow code { font-size: 0.95em; padding: 0.35rem 0.6rem; }
+.st-done { color: var(--text); display: flex; gap: 0.5rem; align-items: flex-start; }
+.st-done i { color: var(--st-good); margin-top: 0.2rem; }
+.st-steps { list-style: none; padding-left: 0; counter-reset: stp; gap: 1rem; }
+.st-steps > li { counter-increment: stp; position: relative; padding-left: 2.25rem; }
+.st-steps > li::before { content: counter(stp); position: absolute; left: 0; top: 0; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-weight: 700; font-size: 0.85rem; display: grid; place-items: center; }

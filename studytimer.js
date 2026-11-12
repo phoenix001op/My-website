@@ -1124,7 +1124,7 @@ function renderScreenList(sources, dates) {
   if (!rows.length) {
     const p = document.createElement('p');
     p.className = 'st-empty';
-    p.textContent = q ? 'No apps match your search.' : 'Nothing tracked for this period yet. Install the tracker above, or import your data.';
+    p.textContent = q ? 'No apps match your search.' : (stExtSeen ? 'Nothing tracked for this period yet. Browse for a minute and your sites will show up here.' : 'Nothing to show yet. Follow the steps above to turn on Screen time.');
     list.appendChild(p);
     return;
   }
@@ -1203,6 +1203,18 @@ function renderScreenList(sources, dates) {
   });
 }
 
+const EXT_URLS = { brave: 'brave://extensions', chrome: 'chrome://extensions', edge: 'edge://extensions' };
+function setInstallBrowser(br) {
+  if (!EXT_URLS[br]) return;
+  setText('stExtUrl', EXT_URLS[br]);
+  document.querySelectorAll('[data-br]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.br === br)));
+}
+function copyExtUrl(btn) {
+  const text = document.getElementById('stExtUrl').textContent;
+  const done = () => { btn.innerHTML = '<i class="fas fa-check"></i> Copied'; setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy'; }, 1800); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, () => showNotification(`Type ${text} in the address bar.`));
+  else showNotification(`Type ${text} in the address bar.`);
+}
 function trackerInstalled() {
   return stExtSeen || !!getData('stLastSync', 0);
 }
@@ -1315,6 +1327,7 @@ function dismissTrackerPrompt() {
 }
 
 function openScreenTime() {
+  setInstallBrowser(/Edg\//.test(navigator.userAgent) ? 'edge' : (navigator.brave ? 'brave' : (/Chrome\//.test(navigator.userAgent) ? 'chrome' : 'brave')));
   stDate = new Date();
   stOpenRow = null;
   showPage('screenPage');

@@ -250,15 +250,28 @@
 
 
     <section class="st-install hidden" id="stInstall">
-      <h2><i class="fas fa-puzzle-piece" aria-hidden="true"></i> Install the tracker to use Screen time</h2>
-      <p>A web page cannot see your other tabs, so a small browser extension counts the time and visits for every website you use. It runs quietly, stores only site names on your computer, and does not slow your browser.</p>
-      <ol>
-        <li><a class="btn btn-primary" href="studytimer-tracker.zip" download><i class="fas fa-download"></i> Download tracker</a></li>
-        <li>Unzip it, then open <code>chrome://extensions</code> (Edge: <code>edge://extensions</code>) and turn on <strong>Developer mode</strong>.</li>
-        <li>Click <strong>Load unpacked</strong> and choose the unzipped <code>studytimer-tracker</code> folder.</li>
-        <li>Come back to this page. It connects by itself and your data appears here.</li>
+      <h2><i class="fas fa-puzzle-piece" aria-hidden="true"></i> Turn on Screen time in 4 easy steps</h2>
+      <p>Screen time needs a small free add-on for your laptop browser. It only saves website names on your own computer and does not slow anything down. Takes about a minute.</p>
+      <div class="st-browsers" role="group" aria-label="Your browser">
+        <button type="button" class="chip-btn" data-br="brave" aria-pressed="true" onclick="setInstallBrowser('brave')">Brave</button>
+        <button type="button" class="chip-btn" data-br="chrome" aria-pressed="false" onclick="setInstallBrowser('chrome')">Chrome</button>
+        <button type="button" class="chip-btn" data-br="edge" aria-pressed="false" onclick="setInstallBrowser('edge')">Edge</button>
+      </div>
+      <ol class="st-steps">
+        <li><strong>Download</strong>
+          <a class="btn btn-primary" href="studytimer-tracker.zip" download><i class="fas fa-download"></i> Download tracker</a>
+          <span>Then right-click the downloaded file and choose <b>Extract files</b>.</span></li>
+        <li><strong>Open your extensions page</strong>
+          <span class="st-copyrow"><code id="stExtUrl">brave://extensions</code>
+          <button type="button" class="btn btn-secondary" onclick="copyExtUrl(this)"><i class="fas fa-copy"></i> Copy</button></span>
+          <span>Open a new tab, paste it in the address bar and press Enter.</span></li>
+        <li><strong>Turn on Developer mode</strong>
+          <span>Flip the switch at the top right of that page.</span></li>
+        <li><strong>Click Load unpacked</strong>
+          <span>Choose the extracted <code>studytimer-tracker</code> folder. If it shows another <code>studytimer-tracker</code> folder inside, choose that inner one.</span></li>
       </ol>
-      <p class="small">Works on laptops with Chrome, Edge or Brave. Phones cannot run it.</p>
+      <p class="st-done"><i class="fas fa-circle-check" aria-hidden="true"></i> Done! Come back and refresh this page. It connects by itself and your screen time starts filling in.</p>
+      <p class="small">Laptops only (Chrome, Brave or Edge). Phones cannot run it.</p>
     </section>
 
     <div class="st-tabs" role="tablist" aria-label="Range">
@@ -291,22 +304,6 @@
 
     <div id="stList" class="st-list"></div>
 
-    <section class="st-source">
-      <p class="small" id="stTrackerStatus"></p>
-      <div class="st-source-actions">
-        <button type="button" class="btn btn-quiet" onclick="document.getElementById('stImportFile').click()"><i class="fas fa-file-import"></i> Import data</button>
-        <input type="file" id="stImportFile" accept="application/json,.json" class="sr-only" onchange="importScreenTime(this)">
-      </div>
-      <details class="st-help">
-        <summary>How laptop tracking works</summary>
-        <p>A web page cannot see your other tabs or programs, so two small helpers collect the numbers and send them here.</p>
-        <ul>
-          <li><strong>Websites:</strong> install the <code>studytimer-tracker</code> browser extension (Chrome, Edge, Brave). Keep this page open once in a while and it syncs by itself.</li>
-          <li><strong>Apps (Windows):</strong> run <code>desktop_tracker.py</code>, then use Import data to load <code>padhlo_apps.json</code>.</li>
-          <li>Tap any row to move a site or app between Productive, Distracting and Others.</li>
-        </ul>
-      </details>
-    </section>
   </div>
 </div>
 
