@@ -1143,16 +1143,8 @@ function renderScreenList(sources, dates) {
 
     const icon = document.createElement('span');
     icon.className = 'st-icon';
-    if (stIsSite(name)) {
-      const img = document.createElement('img');
-      img.alt = '';
-      img.loading = 'lazy';
-      img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(name.split(YT_SEP)[0])}&sz=64`;
-      img.onerror = () => { img.remove(); icon.textContent = stDisplayName(name).charAt(0).toUpperCase(); };
-      icon.appendChild(img);
-    } else {
-      icon.textContent = stDisplayName(name).charAt(0).toUpperCase();
-    }
+    // No third-party favicon lookup: tracked site names are private and stay on this device.
+    icon.textContent = stDisplayName(name).charAt(0).toUpperCase();
 
     const mid = document.createElement('span');
     mid.className = 'st-mid';

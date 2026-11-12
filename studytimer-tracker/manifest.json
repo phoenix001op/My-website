@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Padh Lo Screen Time Tracker",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Counts the time and visits for each website and sends it to your Padh Lo study timer. Data stays on your computer.",
   "permissions": [
     "tabs",
@@ -15,8 +15,10 @@
   "content_scripts": [
     {
       "matches": [
-        "*://*/*studytimer*",
-        "file:///*studytimer*"
+        "https://my-website-ep83.vercel.app/studytimer.html*",
+        "https://my-website-ep83.vercel.app/studytimer",
+        "https://phoenix001op.github.io/My-website/studytimer.html*",
+        "file:///*/studytimer.html*"
       ],
       "js": [
         "content.js"

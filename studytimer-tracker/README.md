@@ -8,8 +8,8 @@ Feeds the **Screen time** page of the study timer (`studytimer.html`).
 3. Browse as usual. Time and visits are counted only while a tab is in front and you are active (or a tab is playing audio). It is event driven and saves in batches every 30 seconds, so it does not slow the browser.
 4. Open the study timer page now and then. It syncs automatically, and the Screen time page shows the totals.
 
-Only host names such as `youtube.com` are stored, never full addresses, and nothing leaves your computer.
-If you open the study timer from a local file, turn on **Allow access to file URLs** for the extension.
+Only host names such as `youtube.com` are stored, never full addresses, and nothing leaves your computer. The tracker only talks to the study timer page on this site (the manifest and `content.js` both enforce that); no other website can read your data.
+If you open the study timer from a local file named `studytimer.html`, turn on **Allow access to file URLs** for the extension.
 
 ## Apps: desktop tracker (Windows)
 1. Install Python 3, then run `python desktop_tracker.py` and leave it running.
