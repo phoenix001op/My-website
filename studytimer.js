@@ -13,7 +13,8 @@ let monthTimer = null;
 let currentCalendarMonth = new Date().getMonth();
 let currentCalendarYear = new Date().getFullYear();
 let selectedCalendarDate = null;
-let currentMusicTrack = 1;
+let currentMusicTrack = -1; // index into MUSIC_TRACKS, -1 = nothing chosen yet
+let musicMirror = 0;
 const audioPlayer = new Audio();
 
 // Ranks reset every month. XP bands:
@@ -31,11 +32,15 @@ const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
 const THEMES = ['night', 'notebook', 'board'];
 const THEME_COLORS = { night: '#11151c', notebook: '#f1f3f7', board: '#16231f' };
 
+// Free calming music. Tap a mood to play it, tap it again to pause.
+// "soma" tracks are free internet radio from SomaFM (ad free, no sign-in). Mirrors are tried if one is busy.
+const SOMA_HOSTS = ['ice1', 'ice2', 'ice4', 'ice6'];
 const MUSIC_TRACKS = [
-  'drifting-away-full-version-binaural-beats-409329.mp3',
-  'https://cdn.pixabay.com/download/audio/2022/03/10/audio_4b8a1d9a4d.mp3',
-  'https://cdn.pixabay.com/download/audio/2022/03/19/audio_1e5b5d9a4d.mp3',
-  'https://cdn.pixabay.com/download/audio/2022/03/07/audio_8b8a1d9a4d.mp3'
+  { id: 'drift', name: 'Drifting Away', hint: 'Soft binaural beats', icon: 'fa-water', file: 'drifting-away-full-version-binaural-beats-409329.mp3' },
+  { id: 'groovesalad', name: 'Chill Beats', hint: 'Lo-fi style downtempo', icon: 'fa-mug-hot', soma: 'groovesalad-128-mp3' },
+  { id: 'dronezone', name: 'Deep Focus', hint: 'Calm ambient drones', icon: 'fa-brain', soma: 'dronezone-128-mp3' },
+  { id: 'deepspaceone', name: 'Deep Space', hint: 'Slow, spacey and peaceful', icon: 'fa-moon', soma: 'deepspaceone-128-mp3' },
+  { id: 'fluid', name: 'Mellow Instrumental', hint: 'Smooth, no vocals', icon: 'fa-leaf', soma: 'fluid-128-mp3' }
 ];
 
 const PAGES = ['appScreen', 'calendarPage', 'statsPage', 'screenPage', 'rankPage'];
@@ -112,30 +117,112 @@ function setTheme(name) {
 
 // ========== MUSIC ==========
 function toggleMusicPlayer() {
+  renderTrackList();
   document.getElementById('musicPlayer').classList.toggle('hidden');
 }
 
+function renderTrackList() {
+  const list = document.getElementById('trackList');
+  if (!list || list.childElementCount) return;
+  MUSIC_TRACKS.forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'track-btn';
+    btn.dataset.i = i;
+    btn.innerHTML = `<i class="fas ${t.icon}" aria-hidden="true"></i><span><b></b><small></small></span>`;
+    btn.querySelector('b').textContent = t.name;
+    btn.querySelector('small').textContent = t.hint;
+    btn.onclick = () => selectTrack(i);
+    list.appendChild(btn);
+  });
+  const vol = Number(getData('musicVol', 60));
+  audioPlayer.volume = Math.min(1, Math.max(0, vol / 100));
+  const slider = document.getElementById('musicVol');
+  if (slider) slider.value = vol;
+}
+
+function trackUrl(t) {
+  return t.file || `https://${SOMA_HOSTS[musicMirror % SOMA_HOSTS.length]}.somafm.com/${t.soma}`;
+}
+
+function setMusicUI(state, message) {
+  const playing = state === 'playing' || state === 'loading';
+  const main = document.getElementById('musicMain');
+  if (main) {
+    main.classList.toggle('on', playing);
+    main.setAttribute('aria-label', playing ? 'Pause music' : 'Play music');
+  }
+  const icon = document.getElementById('musicMainIcon');
+  if (icon) icon.className = 'fas ' + (state === 'loading' ? 'fa-spinner fa-spin' : playing ? 'fa-pause' : 'fa-play');
+  setText('musicMainText', state === 'loading' ? 'Loading' : playing ? 'Pause' : 'Play');
+  if (message) setText('musicStatus', message);
+  document.querySelectorAll('.track-btn').forEach(b => {
+    const on = Number(b.dataset.i) === currentMusicTrack;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', String(on));
+  });
+}
+
+function loadTrack(i) {
+  const t = MUSIC_TRACKS[i];
+  currentMusicTrack = i;
+  audioPlayer.src = trackUrl(t);
+  audioPlayer.loop = !!t.file; // the local file repeats; radio streams run on their own
+  setMusicUI('loading', `Loading ${t.name}...`);
+  audioPlayer.play().catch(() => { /* the error event below handles real failures */ });
+}
+
+function selectTrack(i) {
+  if (i === currentMusicTrack && !audioPlayer.paused) { pauseMusic(); return; } // tap the playing one to pause
+  if (i === currentMusicTrack && audioPlayer.src) { playMusic(); return; }
+  musicMirror = 0;
+  loadTrack(i);
+}
+
+// One big button: play (starts the first mood if none chosen), or pause.
+function toggleMusic() {
+  if (!audioPlayer.paused) pauseMusic();
+  else if (currentMusicTrack < 0) { musicMirror = 0; loadTrack(0); }
+  else playMusic();
+}
+
 function playMusic() {
-  if (audioPlayer.src) audioPlayer.play().catch(() => {});
+  const t = MUSIC_TRACKS[currentMusicTrack];
+  if (!t) return;
+  // A radio stream that was paused is live again, so reload it instead of resuming old audio.
+  if (!t.file) audioPlayer.src = trackUrl(t);
+  setMusicUI('loading', `Loading ${t.name}...`);
+  audioPlayer.play().catch(() => {});
 }
 
 function pauseMusic() {
   audioPlayer.pause();
+  setMusicUI('paused', 'Paused. Tap Play to continue.');
 }
 
 function stopMusic() {
   audioPlayer.pause();
-  audioPlayer.currentTime = 0;
+  if (audioPlayer.currentTime) audioPlayer.currentTime = 0;
+  currentMusicTrack = -1;
+  audioPlayer.removeAttribute('src');
+  setMusicUI('paused', 'Pick a mood to start. Tap again to pause.');
 }
 
-function selectTrack(track, btn) {
-  currentMusicTrack = track;
-  document.querySelectorAll('.track-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  audioPlayer.src = MUSIC_TRACKS[track - 1];
-  audioPlayer.loop = true;
-  if (!audioPlayer.paused) audioPlayer.play().catch(() => {});
+function setMusicVolume(v) {
+  audioPlayer.volume = Math.min(1, Math.max(0, Number(v) / 100));
+  setData('musicVol', Number(v));
 }
+
+audioPlayer.addEventListener('playing', () => {
+  const t = MUSIC_TRACKS[currentMusicTrack];
+  if (t) setMusicUI('playing', `Now playing: ${t.name}`);
+});
+audioPlayer.addEventListener('error', () => {
+  const t = MUSIC_TRACKS[currentMusicTrack];
+  if (!t || !audioPlayer.getAttribute('src')) return;
+  if (t.soma && musicMirror < SOMA_HOSTS.length - 1) { musicMirror++; loadTrack(currentMusicTrack); return; } // try the next server
+  setMusicUI('paused', 'Could not play. Check your internet and try again.');
+});
 
 // ========== XP, RANKS AND THE MONTHLY RESET ==========
 function calculateXP(minutes) {
@@ -1384,7 +1471,6 @@ function initApp() {
   renderTimer();
   requestTrackerSync();
   setTimeout(updateTrackerPrompt, 1500); // give the extension a moment to say hello
-  selectTrack(1, document.querySelector('.track-btn'));
 
   if (monthTimer) clearInterval(monthTimer);
   monthTimer = setInterval(checkMonthRollover, 60000);

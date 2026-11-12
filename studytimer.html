@@ -46,17 +46,16 @@
     <span class="music-title"><i class="fas fa-music"></i> Music</span>
     <button class="music-close" onclick="toggleMusicPlayer()" aria-label="Close music player"><i class="fas fa-times"></i></button>
   </div>
-  <div class="music-controls">
-    <button class="music-btn" onclick="playMusic()" aria-label="Play"><i class="fas fa-play"></i></button>
-    <button class="music-btn alt" onclick="pauseMusic()" aria-label="Pause music"><i class="fas fa-pause"></i></button>
-    <button class="music-btn alt" onclick="stopMusic()" aria-label="Stop"><i class="fas fa-stop"></i></button>
-  </div>
-  <div class="track-selector">
-    <button class="track-btn active" onclick="selectTrack(1, this)"><i class="fas fa-water"></i> Drifting Away</button>
-    <button class="track-btn" onclick="selectTrack(2, this)"><i class="fas fa-music"></i> Piano Relax</button>
-    <button class="track-btn" onclick="selectTrack(3, this)"><i class="fas fa-tree"></i> Nature Sounds</button>
-    <button class="track-btn" onclick="selectTrack(4, this)"><i class="fas fa-brain"></i> Focus Ambient</button>
-  </div>
+  <button class="music-main" id="musicMain" onclick="toggleMusic()" aria-label="Play music">
+    <i class="fas fa-play" id="musicMainIcon"></i>
+    <span id="musicMainText">Play</span>
+  </button>
+  <p class="music-status" id="musicStatus" role="status" aria-live="polite">Pick a mood to start. Tap again to pause.</p>
+  <div class="track-selector" id="trackList"></div>
+  <label class="music-vol"><i class="fas fa-volume-low" aria-hidden="true"></i>
+    <input type="range" id="musicVol" min="0" max="100" value="60" aria-label="Volume" oninput="setMusicVolume(this.value)">
+  </label>
+  <p class="music-credit">Free radio by <a href="https://somafm.com" target="_blank" rel="noopener">SomaFM</a>. Needs internet.</p>
 </div>
 
 <!-- HOME -->
