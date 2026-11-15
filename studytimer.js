@@ -999,8 +999,7 @@ function renderStatsChart() {
 }
 
 // ========== SCREEN TIME ==========
-// Data comes from the studytimer-tracker extension (websites), the desktop tracker (apps, via Import),
-// and is stored per user as { 'YYYY-MM-DD': { 'youtube.com': seconds } }.
+// Data comes from the studytimer-tracker extension and is stored per user as { 'YYYY-MM-DD': { 'youtube.com': seconds } }.
 const ST_RULES = {
   productive: [
     'pw.live', 'physicswallah.live', 'pwskills.com', 'physicswallah', 'khanacademy.org', 'wikipedia.org', 'github.com', 'stackoverflow.com',
@@ -1298,20 +1297,8 @@ function trackerInstalled() {
   return stExtSeen || !!getData('stLastSync', 0);
 }
 function renderTrackerStatus() {
-  const last = getData('stLastSync', 0);
   const card = document.getElementById('stInstall');
   if (card) card.classList.toggle('hidden', stExtSeen);
-  const el = document.getElementById('stTrackerStatus');
-  if (!el) return;
-  if (stExtSeen) {
-    el.textContent = 'Browser tracker connected. Websites update here automatically.';
-  } else if (last && Date.now() - last < 10 * 60 * 1000) {
-    el.textContent = 'Browser tracker connected. Websites sync while this page is open.';
-  } else if (last) {
-    el.textContent = `Browser tracker last synced ${new Date(last).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}. Open this page with the extension on to refresh.`;
-  } else {
-    el.textContent = 'No tracker detected yet. Install the extension to track websites, and import app data from the desktop tracker.';
-  }
 }
 
 // Accepts { 'YYYY-MM-DD': { name: seconds } } and ignores anything else.
@@ -1353,25 +1340,6 @@ function stMerge(storeKey, incoming) {
   }
   if (changed) setData(storeKey, store);
   return changed;
-}
-
-function importScreenTime(input) {
-  const file = input.files && input.files[0];
-  input.value = '';
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const json = JSON.parse(reader.result);
-      const days = stCleanDays(json && json.days ? json.days : json);
-      const n = stMerge('stImported', days);
-      showNotification(n ? `Imported ${n} entries.` : 'Nothing new in that file.');
-      renderScreenTime();
-    } catch (e) {
-      showNotification('That file could not be read. Use the JSON made by the tracker.');
-    }
-  };
-  reader.readAsText(file);
 }
 
 function requestTrackerSync() {

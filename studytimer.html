@@ -41,7 +41,7 @@
     <input id="usernameInput" class="field" placeholder="Your name" maxlength="30" autocomplete="given-name"
            onkeydown="if(event.key==='Enter') login()" />
     <button class="btn btn-primary btn-block" onclick="login()">Submit</button>
-    <p>Time your study, earn XP, climb the ranks.</p>
+    <p>A study timer with XP and a rank that resets every month.</p>
   </main>
 </div>
 
@@ -80,7 +80,7 @@
 
     <div class="tracker-prompt hidden" id="trackerPrompt" role="region" aria-label="Install the screen time tracker">
       <i class="fas fa-display" aria-hidden="true"></i>
-      <div class="tp-text"><strong>Turn on Screen time</strong><span>Install the free tracker to see how long you use every website.</span></div>
+      <div class="tp-text"><strong>See your screen time</strong><span>Install the browser tracker to log how long you spend on each site.</span></div>
       <button class="btn btn-primary" onclick="openScreenTime()">Set up</button>
       <button class="tp-close" onclick="dismissTrackerPrompt()" aria-label="Not now"><i class="fas fa-times"></i></button>
     </div>
@@ -254,8 +254,8 @@
 
 
     <section class="st-install hidden" id="stInstall">
-      <h2><i class="fas fa-puzzle-piece" aria-hidden="true"></i> Turn on Screen time in 4 easy steps</h2>
-      <p>Screen time needs a small free add-on for your laptop browser. It only saves website names on your own computer and does not slow anything down. Takes about a minute.</p>
+      <h2><i class="fas fa-puzzle-piece" aria-hidden="true"></i> Install the tracker to see your screen time</h2>
+      <p>A web page can't see your other tabs, so Screen time needs a small browser extension. It saves only site names, and only on this computer. Setup takes about a minute.</p>
       <div class="st-browsers" role="group" aria-label="Your browser">
         <button type="button" class="chip-btn" data-br="brave" aria-pressed="true" onclick="setInstallBrowser('brave')">Brave</button>
         <button type="button" class="chip-btn" data-br="chrome" aria-pressed="false" onclick="setInstallBrowser('chrome')">Chrome</button>
@@ -274,8 +274,8 @@
         <li><strong>Click Load unpacked</strong>
           <span>Choose the extracted <code>studytimer-tracker</code> folder. If it shows another <code>studytimer-tracker</code> folder inside, choose that inner one.</span></li>
       </ol>
-      <p class="st-done"><i class="fas fa-circle-check" aria-hidden="true"></i> Done! Come back and refresh this page. It connects by itself and your screen time starts filling in.</p>
-      <p class="small">Laptops only (Chrome, Brave or Edge). Phones cannot run it.</p>
+      <p class="st-done"><i class="fas fa-circle-check" aria-hidden="true"></i> When it's loaded, refresh this page. The tracker connects by itself and your sites start to appear.</p>
+      <p class="small">Works in Chrome, Brave and Edge on a laptop. Phone browsers can't run it.</p>
     </section>
 
     <div class="st-tabs" role="tablist" aria-label="Range">

@@ -673,3 +673,4 @@ button.bar-col:hover .bar { filter: brightness(1.12); }
 .music-credit { margin: 0.6rem 0 0; text-align: center; font-size: 0.72rem; color: var(--muted); }
 .music-credit a { color: inherit; text-decoration: underline; }
 .track-btn { min-height: 3rem; padding: 0.4rem 0.75rem; }
+.seg-toggle button { min-height: 2.5rem; }
