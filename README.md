@@ -1,6 +1,6 @@
 # My Website
 
-A collection of small web projects by Lavish.
+A collection of small web projects by Me.
 
 ## Main entry points
 
