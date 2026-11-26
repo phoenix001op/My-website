@@ -15,7 +15,10 @@
     e.className = cls;
     return e;
   };
-  const still = matchMedia('(prefers-reduced-motion: reduce)');
+  // The animation runs by default. The visitor can pause it with the button,
+  // and the choice is remembered in their browser.
+  let paused = false;
+  try { paused = localStorage.getItem('winter-paused') === 'yes'; } catch {}
 
   /* ---------- background ---------- */
   const sky = el('canvas', 'winter-layer');
@@ -30,7 +33,7 @@
   let video = null;
   if (AURORA_VIDEO) {
     video = el('video', 'winter-layer winter-video');
-    Object.assign(video, { src: AURORA_VIDEO, muted: true, loop: true, playsInline: true, autoplay: !still.matches });
+    Object.assign(video, { src: AURORA_VIDEO, muted: true, loop: true, playsInline: true, autoplay: !paused });
     video.addEventListener('error', () => { video.remove(); video = null; draw(); });
     document.body.prepend(video);
     if (VIDEO_CREDIT) {
@@ -220,13 +223,28 @@
   function setMotion() {
     cancelAnimationFrame(raf);
     last = 0;
-    if (video) still.matches ? video.pause() : video.play().catch(() => {});
-    if (still.matches) draw(); else raf = requestAnimationFrame(frame);
+    if (video) paused ? video.pause() : video.play().catch(() => {});
+    if (paused) draw(); else raf = requestAnimationFrame(frame);
   }
   addEventListener('resize', resize);
-  still.addEventListener('change', setMotion);
   resize();
   setMotion();
+
+  /* ---------- pause button ---------- */
+  const toggle = el('button', 'winter-toggle');
+  toggle.type = 'button';
+  const showState = () => {
+    toggle.textContent = paused ? '▶ Play animation' : '⏸ Pause animation';
+    document.documentElement.classList.toggle('winter-paused', paused);
+  };
+  toggle.addEventListener('click', () => {
+    paused = !paused;
+    try { localStorage.setItem('winter-paused', paused ? 'yes' : 'no'); } catch {}
+    showState();
+    setMotion();
+  });
+  showState();
+  document.body.append(toggle);
 
   /* ---------- string lights under the header ---------- */
   const header = document.querySelector('header');
