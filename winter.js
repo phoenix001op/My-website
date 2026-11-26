@@ -1,5 +1,5 @@
-/* Winter theme: aurora, snow, fir trees, string lights and music.
-   Everything is drawn or played by this file. To remove the theme, delete the
+/* Winter theme: aurora, snow, fir trees and string lights.
+   Everything is drawn by this file. To remove the theme, delete the
    winter.css and winter.js lines from the HTML pages. */
 (() => {
   // Optional background video. Leave '' to use the built-in aurora.
@@ -10,10 +10,6 @@
   const AURORA_VIDEO = '';
   const VIDEO_CREDIT = '';
 
-  const store = {
-    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
-    set(k, v) { try { localStorage.setItem(k, v); } catch {} }
-  };
   const el = (tag, cls) => {
     const e = document.createElement(tag);
     e.className = cls;
@@ -48,7 +44,7 @@
   const rand = (a, b) => a + Math.random() * (b - a);
 
   function resize() {
-    const d = Math.min(devicePixelRatio || 1, 2);
+    const d = Math.min(devicePixelRatio || 1, 1.5);
     const newW = innerWidth, newH = innerHeight;
     const widthChanged = newW !== W;
     W = newW; H = newH;
@@ -56,6 +52,10 @@
       c.width = W * d; c.height = H * d;
       c.getContext('2d').setTransform(d, 0, 0, d, 0, 0);
     }
+    glow.width = Math.ceil(W * SMALL); glow.height = Math.ceil(H * SMALL);
+    bg = s.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#040a1c');
+    bg.addColorStop(1, '#0d2440');
     // Phones resize when the address bar hides; keep the scene unless width changes.
     if (widthChanged) {
       stars = Array.from({ length: Math.min(180, W / 6) }, () =>
@@ -65,6 +65,7 @@
       trees = [];
       for (let x = -10; x < W + 20; x += rand(16, 38)) trees.push({ x, h: rand(34, 105) });
     }
+    paintScene(d);
     draw();
   }
 
@@ -74,84 +75,113 @@
     { y: 0.52, h: 0.22, color: '170,110,255', speed: 0.11, wave: 2.3, a: 0.22 }
   ];
 
-  let t = 0;
+  // The aurora is soft, so it is painted at quarter size and stretched.
+  // Its gradients, the stars, trees and snowflake are each painted only once.
+  const SMALL = 0.25, STEP = 8;
+  const glow = document.createElement('canvas');
+  const scene = document.createElement('canvas'); // fir trees and ground
+  const a = glow.getContext('2d');
+
+  const strips = RIBBONS.map(r => {
+    const c = document.createElement('canvas');
+    c.width = 1; c.height = 128;
+    const x = c.getContext('2d');
+    const g = x.createLinearGradient(0, 0, 0, 128);
+    g.addColorStop(0, `rgba(${r.color},0)`);
+    g.addColorStop(0.82, `rgba(${r.color},1)`);
+    g.addColorStop(1, `rgba(${r.color},0)`);
+    x.fillStyle = g;
+    x.fillRect(0, 0, 1, 128);
+    return c;
+  });
+
+  const flake = document.createElement('canvas');
+  flake.width = flake.height = 16;
+  {
+    const x = flake.getContext('2d');
+    x.fillStyle = 'rgba(240,248,255,0.75)';
+    x.beginPath();
+    x.arc(8, 8, 8, 0, 6.3);
+    x.fill();
+  }
+
+  function paintScene(d) {
+    scene.width = W * d; scene.height = 140 * d;
+    const x = scene.getContext('2d');
+    x.setTransform(d, 0, 0, d, 0, 0);
+    x.fillStyle = '#06131f';
+    for (const tr of trees) {
+      for (let i = 0; i < 3; i++) {
+        const top = 122 - tr.h + i * tr.h * 0.24;
+        const half = tr.h * (0.14 + i * 0.06);
+        x.beginPath();
+        x.moveTo(tr.x, top);
+        x.lineTo(tr.x + half, top + tr.h * 0.44);
+        x.lineTo(tr.x - half, top + tr.h * 0.44);
+        x.fill();
+      }
+    }
+    x.fillStyle = '#b9d3ea';
+    x.beginPath();
+    x.moveTo(0, 140);
+    for (let i = 0; i <= W + 20; i += 20) x.lineTo(i, 122 - 6 * Math.sin(i / 90));
+    x.lineTo(W, 140);
+    x.fill();
+  }
+
+  let t = 0, bg = null;
   function drawSky() {
-    s.clearRect(0, 0, W, H);
-    if (!video) {
-      const bg = s.createLinearGradient(0, 0, 0, H);
-      bg.addColorStop(0, '#040a1c');
-      bg.addColorStop(1, '#0d2440');
+    if (video) {
+      s.clearRect(0, 0, W, H);
+    } else {
       s.fillStyle = bg;
       s.fillRect(0, 0, W, H);
 
+      s.fillStyle = '#e6f0ff';
       for (const st of stars) {
-        s.fillStyle = `rgba(230,240,255,${0.35 + 0.3 * Math.sin(t * 1.5 + st.p)})`;
+        s.globalAlpha = 0.35 + 0.3 * Math.sin(t * 1.5 + st.p);
         s.fillRect(st.x, st.y * H * 0.8, st.r, st.r);
       }
 
-      s.globalCompositeOperation = 'lighter';
-      const step = 6;
-      for (const r of RIBBONS) {
-        for (let x = 0; x < W + step; x += step) {
+      a.clearRect(0, 0, W * SMALL, H * SMALL);
+      a.globalCompositeOperation = 'lighter';
+      RIBBONS.forEach((r, n) => {
+        for (let x = 0; x < W + STEP; x += STEP) {
           const u = x / Math.max(W, 700);
           const base = H * (r.y + 0.07 * Math.sin(u * r.wave * 2 + t * r.speed * 2)
                                 + 0.035 * Math.sin(u * r.wave * 5 - t * r.speed * 3));
           const tall = H * r.h * (0.75 + 0.25 * Math.sin(u * 17 + t * r.speed * 4));
-          const light = r.a * (0.65 + 0.2 * Math.sin(u * 41 - t * 0.7) + 0.15 * Math.sin(u * 97 + t * 0.4));
-          const g = s.createLinearGradient(0, base - tall, 0, base + 14);
-          g.addColorStop(0, `rgba(${r.color},0)`);
-          g.addColorStop(0.82, `rgba(${r.color},${light})`);
-          g.addColorStop(1, `rgba(${r.color},0)`);
-          s.fillStyle = g;
-          s.fillRect(x, base - tall, step, tall + 14);
+          a.globalAlpha = r.a * (0.65 + 0.2 * Math.sin(u * 41 - t * 0.7) + 0.15 * Math.sin(u * 97 + t * 0.4));
+          a.drawImage(strips[n], x * SMALL, (base - tall) * SMALL, STEP * SMALL, (tall + 14) * SMALL);
         }
-      }
+      });
+
+      s.globalAlpha = 1;
+      s.globalCompositeOperation = 'lighter';
+      s.drawImage(glow, 0, 0, W, H);
       s.globalCompositeOperation = 'source-over';
     }
-
-    // snowy ground and fir trees
-    s.fillStyle = '#06131f';
-    for (const tr of trees) {
-      const y = H - 18;
-      for (let i = 0; i < 3; i++) {
-        const top = y - tr.h + i * tr.h * 0.24;
-        const half = tr.h * (0.14 + i * 0.06);
-        s.beginPath();
-        s.moveTo(tr.x, top);
-        s.lineTo(tr.x + half, top + tr.h * 0.44);
-        s.lineTo(tr.x - half, top + tr.h * 0.44);
-        s.fill();
-      }
-    }
-    s.fillStyle = '#b9d3ea';
-    s.beginPath();
-    s.moveTo(0, H);
-    for (let x = 0; x <= W + 20; x += 20) s.lineTo(x, H - 18 - 6 * Math.sin(x / 90));
-    s.lineTo(W, H);
-    s.fill();
+    s.drawImage(scene, 0, H - 140, W, 140);
   }
 
   function drawSnow(dt) {
     f.clearRect(0, 0, W, H);
-    f.fillStyle = 'rgba(240,248,255,0.75)';
     for (const k of flakes) {
       k.y += (14 + k.r * 16) * dt;
       k.x += Math.sin(t + k.p) * 12 * dt;
       if (k.y > H + 4) { k.y = -4; k.x = rand(0, W); }
-      f.beginPath();
-      f.arc(k.x, k.y, k.r, 0, 6.3);
-      f.fill();
+      f.drawImage(flake, k.x - k.r, k.y - k.r, k.r * 2, k.r * 2);
     }
   }
 
   function draw() { drawSky(); drawSnow(0); }
 
-  let last = 0, skyLast = 0, raf = 0;
+  let last = 0, raf = 0;
   function frame(now) {
     const dt = Math.min((now - last) / 1000 || 0, 0.05);
     last = now;
     t += dt;
-    if (now - skyLast > 40) { drawSky(); skyLast = now; } // 25 fps is plenty
+    drawSky(); // every frame, so the aurora moves smoothly
     drawSnow(dt);
     raf = requestAnimationFrame(frame);
   }
@@ -171,87 +201,7 @@
   if (header) {
     const lights = el('div', 'winter-lights');
     lights.setAttribute('aria-hidden', 'true');
-    for (let i = 0; i < 60; i++) lights.append(document.createElement('i'));
+    for (let i = 0; i < 80; i++) lights.append(document.createElement('i'));
     header.append(lights);
-  }
-
-  /* ---------- music: Jingle Bells (James Pierpont, 1857, public domain) ---------- */
-  const NOTE = { C: 523.25, D: 587.33, E: 659.25, F: 698.46, G: 783.99 };
-  // [note, length in beats]
-  const TUNE = ('E1 E1 E2 E1 E1 E2 E1 G1 C1.5 D.5 E4 ' +
-                'F1 F1 F1.5 F.5 F1 E1 E1 E.5 E.5 E1 D1 D1 E1 D2 G2 ' +
-                'E1 E1 E2 E1 E1 E2 E1 G1 C1.5 D.5 E4 ' +
-                'F1 F1 F1.5 F.5 F1 E1 E1 E.5 E.5 G1 G1 F1 D1 C4')
-    .split(' ').map(n => [NOTE[n[0]], parseFloat(n.slice(1))]);
-  const BEAT = 0.3;
-
-  let ac = null, out = null, timer = 0, idx = 0, when = 0;
-
-  function bell(freq, at, len) {
-    for (const [mult, vol] of [[1, 0.12], [2.01, 0.035]]) {
-      const o = ac.createOscillator(), g = ac.createGain();
-      o.frequency.value = freq * mult;
-      g.gain.setValueAtTime(0.0001, at);
-      g.gain.exponentialRampToValueAtTime(vol, at + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, at + len + 0.25);
-      o.connect(g).connect(out);
-      o.start(at);
-      o.stop(at + len + 0.3);
-    }
-  }
-  function schedule() {
-    if (ac.state !== 'running') return;
-    if (when < ac.currentTime) when = ac.currentTime + 0.05;
-    while (when < ac.currentTime + 1.2) {
-      const [freq, beats] = TUNE[idx];
-      bell(freq, when, beats * BEAT);
-      when += beats * BEAT;
-      idx = (idx + 1) % TUNE.length;
-      if (idx === 0) when += 2; // short rest before it repeats
-    }
-  }
-
-  const btn = el('button', 'winter-music');
-  btn.type = 'button';
-  let playing = false;
-  const label = () => {
-    btn.textContent = playing ? '🔔 Music on' : '🔕 Play music';
-    btn.setAttribute('aria-pressed', String(playing));
-  };
-  function start() {
-    const AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) return;
-    ac = new AC();
-    out = ac.createGain();
-    out.gain.value = 0.7;
-    out.connect(ac.destination);
-    idx = 0; when = 0; playing = true;
-    ac.resume().then(() => ac && schedule());
-    timer = setInterval(schedule, 250);
-    label();
-  }
-  function stop() {
-    clearInterval(timer);
-    if (ac) ac.close();
-    ac = null; playing = false;
-    label();
-  }
-  btn.addEventListener('click', () => {
-    if (playing) { stop(); store.set('winter-music', 'off'); }
-    else { start(); store.set('winter-music', 'on'); }
-  });
-  label();
-  document.body.append(btn);
-
-  // Browsers block sound until the visitor touches the page. If they turned music
-  // on before, resume it on their first tap or key press on the next page.
-  if (store.get('winter-music') === 'on') {
-    const resume = e => {
-      removeEventListener('pointerdown', resume);
-      removeEventListener('keydown', resume);
-      if (!playing && e.target !== btn) start();
-    };
-    addEventListener('pointerdown', resume);
-    addEventListener('keydown', resume);
   }
 })();
