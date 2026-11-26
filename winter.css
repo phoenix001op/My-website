@@ -1,0 +1,43 @@
+/* Winter theme. Loaded after style.css / about.css. */
+html { background: #040a1c; }
+body { background: transparent; }
+
+.winter-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; pointer-events: none; z-index: -1; }
+.winter-video { object-fit: cover; z-index: -2; }
+.winter-front { z-index: 10; }
+
+header { position: relative; background: rgba(6, 18, 38, 0.72); border-bottom: 1px solid rgba(190, 225, 255, 0.35); padding-bottom: 28px; }
+header h1 { color: #e8f6ff; text-shadow: 0 0 12px rgba(110, 220, 255, 0.65); }
+nav a { color: #e8f6ff; }
+nav a:hover, nav a:focus-visible, nav a.active { color: #ff8a8a; }
+
+.winter-lights { position: absolute; left: 0; right: 0; bottom: -9px; display: flex; justify-content: space-around; gap: 18px; overflow: hidden; height: 18px; border-top: 1px solid #1f4a3a; }
+.winter-lights i { flex: 0 0 8px; height: 12px; margin-top: 1px; border-radius: 50%; color: #ff5c5c; background: currentColor; box-shadow: 0 0 10px 2px currentColor; animation: twinkle 2.4s ease-in-out infinite; }
+.winter-lights i:nth-child(4n+2) { color: #ffd45c; animation-delay: .6s; }
+.winter-lights i:nth-child(4n+3) { color: #5cf0a0; animation-delay: 1.2s; }
+.winter-lights i:nth-child(4n+4) { color: #6cc4ff; animation-delay: 1.8s; }
+@keyframes twinkle { 50% { opacity: .35; } }
+
+.bio, .skills, .about, .contact { text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9); }
+.bio h2, .contact h2, .card h3, .pixel-skill { color: #9be8ff; }
+.bio p, .card p { color: #e1edf8; }
+.about h2 { color: #ff8a8a; }
+.links a { color: #9be8ff; }
+.about { background: rgba(6, 18, 38, 0.65); border-radius: 12px; margin-top: 28px; width: calc(100% - 24px); }
+.profile-pic { border-color: #d8f1ff; box-shadow: 0 0 0 4px rgba(6, 18, 38, 0.8), 0 0 28px rgba(110, 220, 255, 0.4); }
+
+.card, .contact a { background: rgba(8, 24, 48, 0.76); border: 1px solid rgba(190, 225, 255, 0.45); border-top: 5px solid #eef8ff; border-radius: 12px; }
+.btn { background: #c9303c; color: #fff; }
+.btn:hover { background: #a82430; }
+.contact a:hover, .contact a:focus-visible { background: #c9303c; color: #fff; }
+a:focus-visible, .btn:focus-visible, .winter-music:focus-visible { outline: 3px solid #ffd45c; outline-offset: 3px; }
+
+footer { background: rgba(6, 18, 38, 0.3); border-top: 1px solid rgba(190, 225, 255, 0.35); padding-bottom: 130px; }
+
+.winter-music { position: fixed; right: 12px; bottom: 28px; z-index: 20; padding: 10px 14px; font: bold 0.85rem 'Courier New', monospace; color: #fff; background: #a82430; border: 1px solid #ffd9d9; border-radius: 999px; cursor: pointer; }
+.winter-credit { position: fixed; left: 12px; bottom: 32px; z-index: 20; font-size: 0.75rem; color: #fff; text-shadow: 0 1px 3px #000; }
+
+@media (prefers-reduced-motion: reduce) {
+  .winter-lights i { animation: none; }
+  .winter-front { display: none; }
+}
