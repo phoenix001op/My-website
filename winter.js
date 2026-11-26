@@ -130,6 +130,33 @@
   }
 
   let t = 0, bg = null;
+
+  // The aurora follows the mouse or a finger. "aim" is where the pointer is;
+  // "pull" glides towards it, so the movement stays soft.
+  const aim = { x: 0, y: 0, on: 0 };
+  const pull = { x: 0, y: 0, on: 0 };
+  function point(x, y) {
+    if (!pull.on) { pull.x = x; pull.y = y; }
+    aim.x = x; aim.y = y; aim.on = 1;
+  }
+  const release = () => { aim.on = 0; };
+  addEventListener('pointermove', e => { if (e.pointerType !== 'touch') point(e.clientX, e.clientY); }, { passive: true });
+  document.documentElement.addEventListener('mouseleave', release);
+  addEventListener('blur', release);
+  // Touch events keep reporting the finger while the page scrolls.
+  for (const type of ['touchstart', 'touchmove']) {
+    addEventListener(type, e => point(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+  }
+  addEventListener('touchend', release, { passive: true });
+  addEventListener('touchcancel', release, { passive: true });
+
+  function follow(dt) {
+    const k = 1 - Math.exp(-dt * 9);
+    pull.x += (aim.x - pull.x) * k;
+    pull.y += (aim.y - pull.y) * k;
+    pull.on += (aim.on - pull.on) * (1 - Math.exp(-dt * 4));
+    if (!aim.on && pull.on < 0.005) pull.on = 0;
+  }
   function drawSky() {
     if (video) {
       s.clearRect(0, 0, W, H);
@@ -146,13 +173,17 @@
       a.clearRect(0, 0, W * SMALL, H * SMALL);
       a.globalCompositeOperation = 'lighter';
       RIBBONS.forEach((r, n) => {
+        const reach = Math.max(130, W * 0.14);
         for (let x = 0; x < W + STEP; x += STEP) {
           const u = x / Math.max(W, 700);
           const base = H * (r.y + 0.07 * Math.sin(u * r.wave * 2 + t * r.speed * 2)
                                 + 0.035 * Math.sin(u * r.wave * 5 - t * r.speed * 3));
+          const near = pull.on * Math.exp(-(((x - pull.x) / reach) ** 2));
+          // bend the bottom edge towards the pointer
+          const bent = base + (pull.y + 20 - base) * near * (0.75 - n * 0.12);
           const tall = H * r.h * (0.75 + 0.25 * Math.sin(u * 17 + t * r.speed * 4));
-          a.globalAlpha = r.a * (0.65 + 0.2 * Math.sin(u * 41 - t * 0.7) + 0.15 * Math.sin(u * 97 + t * 0.4));
-          a.drawImage(strips[n], x * SMALL, (base - tall) * SMALL, STEP * SMALL, (tall + 14) * SMALL);
+          a.globalAlpha = Math.min(1, r.a * (0.65 + 0.2 * Math.sin(u * 41 - t * 0.7) + 0.15 * Math.sin(u * 97 + t * 0.4)) * (1 + 0.6 * near));
+          a.drawImage(strips[n], x * SMALL, (bent - tall) * SMALL, STEP * SMALL, (tall + 14) * SMALL);
         }
       });
 
@@ -181,6 +212,7 @@
     const dt = Math.min((now - last) / 1000 || 0, 0.05);
     last = now;
     t += dt;
+    follow(dt);
     drawSky(); // every frame, so the aurora moves smoothly
     drawSnow(dt);
     raf = requestAnimationFrame(frame);
