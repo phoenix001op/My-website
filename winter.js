@@ -15,10 +15,6 @@
     e.className = cls;
     return e;
   };
-  // The animation runs by default. The visitor can pause it with the button,
-  // and the choice is remembered in their browser.
-  let paused = false;
-  try { paused = localStorage.getItem('winter-paused') === 'yes'; } catch {}
 
   /* ---------- background ---------- */
   const sky = el('canvas', 'winter-layer');
@@ -33,7 +29,7 @@
   let video = null;
   if (AURORA_VIDEO) {
     video = el('video', 'winter-layer winter-video');
-    Object.assign(video, { src: AURORA_VIDEO, muted: true, loop: true, playsInline: true, autoplay: !paused });
+    Object.assign(video, { src: AURORA_VIDEO, muted: true, loop: true, playsInline: true, autoplay: true });
     video.addEventListener('error', () => { video.remove(); video = null; draw(); });
     document.body.prepend(video);
     if (VIDEO_CREDIT) {
@@ -210,7 +206,7 @@
 
   function draw() { drawSky(); drawSnow(0); }
 
-  let last = 0, raf = 0;
+  let last = 0;
   function frame(now) {
     const dt = Math.min((now - last) / 1000 || 0, 0.05);
     last = now;
@@ -218,33 +214,12 @@
     follow(dt);
     drawSky(); // every frame, so the aurora moves smoothly
     drawSnow(dt);
-    raf = requestAnimationFrame(frame);
-  }
-  function setMotion() {
-    cancelAnimationFrame(raf);
-    last = 0;
-    if (video) paused ? video.pause() : video.play().catch(() => {});
-    if (paused) draw(); else raf = requestAnimationFrame(frame);
+    requestAnimationFrame(frame);
   }
   addEventListener('resize', resize);
   resize();
-  setMotion();
-
-  /* ---------- pause button ---------- */
-  const toggle = el('button', 'winter-toggle');
-  toggle.type = 'button';
-  const showState = () => {
-    toggle.textContent = paused ? '▶ Play animation' : '⏸ Pause animation';
-    document.documentElement.classList.toggle('winter-paused', paused);
-  };
-  toggle.addEventListener('click', () => {
-    paused = !paused;
-    try { localStorage.setItem('winter-paused', paused ? 'yes' : 'no'); } catch {}
-    showState();
-    setMotion();
-  });
-  showState();
-  document.body.append(toggle);
+  if (video) video.play().catch(() => {});
+  requestAnimationFrame(frame);
 
   /* ---------- string lights under the header ---------- */
   const header = document.querySelector('header');

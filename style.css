@@ -120,7 +120,7 @@ a:focus-visible, .btn:focus-visible {
 }
 
 .profile-pic {
-  --pic: clamp(120px, 34vw, 170px);   /* photo width: scales with the screen */
+  --pic: clamp(100px, 28vw, 140px);   /* photo width: scales with the screen */
   width: var(--pic);
   aspect-ratio: 4 / 5;                /* portrait frame */
   height: auto;
@@ -133,6 +133,19 @@ a:focus-visible, .btn:focus-visible {
   display: block;
   margin: 0 auto 20px auto;
 }
+
+/* Christmas hat: sits on the head and sticks out above the photo frame */
+.pic-wrap {position: relative; width: fit-content; margin-top: 24px;}
+.santa-hat {
+  position: absolute;
+  top: -13%;
+  left: 22%;
+  width: 66%;
+  transform: rotate(8deg);
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.45));
+  pointer-events: none;
+}
+.pic-wrap .profile-pic {margin-left: 0; margin-right: 0;}
 
 .skills img {
   width: clamp(36px, 9vw, 52px);
@@ -164,11 +177,10 @@ a:focus-visible, .btn:focus-visible {
     row-gap: 12px;
     text-align: left;
   }
+  .pic-wrap {grid-area: pic; justify-self: center;}
   .profile-pic {
-    --pic: clamp(190px, 20vw, 280px);
-    grid-area: pic;
+    --pic: clamp(160px, 16vw, 220px);
     margin: 0;
-    justify-self: center;
   }
   .bio {grid-area: bio;}
   .bio p {margin: 0 0 15px;}
