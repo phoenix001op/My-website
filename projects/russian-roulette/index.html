@@ -1,54 +1,54 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Snowball Roulette</title>
-<style>
-*{box-sizing:border-box;margin:0}
-body{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:20px 16px;font-family:"Trebuchet MS",system-ui,sans-serif;color:#173654;background:linear-gradient(#bfe3fa,#eef8ff 70%,#fff)}
-main{width:min(520px,100%);text-align:center}
-h1{font-size:clamp(2rem,9vw,3rem);line-height:1.1}
-p{margin:8px 0}
-.score{display:flex;justify-content:center;gap:28px;font-weight:bold;margin:16px 0}
-.gifts{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 14px;margin:22px 0}
-.gift{color:#000;aspect-ratio:1;position:relative;border:0;border-radius:10px;cursor:pointer;font-size:clamp(2.2rem,11vw,3.4rem);background:linear-gradient(90deg,transparent 42%,#ffd968 42% 58%,transparent 58%),var(--c);box-shadow:0 7px 0 #0b2a4430}
-.gift::before{content:"";position:absolute;left:-5%;right:-5%;top:-4%;height:24%;border-radius:6px;background:linear-gradient(90deg,transparent 43%,#ffd968 43% 57%,transparent 57%),var(--c);filter:brightness(1.15)}
-.gift:nth-child(3n+1){--c:#c93b4b}.gift:nth-child(3n+2){--c:#237a5b}.gift:nth-child(3n){--c:#2f66b0}
-.gift:hover:enabled{translate:0 -4px}
-.gift.open{background:#fff;border:3px dashed #9cc7e6;box-shadow:none}.gift.open::before{display:none}
-.gift.hit{background:#d9f0ff;border:3px solid #2f66b0}
-.gift:disabled{cursor:default}
-#message{min-height:3.2em;font-size:1.15rem;font-weight:bold}
-.action{border:0;border-radius:8px;padding:11px 20px;margin:4px;font:bold 1rem inherit;background:#173654;color:#fff;cursor:pointer}
-button:focus-visible{outline:3px solid #e8a400;outline-offset:4px}
-[hidden]{display:none}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Russian Roulette</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<main>
-  <h1>Snowball Roulette</h1>
-  <p>One of these six gifts hides a snowball. Open the other five to win.</p>
-  <div class="score"><span>Wins: <b id="wins">0</b></span><span>Safe gifts: <b id="safe">0</b>/5</span></div>
-  <div class="gifts" id="gifts"></div>
-  <p id="message" role="status"></p>
-  <button class="action" id="again" type="button" hidden>Play again</button>
-  <button class="action" id="sound" type="button" aria-pressed="true">Sound on</button>
-</main>
-<script>
-const $=id=>document.getElementById(id);
-let hidden,safe,wins=0,sound=true,audio;
-function tone(f,t){if(!sound)return;try{audio=audio||new AudioContext();const o=audio.createOscillator(),g=audio.createGain();o.frequency.value=f;g.gain.setValueAtTime(.12,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+t);o.connect(g).connect(audio.destination);o.start();o.stop(audio.currentTime+t)}catch{}}
-function end(text){$('message').textContent=text;[...$('gifts').children].forEach(b=>b.disabled=true);$('again').hidden=false}
-function start(){hidden=Math.floor(Math.random()*6);safe=0;$('safe').textContent=0;$('again').hidden=true;$('message').textContent='Pick a gift.';
-  $('gifts').replaceChildren(...Array.from({length:6},(_,i)=>{const b=document.createElement('button');b.type='button';b.className='gift';b.setAttribute('aria-label','Gift '+(i+1));
-    b.onclick=()=>{b.disabled=true;b.classList.add('open');
-      if(i===hidden){b.classList.add('hit');b.textContent='❄️';b.setAttribute('aria-label','Snowball');tone(160,.4);end('Splat! You found the snowball.')}
-      else{b.textContent='⭐';b.setAttribute('aria-label','Safe gift');$('safe').textContent=++safe;tone(500+safe*90,.18);
-        if(safe===5){$('wins').textContent=++wins;end('You win! You avoided the snowball.')}else $('message').textContent='Safe! Pick another.'}};
-    return b}))}
-$('again').onclick=start;
-$('sound').onclick=()=>{sound=!sound;$('sound').textContent=sound?'Sound on':'Sound off';$('sound').setAttribute('aria-pressed',sound)};
-start();
-</script>
+<body class="dark-mode">
+  <!-- Home Screen -->
+  <div id="home">
+    <h1>🎮 Russian Roulette</h1>
+    <div class="home-buttons">
+      <button onclick="startGame()">▶ Play</button>
+      <button onclick="toggleSettings()">⚙️ Settings</button>
+      <button id="howToPlayBtn">❓ Tutorial</button>
+    </div>
+  </div>
+
+  <!-- Settings Panel -->
+  <div id="settings" style="display:none;">
+    <h2>Settings</h2>
+    <label>
+      <input type="checkbox" id="soundToggle" checked> Game Sound
+    </label>
+    <br>
+    <label>
+      <input type="checkbox" id="modeToggle"> Light Mode
+    </label>
+    <br><br>
+    <button onclick="closeSettings()">Close</button>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="game">
+    <button id="backBtn">⬅ Back</button>
+    <div id="bulletCounter">Bullets: 1/6</div>
+    <img src="images/pistol.png" id="pistol" alt="Pistol">
+    <div id="flash"></div>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div id="gameover">
+    <h1>💀 Game Over</h1>
+    <button onclick="restartGame()">Restart</button>
+  </div>
+
+  <!-- Preloaded Sounds -->
+  <audio id="gunshot" src="sounds/gunshot.mp3" preload="auto"></audio>
+  <audio id="dryfire" src="sounds/dry-fire.mp3" preload="auto"></audio>
+
+  <script src="script.js"></script>
 </body>
 </html>
