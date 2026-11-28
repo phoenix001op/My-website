@@ -147,6 +147,8 @@ a:focus-visible, .btn:focus-visible {
 }
 .pic-wrap .profile-pic {margin-left: 0; margin-right: 0;}
 
+.skills img[src="mysql.svg"] {background: #fff; border-radius: 4px; padding: 3px;}
+
 .skills img {
   width: clamp(36px, 9vw, 52px);
   height: clamp(36px, 9vw, 52px);
