@@ -134,14 +134,14 @@ a:focus-visible, .btn:focus-visible {
   margin: 0 auto 20px auto;
 }
 
-/* Christmas hat: sits on the head and sticks out above the photo frame */
+/* Christmas hat: hangs outside the top-left corner of the photo frame */
 .pic-wrap {position: relative; width: fit-content; margin-top: 24px;}
 .santa-hat {
   position: absolute;
-  top: -13%;
-  left: 22%;
-  width: 66%;
-  transform: rotate(8deg);
+  top: -17%;
+  left: -26%;
+  width: 56%;
+  transform: rotate(-35deg) scaleX(-1);   /* tip hangs to the left */
   filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.45));
   pointer-events: none;
 }
