@@ -1,31 +1,25 @@
 # My Website
 
-A collection of small web projects by Me.
+A collection of my web projects.
 
-## Main entry points
+## Folder guide
 
-- **Home:** [`index.html`](./index.html)
-- **Projects:** [`projects.html`](./projects.html)
-- **About:** [`about.html`](./about.html)
+| Location | What's inside |
+|---|---|
+| `index.html`, `projects.html`, `about.html` | Main website pages |
+| `studytimer.html` | Padh Lo study timer page (stays here because the tracker extension uses this address) |
+| `assets/` | Shared styles, scripts and images for the main pages |
+| `projects/` | One folder per project |
+| `archive/` | Pages not linked from the main website |
 
-## Organized project URLs
+## Projects
 
-| Project | Path |
+| Project | Folder |
 |---|---|
 | Easy | [`projects/easy/`](./projects/easy/) |
 | Russian Roulette | [`projects/russian-roulette/`](./projects/russian-roulette/) |
-| Padh Lo Study Timer | [`projects/study-timer/`](./projects/study-timer/) |
-| Phoenix | [`projects/phoenix/`](./projects/phoenix/) |
+| Padh Lo Study Timer (files and tracker) | [`projects/study-timer/`](./projects/study-timer/) |
 | PowerPalm | [`projects/power-palm/`](./projects/power-palm/) |
-| Guess to Win | [`projects/guess-to-win/`](./projects/guess-to-win/) |
-| Phone Controller | [`projects/phone-controller/`](./projects/phone-controller/) |
-
-The original project files remain in the repository root for compatibility with existing links and deployments. Files inside `website/` are an older duplicate copy and should not be used for new edits.
-
-## Projects with external hosting
-
-Phoenix, Guess to Win, and Phone Controller use existing Render deployments.
-
-## Local Padh Lo tracker
-
-The Padh Lo project includes `studytimer-tracker.zip` and `studytimer-tracker/` for optional browser screen-time tracking.
+| Phoenix (hosted on Render) | [`projects/phoenix/`](./projects/phoenix/) |
+| Guess to Win (hosted on Render) | [`projects/guess-to-win/`](./projects/guess-to-win/) |
+| Phone Controller (hosted on Render) | [`projects/phone-controller/`](./projects/phone-controller/) |

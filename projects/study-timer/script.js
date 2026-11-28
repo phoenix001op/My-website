@@ -36,7 +36,7 @@ const THEME_COLORS = { night: '#11151c', notebook: '#f1f3f7', board: '#16231f' }
 // "soma" tracks are free internet radio from SomaFM (ad free, no sign-in). Mirrors are tried if one is busy.
 const SOMA_HOSTS = ['ice1', 'ice2', 'ice4', 'ice6'];
 const MUSIC_TRACKS = [
-  { id: 'drift', name: 'Drifting Away', hint: 'Soft binaural beats', icon: 'fa-water', file: 'drifting-away-full-version-binaural-beats-409329.mp3' },
+  { id: 'drift', name: 'Drifting Away', hint: 'Soft binaural beats', icon: 'fa-water', file: 'projects/study-timer/sounds/drifting-away.mp3' },
   { id: 'groovesalad', name: 'Chill Beats', hint: 'Lo-fi style downtempo', icon: 'fa-mug-hot', soma: 'groovesalad-128-mp3' },
   { id: 'dronezone', name: 'Deep Focus', hint: 'Calm ambient drones', icon: 'fa-brain', soma: 'dronezone-128-mp3' },
   { id: 'deepspaceone', name: 'Deep Space', hint: 'Slow, spacey and peaceful', icon: 'fa-moon', soma: 'deepspaceone-128-mp3' },

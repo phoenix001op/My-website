@@ -1,11 +1,54 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="refresh" content="0; url=../../Russian_Roulette.html">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Russian Roulette</title>
-  <script>location.replace('../../Russian_Roulette.html');</script>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body><p><a href="../../Russian_Roulette.html">Open Russian Roulette</a></p></body>
+<body class="dark-mode">
+  <!-- Home Screen -->
+  <div id="home">
+    <h1>🎮 Russian Roulette</h1>
+    <div class="home-buttons">
+      <button onclick="startGame()">▶ Play</button>
+      <button onclick="toggleSettings()">⚙️ Settings</button>
+      <button id="howToPlayBtn">❓ Tutorial</button>
+    </div>
+  </div>
+
+  <!-- Settings Panel -->
+  <div id="settings" style="display:none;">
+    <h2>Settings</h2>
+    <label>
+      <input type="checkbox" id="soundToggle" checked> Game Sound
+    </label>
+    <br>
+    <label>
+      <input type="checkbox" id="modeToggle"> Light Mode
+    </label>
+    <br><br>
+    <button onclick="closeSettings()">Close</button>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="game">
+    <button id="backBtn">⬅ Back</button>
+    <div id="bulletCounter">Bullets: 1/6</div>
+    <img src="images/pistol.png" id="pistol" alt="Pistol">
+    <div id="flash"></div>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div id="gameover">
+    <h1>💀 Game Over</h1>
+    <button onclick="restartGame()">Restart</button>
+  </div>
+
+  <!-- Preloaded Sounds -->
+  <audio id="gunshot" src="sounds/gunshot.mp3" preload="auto"></audio>
+  <audio id="dryfire" src="sounds/dry-fire.mp3" preload="auto"></audio>
+
+  <script src="script.js"></script>
+</body>
 </html>
