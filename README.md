@@ -7,7 +7,7 @@ My personal website and a collection of my coding projects.
 | Project | About |
 |---|---|
 | [Easy](./projects/easy/) | 36 simple math tools |
-| [Russian Roulette](./projects/russian-roulette/) | A browser game |
+| [Snowball Roulette](./projects/russian-roulette/) | A winter game of luck: avoid the hidden snowball |
 | [Padh Lo](./studytimer.html) | Study timer with a calendar, statistics, ranks and screen time tracking |
 | [PowerPalm](./projects/power-palm/) | Hand gesture visual effects using your camera |
 | [Phoenix](https://phoenix-bi9s.onrender.com) | Hosted on Render |
